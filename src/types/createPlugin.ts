@@ -1,3 +1,5 @@
+import { FunctionParameter } from "../createPlugin";
+
 export interface JsonFragmentType {
   /**
    *  The parameter name.
@@ -59,3 +61,36 @@ export interface JsonFragment {
    */
   readonly gas?: string;
 }
+
+export type HandleUndefined<T> = T extends undefined ? [] : T;
+
+export type FunctionParameterInput<T extends string, C extends readonly JsonFragmentType[]> = T extends "tuple"
+  ? {
+      [K in C[number]["name"]]?: FunctionParameterInput<
+        Extract<C[number], { name: K }>["type"],
+        HandleUndefined<Extract<C[number], { name: K }>["components"]>
+      >;
+    }
+  : T extends "bool"
+  ? boolean | undefined
+  : T extends `${infer _}[${string}`
+  ? Array<FunctionParameterInput<_, C>>
+  : string | undefined;
+
+export type FunctionParameterValue<
+  N extends string,
+  T extends string,
+  C extends readonly JsonFragmentType[]
+> = T extends "tuple"
+  ? {
+      [K in C[number]["name"]]: FunctionParameter<
+        K,
+        Extract<C[number], { name: K }>["type"],
+        HandleUndefined<Extract<C[number], { name: K }>["components"]>
+      >;
+    }
+  : T extends "bool"
+  ? FunctionParameter<T, "bool", C>
+  : T extends `${infer _}[${string}`
+  ? Array<FunctionParameterValue<N, _, C>>
+  : FunctionParameter<N, T, C>;

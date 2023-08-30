@@ -1,7 +1,8 @@
 {
   "name": "@kiroboio/flow-plugins",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "git@github.com:kiroboio/ki-flow-plugins.git",
   "author": "Brendons Karelis <bk@kirobo.id>",
   "license": "MIT",
