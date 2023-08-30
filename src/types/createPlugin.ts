@@ -62,6 +62,12 @@ export interface JsonFragment {
   readonly gas?: string;
 }
 
+export interface EnhancedJsonFragment extends JsonFragment {
+  options?: {
+    falseMeansFail?: boolean;
+  };
+}
+
 export type HandleUndefined<T> = T extends undefined ? [] : T;
 
 export type FunctionParameterInput<T extends string, C extends readonly JsonFragmentType[]> = T extends "tuple"

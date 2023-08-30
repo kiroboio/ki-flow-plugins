@@ -80,6 +80,9 @@ export const ERC20ABI = [
     stateMutability: "nonpayable",
     type: "function",
     gas: "107870",
+    options: {
+      falseMeansFail: true,
+    },
   },
   {
     constant: true,
@@ -154,6 +157,9 @@ export const ERC20ABI = [
     stateMutability: "nonpayable",
     type: "function",
     gas: "92452",
+    options: {
+      falseMeansFail: true,
+    },
   },
   {
     constant: true,

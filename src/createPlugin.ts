@@ -5,6 +5,7 @@ import { CallType, IPluginCall, Variable } from "./types/coreLib";
 import {
   type JsonFragment,
   type JsonFragmentType,
+  EnhancedJsonFragment,
   FunctionParameterInput,
   FunctionParameterValue,
   HandleUndefined,
@@ -165,7 +166,7 @@ type Outputs<
     }
   : never;
 
-export class PluginFunction<A extends JsonFragment = JsonFragment> {
+export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment> {
   public readonly chainId: ChainId;
   public readonly method: A["name"];
   public readonly params: FunctionParameter[] = [];
@@ -173,6 +174,7 @@ export class PluginFunction<A extends JsonFragment = JsonFragment> {
   public readonly gas: A["gas"];
   public readonly abiFragment: A;
   public readonly outputParams: FunctionParameter[] = [];
+  public readonly options: A["options"] = {};
 
   public contractAddress?: string;
   public ethValue: string = "0";
@@ -185,6 +187,9 @@ export class PluginFunction<A extends JsonFragment = JsonFragment> {
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.gas = args.abiFragment.gas || "0";
     this.abiFragment = args.abiFragment;
+    if (args.abiFragment.options) {
+      this.options = args.abiFragment.options;
+    }
   }
 
   get functionSignature(): string {
@@ -243,6 +248,7 @@ export class PluginFunction<A extends JsonFragment = JsonFragment> {
       to: this.contractAddress,
       options: {
         callType: this.getCallType(),
+        ...this.options,
       },
     };
     return call;
