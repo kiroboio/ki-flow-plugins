@@ -179,7 +179,12 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public contractAddress?: string;
   public ethValue: string = "0";
 
-  constructor(args: { abiFragment: A; chainId: ChainId; contractAddress?: string }) {
+  constructor(args: {
+    abiFragment: A;
+    chainId: ChainId;
+    contractAddress?: string;
+    input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+  }) {
     this.chainId = args.chainId;
     this.method = args.abiFragment.name;
     this.params = args.abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
@@ -189,6 +194,9 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     this.abiFragment = args.abiFragment;
     if (args.abiFragment.options) {
       this.options = args.abiFragment.options;
+    }
+    if (args.input) {
+      this.set(args.input);
     }
   }
 
@@ -264,8 +272,12 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
 export function createPluginClass<F extends Readonly<JsonFragment>>({ abiFragment }: { abiFragment: F }) {
   return class Plugin extends PluginFunction<F> {
-    constructor(args: { chainId: ChainId; contractAddress?: string }) {
-      super({ abiFragment, chainId: args.chainId, contractAddress: args.contractAddress });
+    constructor(args: {
+      chainId: ChainId;
+      contractAddress?: string;
+      input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
+    }) {
+      super({ abiFragment, chainId: args.chainId, contractAddress: args.contractAddress, input: args.input });
     }
   };
 }
