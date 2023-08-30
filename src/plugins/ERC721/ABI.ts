@@ -10,6 +10,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "124834",
   },
   {
     constant: false,
@@ -35,20 +36,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      { internalType: "address", name: "from", type: "address" },
-      { internalType: "address", name: "to", type: "address" },
-      { internalType: "uint256", name: "tokenId", type: "uint256" },
-      { internalType: "bytes", name: "_data", type: "bytes" },
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    gas: "158922",
   },
   {
     constant: false,
@@ -61,6 +49,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "119842",
   },
   {
     constant: false,
@@ -74,36 +63,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: true, internalType: "address", name: "from", type: "address" },
-      { indexed: true, internalType: "address", name: "to", type: "address" },
-      { indexed: true, internalType: "uint256", name: "tokenId", type: "uint256" },
-    ],
-    name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: true, internalType: "address", name: "owner", type: "address" },
-      { indexed: true, internalType: "address", name: "approved", type: "address" },
-      { indexed: true, internalType: "uint256", name: "tokenId", type: "uint256" },
-    ],
-    name: "Approval",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: true, internalType: "address", name: "owner", type: "address" },
-      { indexed: true, internalType: "address", name: "operator", type: "address" },
-      { indexed: false, internalType: "bool", name: "approved", type: "bool" },
-    ],
-    name: "ApprovalForAll",
-    type: "event",
+    gas: "148296",
   },
   {
     constant: true,
@@ -113,6 +73,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "75482",
   },
   {
     constant: true,
@@ -122,6 +83,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "79468",
   },
   {
     constant: true,
@@ -134,6 +96,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "76450",
   },
   {
     constant: true,
@@ -143,6 +106,7 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "74956",
   },
   {
     constant: true,
@@ -152,5 +116,6 @@ export const ERC721ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "70896",
   },
 ] as const;

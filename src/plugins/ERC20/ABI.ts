@@ -12,6 +12,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "75750",
   },
   {
     constant: false,
@@ -35,6 +36,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "124834",
   },
   {
     constant: true,
@@ -49,6 +51,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "74316",
   },
   {
     constant: false,
@@ -76,6 +79,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "107870",
   },
   {
     constant: true,
@@ -90,6 +94,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "74434",
   },
   {
     constant: true,
@@ -109,6 +114,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "75448",
   },
   {
     constant: true,
@@ -123,6 +129,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "75834",
   },
   {
     constant: false,
@@ -146,6 +153,7 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "92452",
   },
   {
     constant: true,
@@ -169,5 +177,6 @@ export const ERC20ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "76504",
   },
 ] as const;

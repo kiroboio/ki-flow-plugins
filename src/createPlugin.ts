@@ -1,13 +1,15 @@
 import { ethers } from "ethers";
+
+import { ChainId, Param } from "./types";
+import { CallType, IPluginCall, Variable } from "./types/coreLib";
 import {
-  type JsonFragmentType,
   type JsonFragment,
+  type JsonFragmentType,
   FunctionParameterInput,
   FunctionParameterValue,
   HandleUndefined,
+  PluginFunctionInput,
 } from "./types/createPlugin";
-import { ChainId, Param } from "./types";
-import { IPluginCall } from "./types/coreLib";
 
 export class FunctionParameter<
   N extends string = string,
@@ -153,24 +155,36 @@ export class FunctionParameter<
   }
 }
 
-type PluginFunctionInput<A extends readonly JsonFragmentType[]> = {
-  [K in A[number]["name"]]: FunctionParameterInput<
-    Extract<A[number], { name: K }>["type"],
-    HandleUndefined<Extract<A[number], { name: K }>["components"]>
-  >;
-};
+type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
+type Outputs<
+  T extends readonly JsonFragmentType[] | undefined,
+  N extends string
+> = T extends readonly JsonFragmentType[]
+  ? {
+      [key: number]: Variable & { type: "output"; id: { nodeId: N } };
+    }
+  : never;
 
 export class PluginFunction<A extends JsonFragment = JsonFragment> {
   public readonly chainId: ChainId;
   public readonly method: A["name"];
   public readonly params: FunctionParameter[] = [];
+  public readonly functionType: A["stateMutability"] = "payable";
+  public readonly gas: A["gas"];
+  public readonly abiFragment: A;
+  public readonly outputParams: FunctionParameter[] = [];
 
   public contractAddress?: string;
+  public ethValue: string = "0";
 
   constructor(args: { abiFragment: A; chainId: ChainId; contractAddress?: string }) {
     this.chainId = args.chainId;
     this.method = args.abiFragment.name;
     this.params = args.abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
+    this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
+    this.functionType = args.abiFragment.stateMutability || "payable";
+    this.gas = args.abiFragment.gas || "0";
+    this.abiFragment = args.abiFragment;
   }
 
   get functionSignature(): string {
@@ -182,9 +196,22 @@ export class PluginFunction<A extends JsonFragment = JsonFragment> {
   }
 
   get inputs() {
-    return this.params.reduce((acc, cur) => {
+    const params = this.params.reduce((acc, cur) => {
       return { ...acc, [cur.name]: cur.get() };
     }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
+    return { params, set: this.set.bind(this), get: this.get.bind(this) };
+  }
+
+  public getOutputs<N extends string>(nodeId: N): Outputs<A["outputs"], N> {
+    const params = this.outputParams.reduce((acc, _, i) => {
+      return { ...acc, [i]: { type: "output", id: { nodeId, innerIndex: i } } };
+    }, {});
+    return params as Outputs<A["outputs"], N>;
+  }
+
+  public setValue(value: ETHValueInput<A["stateMutability"]>) {
+    if (this.functionType !== "payable") return;
+    this.ethValue = value || "0";
   }
 
   public setContractAddress(address: string) {
@@ -201,7 +228,7 @@ export class PluginFunction<A extends JsonFragment = JsonFragment> {
   }
 
   public get() {
-    return this.params.reduce<PluginFunctionInput<HandleUndefined<A["inputs"]>>>((acc, cur) => {
+    return this.params.reduce((acc, cur) => {
       return { ...acc, [cur.name]: cur.get() };
     }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
   }
@@ -212,9 +239,20 @@ export class PluginFunction<A extends JsonFragment = JsonFragment> {
     const call: IPluginCall = {
       method: this.method,
       params,
+      value: this.ethValue,
       to: this.contractAddress,
+      options: {
+        callType: this.getCallType(),
+      },
     };
     return call;
+  }
+
+  public getCallType(): CallType {
+    if (this.functionType === "payable" || this.functionType === "nonpayable") {
+      return "ACTION";
+    }
+    return "VIEW_ONLY";
   }
 }
 

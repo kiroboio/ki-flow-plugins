@@ -94,3 +94,10 @@ export type FunctionParameterValue<
   : T extends `${infer _}[${string}`
   ? Array<FunctionParameterValue<N, _, C>>
   : FunctionParameter<N, T, C>;
+
+export type PluginFunctionInput<A extends readonly JsonFragmentType[]> = {
+  [K in A[number]["name"]]: FunctionParameterInput<
+    Extract<A[number], { name: K }>["type"],
+    HandleUndefined<Extract<A[number], { name: K }>["components"]>
+  >;
+};
