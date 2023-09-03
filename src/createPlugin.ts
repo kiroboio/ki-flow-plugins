@@ -12,6 +12,11 @@ import {
   PluginFunctionInput,
 } from "./types/createPlugin";
 
+export interface SupportedContract {
+  address: string;
+  chainId: ChainId;
+}
+
 export class FunctionParameter<
   N extends string = string,
   I extends string = string,
@@ -198,6 +203,9 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     if (args.input) {
       this.set(args.input);
     }
+    if (args.contractAddress) {
+      this.contractAddress = args.contractAddress;
+    }
   }
 
   get functionSignature(): string {
@@ -270,24 +278,52 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 }
 
-export function createPluginClass<F extends Readonly<JsonFragment>>({ abiFragment }: { abiFragment: F }) {
+export function createPluginClass<F extends Readonly<JsonFragment>>({
+  abiFragment,
+  supportedAddressses,
+}: {
+  abiFragment: F;
+  supportedAddressses?: readonly SupportedContract[];
+}) {
   return class Plugin extends PluginFunction<F> {
     constructor(args: {
       chainId: ChainId;
       contractAddress?: string;
       input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
     }) {
-      super({ abiFragment, chainId: args.chainId, contractAddress: args.contractAddress, input: args.input });
+      console.log(supportedAddressses);
+
+      let contractAddress = "";
+      if (args.contractAddress) {
+        contractAddress = args.contractAddress;
+      } else if (supportedAddressses) {
+        console.log("in supportedAddressses");
+        // Find the supported address for the chainId
+        const supportedAddress = supportedAddressses.find((s) => s.chainId === args.chainId);
+        if (supportedAddress) {
+          contractAddress = supportedAddress.address;
+        }
+      }
+
+      console.log("contractAddress", contractAddress);
+      super({ abiFragment, chainId: args.chainId, contractAddress, input: args.input });
     }
   };
 }
 
-export function createProtocolPlugins<F extends JsonFragment>({ abi }: { abi: readonly F[] }) {
+export function createProtocolPlugins<F extends JsonFragment>({
+  abi,
+  supportedAddressses,
+}: {
+  abi: readonly F[];
+  supportedAddressses?: SupportedContract[];
+}) {
   return abi
     .filter((f) => f.type === "function")
     .map((f) =>
       createPluginClass({
         abiFragment: f,
+        supportedAddressses,
       })
     );
 }
@@ -296,18 +332,20 @@ type Plugin<F extends JsonFragment> = ReturnType<typeof createPluginClass<F>>;
 
 export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>({
   abi,
+  supportedAddressses,
 }: {
   abi: F;
+  supportedAddressses?: readonly SupportedContract[];
 }): {
   [K in Extract<F[number], { type: "function" }>["name"]]: Plugin<Extract<F[number], { name: K; type: "function" }>>;
 } {
-  return abi
+  const data = abi
     .filter((f) => f.type === "function")
     .reduce(
       (acc, cur) => {
         return {
           ...acc,
-          [cur.name]: createPluginClass({ abiFragment: cur }),
+          [cur.name]: createPluginClass({ abiFragment: cur, supportedAddressses }),
         };
       },
       {} as {
@@ -316,4 +354,5 @@ export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>
         >;
       }
     );
+  return data;
 }
