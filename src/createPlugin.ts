@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-import { ChainId, Param } from "./types";
+import { ChainId, Param, SupportedContract } from "./types";
 import { CallType, IPluginCall, Variable } from "./types/coreLib";
 import {
   type JsonFragment,
@@ -11,11 +11,6 @@ import {
   HandleUndefined,
   PluginFunctionInput,
 } from "./types/createPlugin";
-
-export interface SupportedContract {
-  address: string;
-  chainId: ChainId;
-}
 
 export class FunctionParameter<
   N extends string = string,

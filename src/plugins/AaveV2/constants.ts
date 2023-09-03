@@ -1,4 +1,4 @@
-import { SupportedContract } from "../../createPlugin";
+import { SupportedContract } from "../../types";
 
 export const AaveV2_LendingPool_Addresses: readonly SupportedContract[] = [
   {
@@ -18,6 +18,6 @@ export const AaveV2_ProtocolDataProvider_Addresses: readonly SupportedContract[]
   },
   {
     address: "0x927F584d4321C1dCcBf5e2902368124b02419a1E",
-    chainId: "1",
+    chainId: "5",
   },
 ];

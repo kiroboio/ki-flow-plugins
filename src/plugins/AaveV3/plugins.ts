@@ -1,0 +1,15 @@
+import { createProtocolPluginsAsObject } from "../../createPlugin";
+import { AaveV2_ProtocolDataProviderABI } from "../AaveV2/ABI";
+import { AaveV3_PoolABI } from "./ABI";
+import { AaveV3_Pool_Addresses, AaveV3_ProtocolDataProvider_Addresses } from "./constants";
+
+const Pool = createProtocolPluginsAsObject({
+  abi: AaveV3_PoolABI,
+  supportedAddressses: AaveV3_Pool_Addresses,
+});
+const ProtocolDataProvider = createProtocolPluginsAsObject({
+  abi: AaveV2_ProtocolDataProviderABI,
+  supportedAddressses: AaveV3_ProtocolDataProvider_Addresses,
+});
+
+export const AaveV3 = { ...Pool, ...ProtocolDataProvider };
