@@ -265,6 +265,36 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     return call;
   }
 
+  public async simulate({ rpcUrl, from }: { rpcUrl: string; from: string }) {
+    if (!this.contractAddress) {
+      return {
+        success: false,
+        result: "Contract address not set",
+      };
+    }
+
+    const signer = new ethers.providers.JsonRpcProvider(rpcUrl).getSigner(from);
+    const contract = new ethers.Contract(this.contractAddress, [this.abiFragment], signer);
+    try {
+      const result = await contract.callStatic[this.method](...this.params.map((p) => p.get()));
+      return {
+        success: true,
+        result,
+      };
+    } catch (e) {
+      if (typeof e === "object" && e && "reason" in e) {
+        return {
+          success: false,
+          result: e.reason,
+        };
+      }
+      return {
+        success: false,
+        result: e,
+      };
+    }
+  }
+
   public getCallType(): CallType {
     if (this.functionType === "payable" || this.functionType === "nonpayable") {
       return "ACTION";
@@ -286,13 +316,10 @@ export function createPluginClass<F extends Readonly<JsonFragment>>({
       contractAddress?: string;
       input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
     }) {
-      console.log(supportedAddressses);
-
       let contractAddress = "";
       if (args.contractAddress) {
         contractAddress = args.contractAddress;
       } else if (supportedAddressses) {
-        console.log("in supportedAddressses");
         // Find the supported address for the chainId
         const supportedAddress = supportedAddressses.find((s) => s.chainId === args.chainId);
         if (supportedAddress) {
@@ -300,7 +327,6 @@ export function createPluginClass<F extends Readonly<JsonFragment>>({
         }
       }
 
-      console.log("contractAddress", contractAddress);
       super({ abiFragment, chainId: args.chainId, contractAddress, input: args.input });
     }
   };
