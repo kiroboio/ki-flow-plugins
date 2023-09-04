@@ -265,22 +265,51 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     return call;
   }
 
-  public async simulate({ rpcUrl, from }: { rpcUrl: string; from: string }) {
+  public async simulate({
+    rpcUrl,
+    from,
+    input,
+  }: {
+    rpcUrl: string;
+    from: string;
+    input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+  }) {
+    if (!this.contractAddress) {
+      throw new Error("Contract address not set");
+    }
+
+    const params = this.params.map((p) => {
+      if (input && p.name in input) {
+        return input[p.name as keyof typeof input];
+      }
+      return p.get();
+    });
+    const signer = new ethers.providers.JsonRpcProvider(rpcUrl).getSigner(from);
+    const contract = new ethers.Contract(this.contractAddress, [this.abiFragment], signer);
+    const result = await contract.callStatic[this.method](...params);
+    return {
+      success: true,
+      result,
+    };
+  }
+
+  public async safeSimulate({
+    rpcUrl,
+    from,
+    input,
+  }: {
+    rpcUrl: string;
+    from: string;
+    input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+  }) {
     if (!this.contractAddress) {
       return {
         success: false,
         result: "Contract address not set",
       };
     }
-
-    const signer = new ethers.providers.JsonRpcProvider(rpcUrl).getSigner(from);
-    const contract = new ethers.Contract(this.contractAddress, [this.abiFragment], signer);
     try {
-      const result = await contract.callStatic[this.method](...this.params.map((p) => p.get()));
-      return {
-        success: true,
-        result,
-      };
+      return await this.simulate({ rpcUrl, from, input });
     } catch (e) {
       if (typeof e === "object" && e && "reason" in e) {
         return {
@@ -293,6 +322,15 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
         result: e,
       };
     }
+  }
+
+  public clone(): PluginFunction<A> {
+    return new PluginFunction({
+      abiFragment: this.abiFragment,
+      chainId: this.chainId,
+      contractAddress: this.contractAddress,
+      input: this.get(),
+    });
   }
 
   public getCallType(): CallType {
