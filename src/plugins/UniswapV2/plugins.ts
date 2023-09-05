@@ -4,7 +4,7 @@ import { UniswapV2_Router } from "./constants";
 
 const Router = createProtocolPluginsAsObject({
   abi: UniswapV2_Router_ABI,
-  supportedAddressses: UniswapV2_Router,
+  supportedContracts: UniswapV2_Router,
 });
 
 export const UniswapV2 = { ...Router };

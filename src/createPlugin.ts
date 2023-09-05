@@ -175,6 +175,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly abiFragment: A;
   public readonly outputParams: FunctionParameter[] = [];
   public readonly options: A["options"] = {};
+  public readonly supportedContracts: readonly SupportedContract[] = [];
 
   public contractAddress?: string;
   public ethValue: string = "0";
@@ -183,6 +184,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     abiFragment: A;
     chainId: ChainId;
     contractAddress?: string;
+    supportedContracts?: readonly SupportedContract[];
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) {
     this.chainId = args.chainId;
@@ -197,6 +199,13 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     }
     if (args.input) {
       this.set(args.input);
+    }
+    if (args.supportedContracts) {
+      this.supportedContracts = args.supportedContracts.filter((s) => s.chainId === args.chainId);
+      // If there is only one supported contract, set the contract address
+      if (this.supportedContracts.length === 1) {
+        this.contractAddress = this.supportedContracts[0].address;
+      }
     }
     if (args.contractAddress) {
       this.contractAddress = args.contractAddress;
@@ -231,7 +240,15 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   public setContractAddress(address: string) {
+    // If there are supported contracts, check if the address is supported
+    if (this.supportedContracts) {
+      const supportedContract = this.supportedContracts.find((s) => s.address.toLowerCase() === address.toLowerCase());
+      if (!supportedContract) {
+        throw new Error(`Contract address ${address} is not supported`);
+      }
+    }
     this.contractAddress = address;
+    return address;
   }
 
   public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
@@ -343,10 +360,10 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
 export function createPluginClass<F extends Readonly<JsonFragment>>({
   abiFragment,
-  supportedAddressses,
+  supportedContracts,
 }: {
   abiFragment: F;
-  supportedAddressses?: readonly SupportedContract[];
+  supportedContracts?: readonly SupportedContract[];
 }) {
   return class Plugin extends PluginFunction<F> {
     constructor(args: {
@@ -354,35 +371,30 @@ export function createPluginClass<F extends Readonly<JsonFragment>>({
       contractAddress?: string;
       input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
     }) {
-      let contractAddress = "";
-      if (args.contractAddress) {
-        contractAddress = args.contractAddress;
-      } else if (supportedAddressses) {
-        // Find the supported address for the chainId
-        const supportedAddress = supportedAddressses.find((s) => s.chainId === args.chainId);
-        if (supportedAddress) {
-          contractAddress = supportedAddress.address;
-        }
-      }
-
-      super({ abiFragment, chainId: args.chainId, contractAddress, input: args.input });
+      super({
+        abiFragment,
+        chainId: args.chainId,
+        contractAddress: args.contractAddress,
+        supportedContracts,
+        input: args.input,
+      });
     }
   };
 }
 
 export function createProtocolPlugins<F extends JsonFragment>({
   abi,
-  supportedAddressses,
+  supportedContracts,
 }: {
   abi: readonly F[];
-  supportedAddressses?: SupportedContract[];
+  supportedContracts?: SupportedContract[];
 }) {
   return abi
     .filter((f) => f.type === "function")
     .map((f) =>
       createPluginClass({
         abiFragment: f,
-        supportedAddressses,
+        supportedContracts,
       })
     );
 }
@@ -391,10 +403,10 @@ type Plugin<F extends JsonFragment> = ReturnType<typeof createPluginClass<F>>;
 
 export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>({
   abi,
-  supportedAddressses,
+  supportedContracts,
 }: {
   abi: F;
-  supportedAddressses?: readonly SupportedContract[];
+  supportedContracts?: readonly SupportedContract[];
 }): {
   [K in Extract<F[number], { type: "function" }>["name"]]: Plugin<Extract<F[number], { name: K; type: "function" }>>;
 } {
@@ -404,7 +416,7 @@ export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>
       (acc, cur) => {
         return {
           ...acc,
-          [cur.name]: createPluginClass({ abiFragment: cur, supportedAddressses }),
+          [cur.name]: createPluginClass({ abiFragment: cur, supportedContracts }),
         };
       },
       {} as {

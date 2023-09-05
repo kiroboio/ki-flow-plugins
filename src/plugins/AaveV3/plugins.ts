@@ -5,11 +5,11 @@ import { AaveV3_Pool_Addresses, AaveV3_ProtocolDataProvider_Addresses } from "./
 
 const Pool = createProtocolPluginsAsObject({
   abi: AaveV3_PoolABI,
-  supportedAddressses: AaveV3_Pool_Addresses,
+  supportedContracts: AaveV3_Pool_Addresses,
 });
 const ProtocolDataProvider = createProtocolPluginsAsObject({
   abi: AaveV2_ProtocolDataProviderABI,
-  supportedAddressses: AaveV3_ProtocolDataProvider_Addresses,
+  supportedContracts: AaveV3_ProtocolDataProvider_Addresses,
 });
 
 export const AaveV3 = { ...Pool, ...ProtocolDataProvider };

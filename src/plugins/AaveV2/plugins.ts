@@ -4,11 +4,11 @@ import { AaveV2_LendingPool_Addresses, AaveV2_ProtocolDataProvider_Addresses } f
 
 const LendingPool = createProtocolPluginsAsObject({
   abi: AaveV2_LendingPoolABI,
-  supportedAddressses: AaveV2_LendingPool_Addresses,
+  supportedContracts: AaveV2_LendingPool_Addresses,
 });
 const ProtocolDataProvider = createProtocolPluginsAsObject({
   abi: AaveV2_ProtocolDataProviderABI,
-  supportedAddressses: AaveV2_ProtocolDataProvider_Addresses,
+  supportedContracts: AaveV2_ProtocolDataProvider_Addresses,
 });
 
 export const AaveV2 = { ...LendingPool, ...ProtocolDataProvider };
