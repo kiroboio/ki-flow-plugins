@@ -1,20 +1,5 @@
 export const ERC20ABI = [
   {
-    constant: true,
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        name: "name",
-        type: "string",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-    gas: "75750",
-  },
-  {
     constant: false,
     inputs: [
       {
@@ -103,7 +88,7 @@ export const ERC20ABI = [
     constant: true,
     inputs: [
       {
-        name: "_owner",
+        name: "owner",
         type: "address",
       },
     ],
@@ -120,29 +105,14 @@ export const ERC20ABI = [
     gas: "75448",
   },
   {
-    constant: true,
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        name: "symbol",
-        type: "string",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-    gas: "75834",
-  },
-  {
     constant: false,
     inputs: [
       {
-        name: "_to",
+        name: "to",
         type: "address",
       },
       {
-        name: "_value",
+        name: "value",
         type: "uint256",
       },
     ],
@@ -165,11 +135,11 @@ export const ERC20ABI = [
     constant: true,
     inputs: [
       {
-        name: "_owner",
+        name: "owner",
         type: "address",
       },
       {
-        name: "_spender",
+        name: "spender",
         type: "address",
       },
     ],
