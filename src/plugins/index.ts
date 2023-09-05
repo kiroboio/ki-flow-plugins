@@ -5,3 +5,4 @@ export * from "./ERC20";
 export * from "./ERC721";
 export * from "./UniswapV2";
 export * from "./UniswapV3";
+export * from "./WETH";
