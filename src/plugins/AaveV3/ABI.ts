@@ -57,6 +57,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "440000",
   },
   {
     inputs: [
@@ -130,6 +131,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    deposit: "210000",
   },
   {
     inputs: [
@@ -414,6 +416,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "250000",
   },
   {
     inputs: [
@@ -496,6 +499,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "270000",
   },
   {
     inputs: [
@@ -537,6 +541,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "245000",
   },
 ] as const;
 

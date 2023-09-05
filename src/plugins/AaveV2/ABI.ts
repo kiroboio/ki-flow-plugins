@@ -57,6 +57,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "650000",
   },
   {
     inputs: [
@@ -85,6 +86,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "580000",
   },
   {
     inputs: [
@@ -173,6 +175,7 @@ export const AaveV2_LendingPoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "119576",
   },
   {
     inputs: [
@@ -217,39 +220,7 @@ export const AaveV2_LendingPoolABI = [
     ],
     stateMutability: "view",
     type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "collateralAsset",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "debtAsset",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "debtToCover",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "receiveAToken",
-        type: "bool",
-      },
-    ],
-    name: "liquidationCall",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    gas: "124000",
   },
   {
     inputs: [],
@@ -257,7 +228,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "isPaused",
         type: "bool",
       },
     ],
@@ -291,24 +262,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "rateStrategyAddress",
-        type: "address",
-      },
-    ],
-    name: "setReserveInterestRateStrategyAddress",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    gas: "540000",
   },
   {
     inputs: [
@@ -368,6 +322,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "620000",
   },
 ] as const;
 
@@ -435,6 +390,7 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "105000",
   },
   {
     inputs: [
@@ -499,6 +455,7 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "115000",
   },
   {
     inputs: [
@@ -528,6 +485,7 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "119000",
   },
   {
     inputs: [
@@ -592,5 +550,6 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "245000",
   },
 ] as const;
