@@ -5,7 +5,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "FLASHLOAN_PREMIUM_TOTAL",
         type: "uint256",
       },
     ],
@@ -18,7 +18,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "MAX_NUMBER_RESERVES",
         type: "uint256",
       },
     ],
@@ -84,32 +84,6 @@ export const AaveV2_LendingPoolABI = [
     name: "deposit",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-    ],
-    name: "getConfiguration",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "data",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct DataTypes.ReserveConfigurationMap",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -193,7 +167,7 @@ export const AaveV2_LendingPoolABI = [
           },
         ],
         internalType: "struct DataTypes.ReserveData",
-        name: "",
+        name: "data",
         type: "tuple",
       },
     ],
@@ -239,32 +213,6 @@ export const AaveV2_LendingPoolABI = [
         internalType: "uint256",
         name: "healthFactor",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-    ],
-    name: "getUserConfiguration",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "data",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct DataTypes.UserConfigurationMap",
-        name: "",
-        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -340,13 +288,7 @@ export const AaveV2_LendingPoolABI = [
       },
     ],
     name: "repay",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -423,13 +365,7 @@ export const AaveV2_LendingPoolABI = [
       },
     ],
     name: "withdraw",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

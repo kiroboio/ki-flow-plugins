@@ -5,7 +5,7 @@ export const AaveV3_PoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "MAX_STABLE_RATE_BORROW_SIZE_PERCENT",
         type: "uint256",
       },
     ],
@@ -18,7 +18,7 @@ export const AaveV3_PoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "POOL_REVISION",
         type: "uint256",
       },
     ],
@@ -143,7 +143,7 @@ export const AaveV3_PoolABI = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "reserveAddress",
         type: "address",
       },
     ],
@@ -246,7 +246,7 @@ export const AaveV3_PoolABI = [
           },
         ],
         internalType: "struct DataTypes.ReserveData",
-        name: "",
+        name: "data",
         type: "tuple",
       },
     ],
@@ -265,7 +265,7 @@ export const AaveV3_PoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "reserveNormalizedIncome",
         type: "uint256",
       },
     ],
@@ -284,7 +284,7 @@ export const AaveV3_PoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "reserveNormalizedVariableDebt",
         type: "uint256",
       },
     ],
@@ -347,7 +347,7 @@ export const AaveV3_PoolABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "eMode",
         type: "uint256",
       },
     ],
@@ -411,13 +411,7 @@ export const AaveV3_PoolABI = [
       },
     ],
     name: "repay",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -440,13 +434,7 @@ export const AaveV3_PoolABI = [
       },
     ],
     name: "repayWithATokens",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -546,13 +534,7 @@ export const AaveV3_PoolABI = [
       },
     ],
     name: "withdraw",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -571,7 +553,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "aTokenTotalSupply",
         type: "uint256",
       },
     ],
@@ -590,7 +572,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "debtCeiling",
         type: "uint256",
       },
     ],
@@ -603,7 +585,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "debtCeilingDecimals",
         type: "uint256",
       },
     ],
@@ -641,7 +623,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "liquidationProtocolFee",
         type: "uint256",
       },
     ],
@@ -841,7 +823,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "reserveEModeCategory",
         type: "uint256",
       },
     ],
@@ -889,7 +871,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "isSiloedBorrowingEnabled",
         type: "bool",
       },
     ],
@@ -908,7 +890,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "totalDebt",
         type: "uint256",
       },
     ],
@@ -927,7 +909,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "unbakcedMintCap",
         type: "uint256",
       },
     ],

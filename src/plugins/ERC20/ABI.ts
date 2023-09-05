@@ -5,7 +5,7 @@ export const ERC20ABI = [
     name: "name",
     outputs: [
       {
-        name: "",
+        name: "name",
         type: "string",
       },
     ],
@@ -29,7 +29,7 @@ export const ERC20ABI = [
     name: "approve",
     outputs: [
       {
-        name: "",
+        name: "isApproved",
         type: "bool",
       },
     ],
@@ -44,7 +44,7 @@ export const ERC20ABI = [
     name: "totalSupply",
     outputs: [
       {
-        name: "",
+        name: "totalSupply",
         type: "uint256",
       },
     ],
@@ -72,7 +72,7 @@ export const ERC20ABI = [
     name: "transferFrom",
     outputs: [
       {
-        name: "",
+        name: "success",
         type: "bool",
       },
     ],
@@ -90,7 +90,7 @@ export const ERC20ABI = [
     name: "decimals",
     outputs: [
       {
-        name: "",
+        name: "decimals",
         type: "uint8",
       },
     ],
@@ -125,7 +125,7 @@ export const ERC20ABI = [
     name: "symbol",
     outputs: [
       {
-        name: "",
+        name: "symbol",
         type: "string",
       },
     ],
@@ -149,7 +149,7 @@ export const ERC20ABI = [
     name: "transfer",
     outputs: [
       {
-        name: "",
+        name: "success",
         type: "bool",
       },
     ],
@@ -176,7 +176,7 @@ export const ERC20ABI = [
     name: "allowance",
     outputs: [
       {
-        name: "",
+        name: "allowance",
         type: "uint256",
       },
     ],
