@@ -1,18 +1,6 @@
 export const cERC20_ABI = [
   {
     constant: false,
-    inputs: [
-      { name: "spender", type: "address" },
-      { name: "amount", type: "uint256" },
-    ],
-    name: "approve",
-    outputs: [{ name: "isApproved", type: "bool" }],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
     inputs: [{ name: "repayAmount", type: "uint256" }],
     name: "repayBorrow",
     outputs: [{ name: "errorCode", type: "uint256" }],
