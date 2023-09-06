@@ -216,7 +216,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 }
 
-export function createPluginClass<F extends Readonly<JsonFragment>>({
+export function createPlugin<F extends Readonly<JsonFragment>>({
   abiFragment,
   supportedContracts,
 }: {
@@ -250,14 +250,14 @@ export function createProtocolPlugins<F extends JsonFragment>({
   return abi
     .filter((f) => f.type === "function")
     .map((f) =>
-      createPluginClass({
+      createPlugin({
         abiFragment: f,
         supportedContracts,
       })
     );
 }
 
-type Plugin<F extends JsonFragment> = ReturnType<typeof createPluginClass<F>>;
+export type Plugin<F extends JsonFragment> = ReturnType<typeof createPlugin<F>>;
 
 export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>({
   abi,
@@ -274,7 +274,7 @@ export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>
       (acc, cur) => {
         return {
           ...acc,
-          [cur.name]: createPluginClass({ abiFragment: cur, supportedContracts }),
+          [cur.name]: createPlugin({ abiFragment: cur, supportedContracts }),
         };
       },
       {} as {

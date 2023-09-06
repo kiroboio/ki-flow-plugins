@@ -143,3 +143,26 @@ export class FunctionParameter<
     return this.internalType.endsWith("]");
   }
 }
+
+export class SmartPluginParameter {
+  public readonly name: string;
+  public readonly type: string;
+  public readonly canBeVariable: boolean = false;
+
+  public value?: any;
+
+  constructor(args: { name: string; type: string; canBeVariable?: boolean }) {
+    this.name = args.name;
+    this.type = args.type;
+    this.canBeVariable = args.canBeVariable || false;
+  }
+
+  public set(value: any) {
+    this.value = value;
+    return this.get();
+  }
+
+  public get(): any {
+    return this.value;
+  }
+}
