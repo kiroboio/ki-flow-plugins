@@ -1,5 +1,5 @@
 import { ERC20 } from "../plugins";
-import { ChainId, HandleUndefined, JsonFragment, PluginFunctionInput } from "../types";
+import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput } from "../types";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
@@ -12,7 +12,7 @@ export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends Json
     input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
     vaultAddress: string;
     chainId: C;
-  }) => InstanceType<P>;
+  }) => Promise<InstanceType<P>>;
   plugins: readonly P[];
   abiFragment: A;
 }) {
@@ -44,13 +44,13 @@ export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends Json
       }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
     }
 
-    public create() {
-      const plugin = prepare({
+    public async create(): Promise<IPluginCall | undefined> {
+      const plugin = await prepare({
         input: this.get(),
         chainId: this.chainId,
         vaultAddress: this.vaultAddress,
       });
-      return plugin;
+      return await plugin.create();
     }
   };
 }
@@ -74,7 +74,7 @@ const SmartTransfer = createSmartPlugin({
     ],
   } as const,
   plugins: [ERC20.transfer, ERC20.transferFrom],
-  prepare(args) {
+  async prepare(args) {
     if (args.vaultAddress === args.input.from) {
       return new ERC20.transfer({
         chainId: args.chainId,
