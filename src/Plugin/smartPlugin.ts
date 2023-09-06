@@ -55,6 +55,7 @@ export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends Json
   };
 }
 
+// Example of SmartTransfer plugin
 const SmartTransfer = createSmartPlugin({
   abiFragment: {
     name: "smartTransfer",
@@ -72,6 +73,7 @@ const SmartTransfer = createSmartPlugin({
         type: "uint256",
       },
     ],
+    payable: false,
   } as const,
   plugins: [ERC20.transfer, ERC20.transferFrom],
   async prepare(args) {
@@ -93,12 +95,5 @@ const SmartTransfer = createSmartPlugin({
       },
     });
   },
-});
-
-const plugin = new SmartTransfer({ chainId: "1", vaultAddress: "0x" });
-
-plugin.set({
-  amount: "100",
-  from: "0x",
-  to: "0x",
+  // TODO: add output options, optional helpers (for example, cache for Uniswap)
 });
