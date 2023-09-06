@@ -1,4 +1,3 @@
-
 export type GlobalVariable =
   | "blockNumber"
   | "blockTimestamp"
@@ -17,16 +16,7 @@ export type Variable =
   | { type: "computed"; id: string };
 //   | { type: "validation"; id: string };
 
-export type ParamValue =
-  | boolean
-  | string
-  | string[]
-  | boolean[]
-  | Param[]
-  | Param[][]
-  | Variable
-  | ParamValue[];
-
+export type ParamValue = boolean | string | string[] | boolean[] | Param[] | Param[][] | Variable | ParamValue[];
 
 export interface Param {
   name: string;
@@ -54,8 +44,6 @@ export const CALL_TYPE = {
   LIBRARY_VIEW_ONLY: "3",
 } as const;
 
-
-
 export type CallType = keyof typeof CALL_TYPE;
 
 export interface CallOptions {
@@ -70,8 +58,6 @@ export interface CallOptions {
   payerIndex?: number;
 }
 
-
-
 export interface IPluginCall {
   value?: string | Variable;
   to: string | Variable;
@@ -79,4 +65,3 @@ export interface IPluginCall {
   params: Param[];
   options?: CallOptions;
 }
-
