@@ -1,4 +1,4 @@
-import { createProtocolPluginsAsObject } from "../../createPlugin";
+import { createProtocolPluginsAsObject } from "../../Plugin";
 import { AaveV2_LendingPoolABI, AaveV2_ProtocolDataProviderABI } from "./ABI";
 import { AaveV2_LendingPool_Addresses, AaveV2_ProtocolDataProvider_Addresses } from "./constants";
 

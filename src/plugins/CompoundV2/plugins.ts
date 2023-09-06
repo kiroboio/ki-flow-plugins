@@ -1,4 +1,4 @@
-import { createProtocolPluginsAsObject } from "../../createPlugin";
+import { createProtocolPluginsAsObject } from "../../Plugin";
 import { cERC20_ABI } from "./ABI";
 import { cTokens } from "./constants";
 

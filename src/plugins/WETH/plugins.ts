@@ -1,4 +1,4 @@
-import { createProtocolPluginsAsObject } from "../../createPlugin";
+import { createProtocolPluginsAsObject } from "../../Plugin";
 import { WETHABI } from "./ABI";
 import { WETHContracts } from "./constants";
 

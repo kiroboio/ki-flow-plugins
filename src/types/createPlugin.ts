@@ -1,4 +1,4 @@
-import { FunctionParameter } from "../createPlugin";
+import { FunctionParameter } from "../Plugin";
 
 export interface JsonFragmentType {
   /**

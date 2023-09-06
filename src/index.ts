@@ -1,2 +1,2 @@
-export * from "./createPlugin";
+export * from "./Plugin";
 export * from "./plugins";

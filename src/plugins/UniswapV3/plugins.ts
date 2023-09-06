@@ -1,4 +1,4 @@
-import { createProtocolPluginsAsObject } from "../../createPlugin";
+import { createProtocolPluginsAsObject } from "../../Plugin";
 import { UniswapV3_Router_ABI } from "./ABI";
 import { UniswapV3_Router } from "./constants";
 

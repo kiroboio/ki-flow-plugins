@@ -14,7 +14,7 @@ import {
   PluginFunctionInput,
   SupportedContract,
   Variable,
-} from "./types";
+} from "../types";
 
 export class FunctionParameter<
   N extends string = string,
