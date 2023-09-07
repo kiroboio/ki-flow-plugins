@@ -332,24 +332,24 @@ export const Comptroller_ABI = [
   //   stateMutability: "nonpayable",
   //   type: "function",
   // },
-  // {
-  //   constant: false,
-  //   inputs: [
-  //     { internalType: "address[]", name: "holders", type: "address[]" },
-  //     { internalType: "contract CToken[]", name: "cTokens", type: "address[]" },
-  //     { internalType: "bool", name: "borrowers", type: "bool" },
-  //     { internalType: "bool", name: "suppliers", type: "bool" },
-  //   ],
-  //   name: "claimComp",
-  //   outputs: [],
-  //   payable: false,
-  //   stateMutability: "nonpayable",
-  //   type: "function",
-  // },
+  {
+    constant: false,
+    inputs: [
+      { internalType: "address[]", name: "holders", type: "address[]" },
+      { internalType: "contract CToken[]", name: "cTokens", type: "address[]" },
+      { internalType: "bool", name: "borrowers", type: "bool" },
+      { internalType: "bool", name: "suppliers", type: "bool" },
+    ],
+    name: "claimComp", // claimComp(address[],address[],bool,bool)
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     constant: false,
     inputs: [{ internalType: "address", name: "holder", type: "address" }],
-    name: "claimComp",
+    name: "claimComp", // claimComp(address)
     outputs: [],
     payable: false,
     stateMutability: "nonpayable",
