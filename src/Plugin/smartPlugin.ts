@@ -95,5 +95,5 @@ const SmartTransfer = createSmartPlugin({
       },
     });
   },
-  // TODO: add output options, optional helpers (for example, cache for Uniswap)
+  // TODO: add output options, optional helpers when constructing plugin (for example, cache for Uniswap)
 });
