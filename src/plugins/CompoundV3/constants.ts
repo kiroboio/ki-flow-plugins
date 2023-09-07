@@ -1,12 +1,5 @@
 import { SupportedContract } from "../../types";
 
-export const Comptroller: readonly SupportedContract[] = [
-  {
-    address: "0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B",
-    chainId: "1",
-  },
-] as const;
-
 export const comets: readonly SupportedContract[] = [
   {
     chainId: "1",
