@@ -8,6 +8,7 @@ export * from "./ERC721";
 export * from "./Lido";
 export * from "./Multicall";
 export * from "./RocketPool";
+export * from "./Sushiswap";
 export * from "./UniswapV2";
 export * from "./UniswapV3";
 export * from "./WETH";
