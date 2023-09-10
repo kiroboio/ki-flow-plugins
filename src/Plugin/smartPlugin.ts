@@ -1,8 +1,13 @@
-import { ERC20 } from "../plugins";
 import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput } from "../types";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
+// TODO: Functions that need to be added:
+// - add output options
+// - required actions before the action
+// Optional:
+// - optional helpers when constructing plugin (for example, cache for Uniswap).
+// After talking with Sumbat - not mandatory.
 export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends JsonFragment, C extends ChainId>({
   prepare,
   plugins,
@@ -54,49 +59,3 @@ export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends Json
     }
   };
 }
-
-// Example of SmartTransfer plugin
-const SmartTransfer = createSmartPlugin({
-  abiFragment: {
-    name: "smartTransfer",
-    inputs: [
-      {
-        name: "from",
-        type: "address",
-      },
-      {
-        name: "to",
-        type: "uint256",
-      },
-      {
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-  } as const,
-  plugins: [ERC20.transfer, ERC20.transferFrom],
-  async prepare(args) {
-    if (args.vaultAddress === args.input.from) {
-      return new ERC20.transfer({
-        chainId: args.chainId,
-        input: {
-          to: args.input.to,
-          value: args.input.amount,
-        },
-      });
-    }
-    return new ERC20.transferFrom({
-      chainId: args.chainId,
-      input: {
-        from: args.input.from,
-        to: args.input.to,
-        value: args.input.amount,
-      },
-    });
-  },
-  // TODO: Functions that need to be added:
-  // - add output options
-  // - optional helpers when constructing plugin (for example, cache for Uniswap)
-  // - required actions before the action
-});
