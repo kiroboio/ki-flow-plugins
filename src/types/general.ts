@@ -7,4 +7,5 @@ export interface SupportedContract {
   symbol?: string;
   decimals?: number;
   logoURI?: string;
+  category?: string; // For example, Chainlink Oracle type
 }

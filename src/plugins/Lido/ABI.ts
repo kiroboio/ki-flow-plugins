@@ -1,15 +1,6 @@
 export const LidoSTETHABI = [
   {
     constant: true,
-    inputs: [],
-    name: "hasInitialized",
-    outputs: [{ name: "", type: "bool" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
     inputs: [{ name: "_ethAmount", type: "uint256" }],
     name: "getSharesByPooledEth",
     outputs: [{ name: "sharesByPooledETH", type: "uint256" }],
@@ -26,7 +17,6 @@ export const LidoSTETHABI = [
     stateMutability: "view",
     type: "function",
   },
-
   {
     constant: true,
     inputs: [],
@@ -45,15 +35,6 @@ export const LidoSTETHABI = [
   //   stateMutability: "view",
   //   type: "function",
   // },
-  {
-    constant: false,
-    inputs: [],
-    name: "receiveELRewards",
-    outputs: [],
-    payable: true,
-    stateMutability: "payable",
-    type: "function",
-  },
   {
     constant: true,
     inputs: [],
