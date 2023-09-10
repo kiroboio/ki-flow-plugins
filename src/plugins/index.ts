@@ -4,6 +4,7 @@ export * from "./CompoundV2";
 export * from "./CompoundV3";
 export * from "./ERC20";
 export * from "./ERC721";
+export * from "./Multicall";
 export * from "./RocketPool";
 export * from "./UniswapV2";
 export * from "./UniswapV3";
