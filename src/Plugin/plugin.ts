@@ -36,6 +36,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
   public contractAddress?: string;
   public ethValue: string = "0";
+  public rpcUrl?: string;
 
   constructor(args: {
     abiFragment: A;
@@ -43,6 +44,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     contractAddress?: string;
     supportedContracts?: readonly SupportedContract[];
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+    rpcUrl?: string;
   }) {
     this.chainId = args.chainId;
     this.method = args.abiFragment.name;
@@ -67,6 +69,9 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     if (args.contractAddress) {
       this.contractAddress = args.contractAddress;
     }
+    if (args.rpcUrl) {
+      this.rpcUrl = args.rpcUrl;
+    }
   }
 
   get functionSignature(): string {
@@ -86,6 +91,11 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
   get outputs() {
     return getOutputs<A["outputs"]>({ outputs: this.abiFragment.outputs });
+  }
+
+  public async getGasLimit() {
+    if (!this.gas) return "0";
+    return this.gas;
   }
 
   public setValue(value: ETHValueInput<A["stateMutability"]>) {
@@ -114,6 +124,10 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     });
   }
 
+  public setRpcUrl(rpcUrl: string) {
+    this.rpcUrl = rpcUrl;
+  }
+
   public get() {
     return this.params.reduce((acc, cur) => {
       return { ...acc, [cur.name]: cur.get() };
@@ -130,6 +144,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       to: this.contractAddress,
       options: {
         callType: this.getCallType(),
+        gasLimit: await this.getGasLimit(),
         ...this.options,
       },
     };
@@ -141,13 +156,15 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     from,
     input,
   }: {
-    rpcUrl: string;
+    rpcUrl?: string;
     from: string;
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) {
     if (!this.contractAddress) {
       throw new Error("Contract address not set");
     }
+    rpcUrl = rpcUrl || this.rpcUrl;
+    if (!rpcUrl) throw new Error("RPC URL not set or provided");
 
     const params = this.params.map((p) => {
       if (input && p.name in input) {
