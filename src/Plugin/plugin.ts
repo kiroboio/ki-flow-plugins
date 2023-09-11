@@ -2,7 +2,6 @@ import { ethers } from "ethers";
 
 import {
   type JsonFragment,
-  type JsonFragmentType,
   CallType,
   ChainId,
   EnhancedJsonFragment,
@@ -10,19 +9,19 @@ import {
   IPluginCall,
   PluginFunctionInput,
   SupportedContract,
-  Variable,
 } from "../types";
+import { getOutputs } from "./outputs";
 import { FunctionParameter } from "./parameter";
 
 type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
-type Outputs<
-  T extends readonly JsonFragmentType[] | undefined,
-  N extends string
-> = T extends readonly JsonFragmentType[]
-  ? {
-      [key: number]: Variable & { type: "output"; id: { nodeId: N } };
-    }
-  : never;
+// type Outputs<
+//   T extends readonly JsonFragmentType[] | undefined,
+//   N extends string
+// > = T extends readonly JsonFragmentType[]
+//   ? {
+//       [key: number]: Variable & { type: "output"; id: { nodeId: N } };
+//     }
+//   : never;
 
 export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment> {
   public readonly chainId: ChainId;
@@ -85,11 +84,8 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     return { params, set: this.set.bind(this), get: this.get.bind(this) };
   }
 
-  public getOutputs<N extends string>(nodeId: N): Outputs<A["outputs"], N> {
-    const params = this.outputParams.reduce((acc, _, i) => {
-      return { ...acc, [i]: { type: "output", id: { nodeId, innerIndex: i } } };
-    }, {});
-    return params as Outputs<A["outputs"], N>;
+  get outputs() {
+    return getOutputs<A["outputs"]>({ outputs: this.abiFragment.outputs });
   }
 
   public setValue(value: ETHValueInput<A["stateMutability"]>) {
