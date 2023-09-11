@@ -1,15 +1,7 @@
 export const CurvePoolABI = [
   {
-    name: "A",
-    outputs: [{ type: "uint256", name: "" }],
-    inputs: [],
-    stateMutability: "view",
-    type: "function",
-    gas: "5227",
-  },
-  {
     name: "get_virtual_price",
-    outputs: [{ type: "uint256", name: "" }],
+    outputs: [{ type: "uint256", name: "virtualPrice" }],
     inputs: [],
     stateMutability: "view",
     type: "function",
@@ -17,7 +9,7 @@ export const CurvePoolABI = [
   },
   {
     name: "calc_token_amount",
-    outputs: [{ type: "uint256", name: "" }],
+    outputs: [{ type: "uint256", name: "tokenAmount" }],
     inputs: [
       { type: "uint256[3]", name: "amounts" },
       { type: "bool", name: "deposit" },
@@ -39,7 +31,7 @@ export const CurvePoolABI = [
   },
   {
     name: "get_dy",
-    outputs: [{ type: "uint256", name: "" }],
+    outputs: [{ type: "uint256", name: "dy" }],
     inputs: [
       { type: "int128", name: "i" },
       { type: "int128", name: "j" },
@@ -51,7 +43,7 @@ export const CurvePoolABI = [
   },
   {
     name: "get_dy_underlying",
-    outputs: [{ type: "uint256", name: "" }],
+    outputs: [{ type: "uint256", name: "dy" }],
     inputs: [
       { type: "int128", name: "i" },
       { type: "int128", name: "j" },
@@ -98,9 +90,9 @@ export const CurvePoolABI = [
   },
   {
     name: "calc_withdraw_one_coin",
-    outputs: [{ type: "uint256", name: "" }],
+    outputs: [{ type: "uint256", name: "amount" }],
     inputs: [
-      { type: "uint256", name: "_token_amount" },
+      { type: "uint256", name: "token_amount" },
       { type: "int128", name: "i" },
     ],
     stateMutability: "view",
@@ -120,35 +112,11 @@ export const CurvePoolABI = [
     gas: "250000",
   },
   {
-    name: "coins",
-    outputs: [{ type: "address", name: "" }],
-    inputs: [{ type: "uint256", name: "arg0" }],
-    stateMutability: "view",
-    type: "function",
-    gas: "2220",
-  },
-  {
     name: "balances",
-    outputs: [{ type: "uint256", name: "" }],
+    outputs: [{ type: "uint256", name: "value" }],
     inputs: [{ type: "uint256", name: "arg0" }],
     stateMutability: "view",
     type: "function",
     gas: "2250",
-  },
-  {
-    name: "fee",
-    outputs: [{ type: "uint256", name: "" }],
-    inputs: [],
-    stateMutability: "view",
-    type: "function",
-    gas: "2171",
-  },
-  {
-    name: "owner",
-    outputs: [{ type: "address", name: "" }],
-    inputs: [],
-    stateMutability: "view",
-    type: "function",
-    gas: "2231",
   },
 ] as const;

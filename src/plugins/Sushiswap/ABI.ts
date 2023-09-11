@@ -263,7 +263,7 @@ export const Sushiswap_MasterChefV2_ABI = [
   {
     inputs: [],
     name: "totalAllocPoint",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [{ internalType: "uint256", name: "totalAllocPoint", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
