@@ -28,7 +28,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly method: A["name"];
   public readonly params: FunctionParameter[] = [];
   public readonly functionType: A["stateMutability"] = "payable";
-  public readonly gas: A["gas"];
+  public readonly gas: string = "0";
   public readonly abiFragment: A;
   public readonly outputParams: FunctionParameter[] = [];
   public readonly options: A["options"] = {};
@@ -51,8 +51,8 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     this.params = args.abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
     this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
     this.functionType = args.abiFragment.stateMutability || "payable";
-    this.gas = args.abiFragment.gas || "0";
     this.abiFragment = args.abiFragment;
+    if (args.abiFragment.gas) this.gas = args.abiFragment.gas;
     if (args.abiFragment.options) {
       this.options = args.abiFragment.options;
     }

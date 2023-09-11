@@ -1,4 +1,5 @@
 import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput } from "../types";
+import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
@@ -8,21 +9,21 @@ import { Plugin } from "./plugin";
 // Optional:
 // - optional helpers when constructing plugin (for example, cache for Uniswap).
 // After talking with Sumbat - not mandatory.
-export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends JsonFragment, C extends ChainId>({
+
+export function createSmartPlugin<A extends JsonFragment = JsonFragment, C extends ChainId = ChainId>({
   prepare,
-  plugins,
   abiFragment,
+  prepareOutputs,
 }: {
   prepare: (args: {
     input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
     vaultAddress: string;
     chainId: C;
-  }) => Promise<InstanceType<P>>;
-  plugins: readonly P[];
+  }) => Promise<InstanceType<Plugin<any>>>;
   abiFragment: A;
+  prepareOutputs?: (args: { input: PluginFunctionInput<HandleUndefined<A["inputs"]>> }) => Record<string, Output>;
 }) {
   return class SmartPlugin {
-    public readonly plugins: readonly P[] = plugins;
     public readonly name: A["name"] = abiFragment.name;
     public readonly chainId: C;
     public readonly vaultAddress: string;
@@ -32,6 +33,17 @@ export function createSmartPlugin<P extends Plugin<JsonFragment>, A extends Json
       this.chainId = args.chainId;
       this.vaultAddress = args.vaultAddress;
       this.params = abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
+    }
+
+    get outputs(): Record<string, Output> {
+      if (prepareOutputs) {
+        return prepareOutputs({ input: this.get() });
+      }
+      return (
+        abiFragment.outputs?.reduce((acc, cur, index) => {
+          return { ...acc, [cur.name]: new Output({ innerIndex: index, name: cur.name, type: cur.type }) };
+        }, {} as Record<string, Output>) || {}
+      );
     }
 
     public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
