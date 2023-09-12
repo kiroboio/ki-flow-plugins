@@ -3,7 +3,7 @@ import { AaveV2 } from "../../../plugins";
 import { AaveV2_LendingPool_Addresses } from "../../../plugins/AaveV2/constants";
 
 const abiFragment = {
-  name: "Deposit",
+  name: "Repay",
   inputs: [
     {
       name: "asset",
@@ -14,18 +14,22 @@ const abiFragment = {
       type: "uint256",
     },
     {
+      name: "rateMode",
+      type: "uint256",
+    },
+    {
       name: "onBehalfOf",
       type: "address",
     },
   ],
 } as const;
 
-export const Deposit = createSmartPlugin({
+export const Repay = createSmartPlugin({
   abiFragment,
   async prepare(args) {
-    return new AaveV2.deposit({
+    return new AaveV2.repay({
       chainId: args.chainId,
-      input: { ...args.input, referralCode: "0" },
+      input: args.input,
     });
   },
   requiredActions(args) {
