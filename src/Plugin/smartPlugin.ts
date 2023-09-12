@@ -69,7 +69,7 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
 
     public getRequiredActions(): RequiredApproval[] {
       if (!requiredActions) return [];
-      return requiredActions({ input: this.get() });
+      return requiredActions({ input: this.get(), chainId: this.chainId, vaultAddress: this.vaultAddress });
     }
 
     public async create(): Promise<IPluginCall | undefined> {
