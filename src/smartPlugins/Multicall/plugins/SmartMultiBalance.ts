@@ -1,6 +1,6 @@
-import { Output } from "../../Plugin/outputs";
-import { createSmartPlugin } from "../../Plugin/smartPlugin";
-import { Multicall } from "../../plugins";
+import { Output } from "../../../Plugin/outputs";
+import { createSmartPlugin } from "../../../Plugin/smartPlugin";
+import { Multicall } from "../../../plugins";
 
 const abiFragment = {
   name: "SmartMultiBalance",

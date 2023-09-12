@@ -1,5 +1,5 @@
-import { createSmartPlugin } from "../../Plugin/smartPlugin";
-import { ERC20 } from "../../plugins";
+import { createSmartPlugin } from "../../../Plugin/smartPlugin";
+import { ERC20 } from "../../../plugins";
 
 const abiFragment = {
   name: "smartTransfer",

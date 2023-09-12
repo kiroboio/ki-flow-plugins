@@ -1,1 +1,1 @@
-export * from "./plugins";
+export * as Multicall from "./plugins";
