@@ -1,1 +1,1 @@
-export * as Multicall from "./plugins";
+export * as AaveV2 from "./plugins";

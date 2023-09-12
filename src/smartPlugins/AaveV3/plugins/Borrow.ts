@@ -1,6 +1,6 @@
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
-import { AaveV2 } from "../../../plugins";
-import { AaveV2_aTokens } from "../../../plugins/AaveV2/constants";
+import { AaveV3 } from "../../../plugins";
+import { AaveV3_aTokens } from "../../../plugins/AaveV3/constants";
 
 const abiFragment = {
   name: "Borrow",
@@ -27,7 +27,7 @@ const abiFragment = {
 export const Borrow = createSmartPlugin({
   abiFragment,
   async prepare(args) {
-    return new AaveV2.borrow({
+    return new AaveV3.borrow({
       chainId: args.chainId,
       input: { ...args.input, referralCode: "0" },
     });
@@ -46,14 +46,13 @@ export const Borrow = createSmartPlugin({
     }
 
     // Find debt bearing token
-    const token = AaveV2_aTokens.find(
+    const token = AaveV3_aTokens.find(
       (token) => token.chainId === args.chainId && token.address.toLowerCase() === asset.toLowerCase()
     );
     if (!token) return [];
 
     return [
       {
-        // If interest rate mode 1, then we need to approve the stable debt token, else variable debt token
         to: interestRateMode === "1" ? token.stableDebtTokenAddress : token.variableDebtTokenAddress,
         from: onBehalfOf,
         params: { delegatee: args.vaultAddress, amount },
