@@ -1,4 +1,4 @@
-import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput } from "../types";
+import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput, RequiredApproval } from "../types";
 import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
@@ -14,6 +14,7 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
   prepare,
   abiFragment,
   prepareOutputs,
+  requiredActions,
 }: {
   prepare: (args: {
     input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
@@ -22,6 +23,11 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
   }) => Promise<InstanceType<Plugin<any>>>;
   abiFragment: A;
   prepareOutputs?: (args: { input: PluginFunctionInput<HandleUndefined<A["inputs"]>> }) => Record<string, Output>;
+  requiredActions?: (args: {
+    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
+    vaultAddress: string;
+    chainId: C;
+  }) => RequiredApproval[];
 }) {
   return class SmartPlugin {
     public readonly name: A["name"] = abiFragment.name;
@@ -59,6 +65,11 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
       return this.params.reduce((acc, cur) => {
         return { ...acc, [cur.name]: cur.get() };
       }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
+    }
+
+    public getRequiredActions(): RequiredApproval[] {
+      if (!requiredActions) return [];
+      return requiredActions({ input: this.get() });
     }
 
     public async create(): Promise<IPluginCall | undefined> {

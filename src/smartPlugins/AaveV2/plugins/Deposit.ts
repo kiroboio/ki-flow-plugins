@@ -1,0 +1,47 @@
+import { createSmartPlugin } from "../../../Plugin/smartPlugin";
+import { AaveV2 } from "../../../plugins";
+import { AaveV2_LendingPool_Addresses } from "../../../plugins/AaveV2/constants";
+
+const abiFragment = {
+  name: "Deposit",
+  inputs: [
+    {
+      name: "asset",
+      type: "address",
+    },
+    {
+      name: "amount",
+      type: "uint256",
+    },
+    {
+      name: "onBehalfOf",
+      type: "address",
+    },
+  ],
+} as const;
+
+export const Deposit = createSmartPlugin({
+  abiFragment,
+  async prepare(args) {
+    return new AaveV2.deposit({
+      chainId: args.chainId,
+      input: { ...args.input, referralCode: "0" },
+    });
+  },
+  requiredActions(args) {
+    const { amount, asset: to } = args.input;
+    if (!amount) return [];
+
+    const spender = AaveV2_LendingPool_Addresses.find((address) => address.chainId === args.chainId);
+    if (!spender) throw new Error("No AaveV2 lending pool address found for this chainId");
+    return [
+      {
+        to,
+        from: args.vaultAddress,
+        params: { spender: "<aave lending pool address here>", amount },
+        method: "approve",
+        protocol: "ERC20",
+      },
+    ];
+  },
+});
