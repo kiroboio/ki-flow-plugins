@@ -306,6 +306,76 @@ export const cERC20_ABI = [
   },
 ] as const;
 
+// cETH works with native token, it is different to cERC20
+export const cETH_ABI = [
+  {
+    constant: false,
+    inputs: [],
+    name: "mint",
+    outputs: [],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "decimals",
+    outputs: [{ name: "", type: "uint256" }],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [],
+    name: "repayBorrow",
+    outputs: [],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      { name: "borrower", type: "address" },
+      { name: "cTokenCollateral", type: "address" },
+    ],
+    name: "liquidateBorrow",
+    outputs: [],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "supplyRatePerBlock",
+    outputs: [{ name: "", type: "uint256" }],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [{ name: "borrowAmount", type: "uint256" }],
+    name: "borrow",
+    outputs: [{ name: "", type: "uint256" }],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [{ name: "borrower", type: "address" }],
+    name: "repayBorrowBehalf",
+    outputs: [],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+] as const;
+
 export const Comptroller_ABI = [
   {
     constant: false,

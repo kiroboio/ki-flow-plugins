@@ -17,7 +17,7 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
   requiredActions,
 }: {
   prepare: (args: {
-    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
+    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>; // TODO: The input should not have undefined values. Function will be called only if the values are set
     vaultAddress: string;
     chainId: C;
   }) => Promise<InstanceType<Plugin<any>>>;
