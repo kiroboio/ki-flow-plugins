@@ -53,6 +53,14 @@ export type RequiredApproval = (
         amount: string;
       };
     }
+  | {
+      method: "allow";
+      protocol: "COMPOUNDV3";
+      params: {
+        manager: string;
+        isAllowed: boolean;
+      };
+    }
 ) & {
   to?: string | Variable;
   from?: string | Variable;
