@@ -1,12 +1,11 @@
 import { Protocol } from "@uniswap/router-sdk";
-import { Percent, TradeType } from "@uniswap/sdk-core";
-import { AlphaRouter, CurrencyAmount, SwapType } from "@uniswap/smart-order-router";
+import { TradeType } from "@uniswap/sdk-core";
+import { AlphaRouter, CurrencyAmount, IV2RouteWithValidQuote } from "@uniswap/smart-order-router";
 import { ethers } from "ethers";
 
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
-import { UniswapV2 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
-import { createToken, handleInput } from "../helpers";
+import { createToken, getPluginFromRoute } from "../helpers";
 
 const UniswapRouter02ABI = [
   {
@@ -257,61 +256,72 @@ export const Swap = createSmartPlugin({
     const [Base, Quote] = isExactIn ? [TokenA, TokenB] : [TokenB, TokenA];
 
     const BaseAmount = CurrencyAmount.fromRawAmount(Base, amount);
-    const deadline = Math.floor(Date.now() / 1000 + 1800);
 
     const swapRoute = await router.route(
       BaseAmount,
       Quote,
       isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
-      {
-        slippageTolerance: new Percent(50, 100_00),
-        recipient,
-        deadline,
-        type: SwapType.SWAP_ROUTER_02,
-      },
+      // {
+      //   slippageTolerance: new Percent(50, 100_00),
+      //   recipient,
+      //   deadline,
+      //   type: SwapType.SWAP_ROUTER_02,
+      // },
+      undefined,
       {
         maxSwapsPerPath: 3,
         protocols: [Protocol.V2],
       }
     );
 
+    // Path: route[0].route.path
+    // RawQuote: route[0].rawQuote (if exactIn = output, if exactOut = input)
+    // Amount: route[0].amount (if exactIn = input, if exactOut = output)
+    // Gas estimate: route[0].gasEstimate
+
     if (!swapRoute) throw new Error("No route found");
-
-    const data = swapRoute.methodParameters?.calldata;
-    if (!data) throw new Error("Failed to generate client side quote");
-
-    // Decode data, which is multicall call
-    const UniswapV2Router02 = new ethers.utils.Interface(UniswapRouter02ABI);
-    const result = UniswapV2Router02.parseTransaction({
-      data,
-    });
-
-    const innerCalldata = result.args.data[0];
-    const result2 = UniswapV2Router02.parseTransaction({
-      data: innerCalldata,
-    });
-
-    const result2Function = result2.functionFragment;
-    const resultArgs = handleInput(result2.args as any);
-
-    const method = result2Function.name;
-    // const value = TokenA.isNative ? (resultArgs.amountIn || resultArgs.amountInMax).toString() : "0";
-
-    // Find the Uniswap V2 plugins
-    const plugin = new UniswapV2[method as keyof typeof UniswapV2]({
+    return getPluginFromRoute({
       chainId: args.chainId,
-      input: { ...resultArgs, deadline: deadline.toString() },
+      isExactIn,
+      recipient,
+      route: swapRoute.route[0] as IV2RouteWithValidQuote,
     });
 
-    plugin.setOptions({
-      gasLimit: swapRoute.estimatedGasUsed.add(50000).toString(),
-    });
+    // const data = swapRoute.methodParameters?.calldata;
+    // if (!data) throw new Error("Failed to generate client side quote");
 
-    // If from is ETH, we set the value on plugin
-    if (TokenA.isNative) {
-      plugin.setValue(result2.value.toString() as never);
-    }
-    return plugin;
+    // // Decode data, which is multicall call
+    // const UniswapV2Router02 = new ethers.utils.Interface(UniswapRouter02ABI);
+    // const result = UniswapV2Router02.parseTransaction({
+    //   data,
+    // });
+
+    // const innerCalldata = result.args.data[0];
+    // const result2 = UniswapV2Router02.parseTransaction({
+    //   data: innerCalldata,
+    // });
+
+    // const result2Function = result2.functionFragment;
+    // const resultArgs = handleInput(result2.args as any);
+
+    // const method = result2Function.name;
+    // // const value = TokenA.isNative ? (resultArgs.amountIn || resultArgs.amountInMax).toString() : "0";
+
+    // // Find the Uniswap V2 plugins
+    // const plugin = new UniswapV2[method as keyof typeof UniswapV2]({
+    //   chainId: args.chainId,
+    //   input: { ...resultArgs, deadline: deadline.toString() },
+    // });
+
+    // plugin.setOptions({
+    //   gasLimit: swapRoute.estimatedGasUsed.add(50000).toString(),
+    // });
+
+    // // If from is ETH, we set the value on plugin
+    // if (TokenA.isNative) {
+    //   plugin.setValue(result2.value.toString() as never);
+    // }
+    // return plugin;
   },
   requiredActions(args) {
     const { from, to, amount, isExactIn, slippage, recipient } = args.input;
