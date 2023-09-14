@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV2 } from "../../../plugins";
+import { RequiredApproval } from "../../../types";
 import { createToken, handleInput } from "../helpers";
 
 const UniswapRouter02ABI = [
@@ -311,5 +312,37 @@ export const Swap = createSmartPlugin({
       plugin.setValue(result2.value.toString() as never);
     }
     return plugin;
+  },
+  requiredActions(args) {
+    const { from, to, amount, isExactIn, slippage, recipient } = args.input;
+    const { address: fromAddress, decimals: fromDecimals } = from;
+    const { address: toAddress, decimals: toDecimals } = to;
+    if (
+      !fromAddress ||
+      !fromDecimals ||
+      !toAddress ||
+      !toDecimals ||
+      !amount ||
+      !isExactIn ||
+      !slippage ||
+      !recipient
+    ) {
+      throw new Error("Invalid input");
+    }
+
+    // If fromAddress is native, return []
+    if (fromAddress === ethers.constants.AddressZero) return [];
+
+    const approvals: RequiredApproval[] = [
+      {
+        to: fromAddress,
+        from: args.vaultAddress,
+        params: { spender: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", amount },
+        method: "approve",
+        protocol: "ERC20",
+      },
+    ];
+
+    return approvals;
   },
 });
