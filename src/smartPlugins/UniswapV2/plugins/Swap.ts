@@ -241,7 +241,7 @@ export const Swap = createSmartPlugin({
       !toAddress ||
       !toDecimals ||
       !amount ||
-      !isExactIn ||
+      isExactIn === undefined ||
       !slippage ||
       !recipient
     ) {
