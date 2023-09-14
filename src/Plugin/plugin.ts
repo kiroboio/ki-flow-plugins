@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import _ from "lodash";
 
 import {
   type JsonFragment,
@@ -14,14 +15,6 @@ import { getOutputs } from "./outputs";
 import { FunctionParameter } from "./parameter";
 
 type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
-// type Outputs<
-//   T extends readonly JsonFragmentType[] | undefined,
-//   N extends string
-// > = T extends readonly JsonFragmentType[]
-//   ? {
-//       [key: number]: Variable & { type: "output"; id: { nodeId: N } };
-//     }
-//   : never;
 
 export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment> {
   public readonly chainId: ChainId;
@@ -31,12 +24,12 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly gas: string = "0";
   public readonly abiFragment: A;
   public readonly outputParams: FunctionParameter[] = [];
-  public readonly options: A["options"] = {};
   public readonly supportedContracts: readonly SupportedContract[] = [];
 
   public contractAddress?: string;
   public ethValue: string = "0";
   public rpcUrl?: string;
+  public options: A["options"] = {};
 
   constructor(args: {
     abiFragment: A;
@@ -113,6 +106,11 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     }
     this.contractAddress = address;
     return address;
+  }
+
+  public setOptions(options: A["options"]) {
+    this.options = _.merge({}, this.options, options);
+    return this.options;
   }
 
   public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {

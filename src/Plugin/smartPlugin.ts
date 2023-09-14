@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput, RequiredApproval } from "../types";
 import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
@@ -19,6 +21,7 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
   prepare: (args: {
     input: PluginFunctionInput<HandleUndefined<A["inputs"]>>; // TODO: The input should not have undefined values. Function will be called only if the values are set
     vaultAddress: string;
+    provider: ethers.providers.JsonRpcProvider;
     chainId: C;
   }) => Promise<InstanceType<Plugin<any>>>;
   abiFragment: A;
@@ -34,11 +37,13 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
     public readonly chainId: C;
     public readonly vaultAddress: string;
     public readonly params: readonly FunctionParameter[] = [];
+    public readonly provider: ethers.providers.JsonRpcProvider;
 
-    constructor(args: { chainId: C; vaultAddress: string }) {
+    constructor(args: { chainId: C; vaultAddress: string; provider: ethers.providers.JsonRpcProvider }) {
       this.chainId = args.chainId;
       this.vaultAddress = args.vaultAddress;
       this.params = abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
+      this.provider = args.provider;
     }
 
     get outputs(): Record<string, Output> {
@@ -77,6 +82,7 @@ export function createSmartPlugin<A extends JsonFragment = JsonFragment, C exten
         input: this.get(),
         chainId: this.chainId,
         vaultAddress: this.vaultAddress,
+        provider: this.provider,
       });
       return await plugin.create();
     }
