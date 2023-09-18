@@ -78,12 +78,6 @@ export const Swap = createSmartPlugin({
       BaseAmount,
       Quote,
       isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
-      // {
-      //   slippageTolerance: new Percent(50, 100_00),
-      //   recipient,
-      //   deadline,
-      //   type: SwapType.SWAP_ROUTER_02,
-      // },
       undefined,
       {
         maxSwapsPerPath: 3,
@@ -103,42 +97,6 @@ export const Swap = createSmartPlugin({
       recipient,
       route: swapRoute.route[0] as IV2RouteWithValidQuote,
     });
-
-    // const data = swapRoute.methodParameters?.calldata;
-    // if (!data) throw new Error("Failed to generate client side quote");
-
-    // // Decode data, which is multicall call
-    // const UniswapV2Router02 = new ethers.utils.Interface(UniswapRouter02ABI);
-    // const result = UniswapV2Router02.parseTransaction({
-    //   data,
-    // });
-
-    // const innerCalldata = result.args.data[0];
-    // const result2 = UniswapV2Router02.parseTransaction({
-    //   data: innerCalldata,
-    // });
-
-    // const result2Function = result2.functionFragment;
-    // const resultArgs = handleInput(result2.args as any);
-
-    // const method = result2Function.name;
-    // // const value = TokenA.isNative ? (resultArgs.amountIn || resultArgs.amountInMax).toString() : "0";
-
-    // // Find the Uniswap V2 plugins
-    // const plugin = new UniswapV2[method as keyof typeof UniswapV2]({
-    //   chainId: args.chainId,
-    //   input: { ...resultArgs, deadline: deadline.toString() },
-    // });
-
-    // plugin.setOptions({
-    //   gasLimit: swapRoute.estimatedGasUsed.add(50000).toString(),
-    // });
-
-    // // If from is ETH, we set the value on plugin
-    // if (TokenA.isNative) {
-    //   plugin.setValue(result2.value.toString() as never);
-    // }
-    // return plugin;
   },
   requiredActions(args) {
     const { from, to, amount, isExactIn, slippage, recipient } = args.input;
