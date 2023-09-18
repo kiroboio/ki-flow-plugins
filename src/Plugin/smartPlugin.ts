@@ -7,17 +7,15 @@ import {
   IPluginCall,
   PluginFunctionInput,
   RequiredApproval,
+  RequiredObject,
 } from "../types";
 import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
 // TODO: Functions that need to be added:
-// - add output options
-// - required actions before the action
 // Optional:
-// - optional helpers when constructing plugin (for example, cache for Uniswap).
-// After talking with Sumbat - not mandatory.
+// - optional helpers when constructing plugin (for example, cache for Uniswap). After talking with Sumbat - not mandatory.
 
 export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonFragment, C extends ChainId = ChainId>({
   prepare,
@@ -26,15 +24,17 @@ export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonF
   requiredActions,
 }: {
   prepare: (args: {
-    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
+    input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     vaultAddress: string;
     provider: ethers.providers.JsonRpcProvider;
     chainId: C;
   }) => Promise<InstanceType<Plugin<any>>>;
   abiFragment: A;
-  prepareOutputs?: (args: { input: PluginFunctionInput<HandleUndefined<A["inputs"]>> }) => Record<string, Output>;
+  prepareOutputs?: (args: {
+    input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+  }) => Record<string, Output>;
   requiredActions?: (args: {
-    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
+    input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     vaultAddress: string;
     chainId: C;
   }) => RequiredApproval[];
@@ -55,7 +55,7 @@ export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonF
 
     get outputs(): Record<string, Output> {
       if (prepareOutputs) {
-        return prepareOutputs({ input: this.get() });
+        return prepareOutputs({ input: this.getStrict() });
       }
       return (
         abiFragment.outputs?.reduce((acc, cur, index) => {
@@ -79,14 +79,21 @@ export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonF
       }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
     }
 
+    // Create a function that returns the same as get, but it checks if the value is undefined and if it is, it throws an error.
+    public getStrict() {
+      return this.params.reduce((acc, cur) => {
+        return { ...acc, [cur.name]: cur.getStrict() };
+      }, {} as RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>);
+    }
+
     public getRequiredActions(): RequiredApproval[] {
       if (!requiredActions) return [];
-      return requiredActions({ input: this.get(), chainId: this.chainId, vaultAddress: this.vaultAddress });
+      return requiredActions({ input: this.getStrict(), chainId: this.chainId, vaultAddress: this.vaultAddress });
     }
 
     public async create(): Promise<IPluginCall | undefined> {
       const plugin = await prepare({
-        input: this.get(),
+        input: this.getStrict(),
         chainId: this.chainId,
         vaultAddress: this.vaultAddress,
         provider: this.provider,

@@ -52,21 +52,10 @@ const abiFragment = {
 export const Swap = createSmartPlugin({
   abiFragment,
   async prepare(args) {
-    const { from, to, amount, isAmountIn, slippage, recipient } = args.input;
+    const { from, to, amount, isAmountIn, recipient } = args.input;
+
     const { address: fromAddress, decimals: fromDecimals } = from;
     const { address: toAddress, decimals: toDecimals } = to;
-    if (
-      !fromAddress ||
-      !fromDecimals ||
-      !toAddress ||
-      !toDecimals ||
-      !amount ||
-      isAmountIn === undefined ||
-      !slippage ||
-      !recipient
-    ) {
-      throw new Error("Invalid input");
-    }
     const chainId = +args.chainId;
 
     const router = new AlphaRouter({ chainId, provider: args.provider });

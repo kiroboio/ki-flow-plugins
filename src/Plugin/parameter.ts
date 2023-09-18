@@ -1,20 +1,23 @@
-import { type JsonFragmentType, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
+import { EnhancedJsonFragmentType, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
 
 export class FunctionParameter<
   N extends string = string,
   I extends string = string,
-  C extends readonly JsonFragmentType[] = readonly JsonFragmentType[]
+  C extends readonly EnhancedJsonFragmentType[] = readonly EnhancedJsonFragmentType[],
+  V extends boolean = boolean
 > {
   public readonly name: N;
   public readonly internalType: I;
   public readonly components: FunctionParameter[];
+  public readonly canBeVariable: V;
 
   public value?: FunctionParameterValue<N, I, C>;
 
-  constructor(args: { name: N; type: I; components?: C }) {
+  constructor(args: { name: N; type: I; components?: C; canBeVariable?: V }) {
     this.name = args.name;
     this.internalType = args.type;
     this.components = args.components?.map((c) => new FunctionParameter(c)) || [];
+    this.canBeVariable = args.canBeVariable || (true as V);
   }
 
   get type(): string {
@@ -32,7 +35,7 @@ export class FunctionParameter<
     return this.internalType;
   }
 
-  public set(value: FunctionParameterInput<I, C>) {
+  public set(value: FunctionParameterInput<I, C, V>) {
     if (this._isTuple()) {
       if (this._isArray()) {
         const storedVal: FunctionParameterValue<N, "tuple[]", C> = [];
@@ -70,7 +73,7 @@ export class FunctionParameter<
     return this.get();
   }
 
-  public get(): FunctionParameterInput<I, C> | undefined {
+  public get(): FunctionParameterInput<I, C, V> | undefined {
     if (this._isTuple()) {
       if (this._isArray()) {
         const outputVal: FunctionParameterInput<"tuple[]", C> = [];
@@ -82,16 +85,24 @@ export class FunctionParameter<
           });
           outputVal.push(arrayVal);
         });
-        return outputVal as unknown as FunctionParameterInput<I, C>;
+        return outputVal as unknown as FunctionParameterInput<I, C, V>;
       }
       const outputVal: FunctionParameterInput<"tuple", C> = {};
       const inputVal = this.value as FunctionParameterValue<N, "tuple", C>;
       Object.entries<any>(inputVal).forEach((k) => {
         outputVal[k[0] as keyof typeof outputVal] = k[1].get();
       });
-      return outputVal as FunctionParameterInput<I, C>;
+      return outputVal as FunctionParameterInput<I, C, V>;
     }
-    return this.value as unknown as FunctionParameterInput<I, C>;
+    return this.value as unknown as FunctionParameterInput<I, C, V>;
+  }
+
+  public getStrict(): FunctionParameterInput<I, C, V> {
+    const val = this.get();
+    if (!val) {
+      throw new Error(`${this.name}: Value not set`);
+    }
+    return val;
   }
 
   public getAsCoreParam(): Param {
@@ -201,28 +212,5 @@ export class FunctionParameter<
         throw new Error(`${this.name}: Invalid ${type} length`);
       }
     }
-  }
-}
-
-export class SmartPluginParameter {
-  public readonly name: string;
-  public readonly type: string;
-  public readonly canBeVariable: boolean = false;
-
-  public value?: any;
-
-  constructor(args: { name: string; type: string; canBeVariable?: boolean }) {
-    this.name = args.name;
-    this.type = args.type;
-    this.canBeVariable = args.canBeVariable || false;
-  }
-
-  public set(value: any) {
-    this.value = value;
-    return this.get();
-  }
-
-  public get(): any {
-    return this.value;
   }
 }

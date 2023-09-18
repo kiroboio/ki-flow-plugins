@@ -65,3 +65,8 @@ export type RequiredApproval = (
   to?: string | Variable;
   from?: string | Variable;
 };
+
+// Create a type that takes an object and makes every value mandatory. If the value is an object then recursively go through the object and make every value mandatory. If the value is an array then recursively go through the array and make every value mandatory.
+export type RequiredObject<T extends object> = {
+  [K in keyof T]-?: T[K] extends object ? RequiredObject<T[K]> : Exclude<T[K], undefined>;
+};

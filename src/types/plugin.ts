@@ -96,7 +96,7 @@ export type FunctionParameterInput<
       [K in C[number]["name"]]?: FunctionParameterInput<
         Extract<C[number], { name: K }>["type"],
         HandleUndefined<Extract<C[number], { name: K }>["components"]>,
-        HandleUndefined<Extract<C[number], { name: K }>["canBeVariable"], false>
+        HandleUndefined<Extract<C[number], { name: K }>["canBeVariable"], true>
       >;
     }
   : T extends "bool"
