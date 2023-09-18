@@ -1,4 +1,5 @@
 import { FunctionParameter } from "../Plugin";
+import { Variable } from "./coreLib";
 
 export interface JsonFragmentType {
   /**
@@ -62,31 +63,52 @@ export interface JsonFragment {
   readonly gas?: string;
 }
 
+export interface EnhancedJsonFragmentType extends JsonFragmentType {
+  readonly canBeVariable?: boolean;
+  readonly components?: ReadonlyArray<EnhancedJsonFragmentType>;
+}
+
 export interface EnhancedJsonFragment extends JsonFragment {
+  readonly inputs?: ReadonlyArray<EnhancedJsonFragmentType>;
+  readonly outputs?: ReadonlyArray<EnhancedJsonFragmentType>;
   options?: {
     falseMeansFail?: boolean;
   };
 }
 
-export type HandleUndefined<T> = T extends undefined ? [] : T;
+export type HandleUndefined<T, V = []> = T extends undefined ? V : T;
 
-export type FunctionParameterInput<T extends string, C extends readonly JsonFragmentType[]> = T extends "tuple"
+// Can be variable if type is address, bytesX (not bytes), uintX, intX. Cannot be if the type is bytes, string
+export type HandleValueType<T extends string, V extends boolean> = V extends false
+  ? string
+  : T extends "address" | `bytes${number}` | `uint${number}` | `int${number}`
+  ? string | Variable
+  : string;
+
+export type HandleValue<V extends boolean, T> = V extends true ? Variable | T : T;
+
+export type FunctionParameterInput<
+  T extends string,
+  C extends readonly EnhancedJsonFragmentType[],
+  V extends boolean = true
+> = T extends "tuple"
   ? {
       [K in C[number]["name"]]?: FunctionParameterInput<
         Extract<C[number], { name: K }>["type"],
-        HandleUndefined<Extract<C[number], { name: K }>["components"]>
+        HandleUndefined<Extract<C[number], { name: K }>["components"]>,
+        HandleUndefined<Extract<C[number], { name: K }>["canBeVariable"], false>
       >;
     }
   : T extends "bool"
-  ? boolean | undefined
+  ? HandleValue<V, boolean> | undefined
   : T extends `${infer _}[${string}`
   ? Array<FunctionParameterInput<_, C>>
-  : string | undefined;
+  : HandleValueType<T, V> | undefined;
 
 export type FunctionParameterValue<
   N extends string,
   T extends string,
-  C extends readonly JsonFragmentType[]
+  C extends readonly EnhancedJsonFragmentType[]
 > = T extends "tuple"
   ? {
       [K in C[number]["name"]]: FunctionParameter<
@@ -101,9 +123,10 @@ export type FunctionParameterValue<
   ? Array<FunctionParameterValue<N, _, C>>
   : FunctionParameter<N, T, C>;
 
-export type PluginFunctionInput<A extends readonly JsonFragmentType[]> = {
+export type PluginFunctionInput<A extends readonly EnhancedJsonFragmentType[]> = {
   [K in A[number]["name"]]: FunctionParameterInput<
     Extract<A[number], { name: K }>["type"],
-    HandleUndefined<Extract<A[number], { name: K }>["components"]>
+    HandleUndefined<Extract<A[number], { name: K }>["components"]>,
+    HandleUndefined<Extract<A[number], { name: K }>["canBeVariable"], true>
   >;
 };

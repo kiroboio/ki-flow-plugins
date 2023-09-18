@@ -1,6 +1,13 @@
 import { ethers } from "ethers";
 
-import { ChainId, HandleUndefined, IPluginCall, JsonFragment, PluginFunctionInput, RequiredApproval } from "../types";
+import {
+  ChainId,
+  EnhancedJsonFragment,
+  HandleUndefined,
+  IPluginCall,
+  PluginFunctionInput,
+  RequiredApproval,
+} from "../types";
 import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
@@ -12,14 +19,14 @@ import { Plugin } from "./plugin";
 // - optional helpers when constructing plugin (for example, cache for Uniswap).
 // After talking with Sumbat - not mandatory.
 
-export function createSmartPlugin<A extends JsonFragment = JsonFragment, C extends ChainId = ChainId>({
+export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonFragment, C extends ChainId = ChainId>({
   prepare,
   abiFragment,
   prepareOutputs,
   requiredActions,
 }: {
   prepare: (args: {
-    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>; // TODO: The input should not have undefined values. Function will be called only if the values are set
+    input: PluginFunctionInput<HandleUndefined<A["inputs"]>>;
     vaultAddress: string;
     provider: ethers.providers.JsonRpcProvider;
     chainId: C;

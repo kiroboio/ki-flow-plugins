@@ -65,6 +65,7 @@ export class FunctionParameter<
       this.value = storedVal as any;
       return this.get();
     }
+    this._validateValue(value);
     this.value = value as unknown as FunctionParameterValue<N, I, C>;
     return this.get();
   }
@@ -141,6 +142,65 @@ export class FunctionParameter<
 
   private _isArray(): boolean {
     return this.internalType.endsWith("]");
+  }
+
+  private _validateValue(value: any) {
+    const type = this.internalType;
+    if (type === "tuple" || type.includes("]")) {
+      return;
+    }
+    if (type === "bool") {
+      if (typeof value !== "boolean") {
+        throw new Error(`${this.name}: Expected boolean, got ${typeof value}`);
+      }
+    }
+    if (typeof value !== "string") {
+      throw new Error(`${this.name}: Expected string, got ${typeof value}`);
+    }
+    if (type.startsWith("uint")) {
+      if (value.includes(".")) {
+        throw new Error(`${this.name}: Cannot be a decimal`);
+      }
+      if (value.startsWith("-")) {
+        throw new Error(`${this.name}: Cannot be negative`);
+      }
+      if (isNaN(+value)) {
+        throw new Error(`${this.name}: Invalid number`);
+      }
+    }
+
+    if (type.startsWith("int")) {
+      if (value.includes(".")) {
+        throw new Error(`${this.name}: Cannot be a decimal`);
+      }
+      if (isNaN(+value)) {
+        throw new Error(`${this.name}: Invalid number`);
+      }
+    }
+
+    if (type === "address") {
+      if (!value.startsWith("0x")) {
+        throw new Error(`${this.name}: Must start with 0x`);
+      }
+      if (value.length !== 42) {
+        throw new Error(`${this.name}: Invalid address`);
+      }
+    }
+
+    if (type.startsWith("bytes")) {
+      if (!value.startsWith("0x")) {
+        throw new Error(`${this.name}: Must start with 0x`);
+      }
+      const length = type.match(/\d+/g);
+      if (!length) {
+        // If no length, then the type is `bytes`
+        return;
+      }
+      const requiredLength = +length[0] * 2 + 2;
+      if (value.length !== requiredLength) {
+        throw new Error(`${this.name}: Invalid ${type} length`);
+      }
+    }
   }
 }
 

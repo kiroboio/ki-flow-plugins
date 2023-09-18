@@ -12,16 +12,16 @@ const abiFragment = {
   inputs: [
     {
       components: [
-        { name: "address", type: "address" },
-        { name: "decimals", type: "address" },
+        { name: "address", type: "address", canBeVariable: false },
+        { name: "decimals", type: "address", canBeVariable: false },
       ],
       name: "from",
       type: "tuple",
     },
     {
       components: [
-        { name: "address", type: "address" },
-        { name: "decimals", type: "address" },
+        { name: "address", type: "address", canBeVariable: false },
+        { name: "decimals", type: "address", canBeVariable: false },
       ],
       name: "to",
       type: "tuple",
@@ -29,18 +29,22 @@ const abiFragment = {
     {
       name: "amount",
       type: "uint256",
+      canBeVariable: false,
     },
     {
-      name: "isExactIn",
+      name: "isAmountIn",
       type: "bool",
+      canBeVariable: false,
     },
     {
       name: "slippage",
       type: "uint256",
+      canBeVariable: false,
     },
     {
       name: "recipient",
       type: "address",
+      canBeVariable: false,
     },
   ],
 } as const;
@@ -48,7 +52,7 @@ const abiFragment = {
 export const Swap = createSmartPlugin({
   abiFragment,
   async prepare(args) {
-    const { from, to, amount, isExactIn, slippage, recipient } = args.input;
+    const { from, to, amount, isAmountIn, slippage, recipient } = args.input;
     const { address: fromAddress, decimals: fromDecimals } = from;
     const { address: toAddress, decimals: toDecimals } = to;
     if (
@@ -57,7 +61,7 @@ export const Swap = createSmartPlugin({
       !toAddress ||
       !toDecimals ||
       !amount ||
-      isExactIn === undefined ||
+      isAmountIn === undefined ||
       !slippage ||
       !recipient
     ) {
@@ -70,14 +74,14 @@ export const Swap = createSmartPlugin({
     const TokenA = createToken({ address: fromAddress, decimals: +fromDecimals }, chainId);
     const TokenB = createToken({ address: toAddress, decimals: +toDecimals }, chainId);
 
-    const [Base, Quote] = isExactIn ? [TokenA, TokenB] : [TokenB, TokenA];
+    const [Base, Quote] = isAmountIn ? [TokenA, TokenB] : [TokenB, TokenA];
 
     const BaseAmount = CurrencyAmount.fromRawAmount(Base, amount);
 
     const swapRoute = await router.route(
       BaseAmount,
       Quote,
-      isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
+      isAmountIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
       undefined,
       {
         maxSwapsPerPath: 3,
@@ -93,13 +97,13 @@ export const Swap = createSmartPlugin({
     if (!swapRoute) throw new Error("No route found");
     return getPluginFromRoute({
       chainId: args.chainId,
-      isExactIn,
+      isAmountIn,
       recipient,
       route: swapRoute.route[0] as IV2RouteWithValidQuote,
     });
   },
   requiredActions(args) {
-    const { from, to, amount, isExactIn, slippage, recipient } = args.input;
+    const { from, to, amount, isAmountIn, slippage, recipient } = args.input;
     const { address: fromAddress, decimals: fromDecimals } = from;
     const { address: toAddress, decimals: toDecimals } = to;
     if (
@@ -108,7 +112,7 @@ export const Swap = createSmartPlugin({
       !toAddress ||
       !toDecimals ||
       !amount ||
-      !isExactIn ||
+      isAmountIn === undefined ||
       !slippage ||
       !recipient
     ) {

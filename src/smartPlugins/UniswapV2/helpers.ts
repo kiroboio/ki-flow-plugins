@@ -35,19 +35,19 @@ export const handleValue = (value: any): any => {
 export const getPluginFromRoute = ({
   chainId,
   route,
-  isExactIn,
+  isAmountIn,
   recipient,
 }: {
   chainId: ChainId;
   route: IV2RouteWithValidQuote;
-  isExactIn: boolean;
+  isAmountIn: boolean;
   recipient: string;
 }) => {
   // If isExactIn = true, amount is from, rawQuote is to
   // If isExactIn = false, amount is to, rawQuote is from
   const path = route.route.path.map((token) => token.address);
   const deadline = Math.floor(Date.now() / 1000 + 1800).toString();
-  if (isExactIn) {
+  if (isAmountIn) {
     const input = route.amount;
     const output = route.quote;
     const inputAmount = input.quotient.toString();
