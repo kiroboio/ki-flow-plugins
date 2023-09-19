@@ -1,3 +1,4 @@
+import { InstanceOf } from "../helpers/instanceOf";
 import { EnhancedJsonFragmentType, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
 
 export class FunctionParameter<
@@ -156,6 +157,7 @@ export class FunctionParameter<
   }
 
   private _validateValue(value: any) {
+    if (InstanceOf.Variable(value)) return;
     const type = this.internalType;
     if (type === "tuple" || type.includes("]")) {
       return;
@@ -178,6 +180,10 @@ export class FunctionParameter<
       if (isNaN(+value)) {
         throw new Error(`${this.name}: Invalid number`);
       }
+      const bits = type.match(/\d+/g);
+      if (bits && BigInt(value) > 2n ** BigInt(bits[0]) - 1n) {
+        throw new Error(`${this.name}: Value too large for ${type}`);
+      }
     }
 
     if (type.startsWith("int")) {
@@ -186,6 +192,13 @@ export class FunctionParameter<
       }
       if (isNaN(+value)) {
         throw new Error(`${this.name}: Invalid number`);
+      }
+      const bits = type.match(/\d+/g);
+      if (bits && BigInt(value) > 2n ** (BigInt(bits[0]) - 1n) - 1n) {
+        throw new Error(`${this.name}: Value too large for ${type}`);
+      }
+      if (bits && BigInt(value) < -(2n ** (BigInt(bits[0]) - 1n))) {
+        throw new Error(`${this.name}: Value too small for ${type}`);
       }
     }
 

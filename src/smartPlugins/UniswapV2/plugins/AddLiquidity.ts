@@ -8,7 +8,7 @@ import { RequiredApproval } from "../../../types";
 import { createToken, getPluginFromRoute } from "../helpers";
 
 const abiFragment = {
-  name: "Swap",
+  name: "Supply",
   inputs: [
     {
       components: [
