@@ -128,7 +128,7 @@ export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonF
       return await plugin.create();
     }
 
-    private _getCacheKey() {
+    public _getCacheKey() {
       return JSON.stringify(this.get());
     }
   };

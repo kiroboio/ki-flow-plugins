@@ -112,12 +112,6 @@ export const Swap = createSmartPlugin({
   },
 });
 
-const plugin = new Swap({
-  chainId: "1",
-  provider: new ethers.providers.JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/<key>"),
-  vaultAddress: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-});
-
 // Below is a test for this Swap plugin
 // const plugin = new SmartPlugins.UniswapV2.Swap({
 //   chainId: "1",
