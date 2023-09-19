@@ -92,21 +92,8 @@ export const Swap = createSmartPlugin({
     });
   },
   requiredActions(args) {
-    const { from, to, amount, isAmountIn, slippage, recipient } = args.input;
-    const { address: fromAddress, decimals: fromDecimals } = from;
-    const { address: toAddress, decimals: toDecimals } = to;
-    if (
-      !fromAddress ||
-      !fromDecimals ||
-      !toAddress ||
-      !toDecimals ||
-      !amount ||
-      isAmountIn === undefined ||
-      !slippage ||
-      !recipient
-    ) {
-      throw new Error("Invalid input");
-    }
+    const { from, amount } = args.input;
+    const { address: fromAddress } = from;
 
     // If fromAddress is native, return []
     if (fromAddress === ethers.constants.AddressZero) return [];
@@ -123,6 +110,12 @@ export const Swap = createSmartPlugin({
 
     return approvals;
   },
+});
+
+const plugin = new Swap({
+  chainId: "1",
+  provider: new ethers.providers.JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/<key>"),
+  vaultAddress: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
 });
 
 // Below is a test for this Swap plugin
