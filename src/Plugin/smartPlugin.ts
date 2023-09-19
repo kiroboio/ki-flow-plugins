@@ -20,6 +20,11 @@ import { Plugin } from "./plugin";
 
 // TODO: For now the cache and _getCacheKey are public, should be made private in the future.
 
+/* Issues that came into my mind:
+ * - Should we still have the getPlugin function? If yes then we might have 2 problems - how to get required actions and how to run the getPlugin from EIP712 data
+ * - Some Smart plugins may require to get plugin from 'prepare' to correctly get 'requiredActions'.
+ */
+
 export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonFragment, C extends ChainId = ChainId>({
   prepare,
   abiFragment,
