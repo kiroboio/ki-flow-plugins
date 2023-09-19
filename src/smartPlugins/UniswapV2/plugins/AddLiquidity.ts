@@ -1,5 +1,10 @@
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 
+// TODO: Question is - should it be tokenA and tokenB or the LP pool? I am leaning towards tokenA and tokenB
+// The calculation is like this:
+// reserveA * 1e18 / reserveB = How much per 1 tokenB
+// reserveB * 1e18 / reserveA = How much per 1 tokenA
+
 const abiFragment = {
   name: "AddLiquidity",
   inputs: [
@@ -44,7 +49,14 @@ const abiFragment = {
 
 export const AddLiquidity = createSmartPlugin({
   abiFragment,
-  async prepare(args) {},
+  async prepare(args) {
+    /*
+     * 1. Get pool from tokenA and tokenB
+     * 2. Get reserves from pool
+     * 3. If the amount is tokenA, calculate how much tokenB is needed
+     * 4. If the amount is tokenB, calculate how much tokenA is needed
+     */
+  },
   requiredActions(args) {},
 });
 
