@@ -1,10 +1,12 @@
 import { ethers } from "ethers";
 
 import { isEqualAddress, isNative } from "../../../helpers";
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV2 } from "../../../plugins";
 import { UniswapV2_Factory } from "../../../plugins/UniswapV2/constants";
 import { WETHContracts } from "../../../plugins/WETH/constants";
+import { RequiredApproval } from "../../../types";
 
 // TODO: Question is - should it be tokenA and tokenB or the LP pool? I am leaning towards tokenA and tokenB
 
@@ -51,6 +53,7 @@ const abiFragment = {
 } as const;
 
 export const AddLiquidity = createSmartPlugin({
+  supportedPlugins: [UniswapV2.addLiquidity, UniswapV2.addLiquidityETH],
   abiFragment,
   async prepare(args) {
     /*
@@ -147,4 +150,43 @@ export const AddLiquidity = createSmartPlugin({
     });
   },
   // TODO: requiredActions
+  requiredActionsFromPlugin(args) {
+    const Plugin = args.plugin;
+    // Check if the plugins is addLiquidityETH
+    if (Plugin.method === "addLiquidityETH") {
+      const data = Plugin.inputs.get();
+      if (!data.amountTokenDesired || InstanceOf.Variable(data.amountTokenDesired)) return [];
+      const approvals: RequiredApproval[] = [
+        {
+          to: data.token,
+          from: args.vaultAddress,
+          params: { spender: args.vaultAddress, amount: data.amountTokenDesired },
+          method: "approve",
+          protocol: "ERC20",
+        },
+      ];
+      return approvals;
+    }
+    const data = Plugin.inputs.get();
+    const approvals: RequiredApproval[] = [];
+    if (data.amountADesired && !InstanceOf.Variable(data.amountADesired)) {
+      approvals.push({
+        to: data.tokenA,
+        from: args.vaultAddress,
+        params: { spender: args.vaultAddress, amount: data.amountADesired },
+        method: "approve",
+        protocol: "ERC20",
+      });
+    }
+    if (data.amountBDesired && !InstanceOf.Variable(data.amountBDesired)) {
+      approvals.push({
+        to: data.tokenB,
+        from: args.vaultAddress,
+        params: { spender: args.vaultAddress, amount: data.amountBDesired },
+        method: "approve",
+        protocol: "ERC20",
+      });
+    }
+    return approvals;
+  },
 });

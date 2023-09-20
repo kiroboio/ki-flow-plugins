@@ -30,6 +30,7 @@ const abiFragment = {
 } as const;
 
 export const SmartMultiAllowance = createSmartPlugin({
+  supportedPlugins: [Multicall.multiAllowance],
   abiFragment,
   async prepare(args) {
     return new Multicall.multiAllowance({

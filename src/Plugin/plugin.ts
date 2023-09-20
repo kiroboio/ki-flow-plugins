@@ -10,6 +10,7 @@ import {
   IPluginCall,
   PluginFunctionInput,
   SupportedContract,
+  Variable,
 } from "../types";
 import { getOutputs } from "./outputs";
 import { FunctionParameter } from "./parameter";
@@ -27,7 +28,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly supportedContracts: readonly SupportedContract[] = [];
 
   public contractAddress?: string;
-  public ethValue: string = "0";
+  public ethValue: string | Variable = "0";
   public rpcUrl?: string;
   public options: A["options"] = {};
 
@@ -91,7 +92,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     return this.gas;
   }
 
-  public setValue(value: ETHValueInput<A["stateMutability"]>) {
+  public setValue(value: ETHValueInput<A["stateMutability"]> | Variable) {
     if (this.functionType !== "payable") return;
     this.ethValue = value || "0";
   }

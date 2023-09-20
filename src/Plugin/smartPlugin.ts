@@ -25,24 +25,35 @@ import { Plugin } from "./plugin";
  * - Some Smart plugins may require to get plugin from 'prepare' to correctly get 'requiredActions'.
  */
 
-export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonFragment, C extends ChainId = ChainId>({
+export function createSmartPlugin<
+  P extends readonly Plugin<any>[] = readonly Plugin<any>[],
+  A extends EnhancedJsonFragment = EnhancedJsonFragment,
+  C extends ChainId = ChainId
+>({
   prepare,
   abiFragment,
   prepareOutputs,
   requiredActions,
+  requiredActionsFromPlugin,
 }: {
+  abiFragment: A;
+  supportedPlugins: P;
   prepare: (args: {
     input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     vaultAddress: string;
     provider: ethers.providers.JsonRpcProvider;
     chainId: C;
-  }) => Promise<InstanceType<Plugin<any>>>;
-  abiFragment: A;
+  }) => Promise<InstanceType<P[number]>>;
   prepareOutputs?: (args: {
     input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) => Record<string, Output>;
   requiredActions?: (args: {
     input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+    vaultAddress: string;
+    chainId: C;
+  }) => RequiredApproval[];
+  requiredActionsFromPlugin?: (args: {
+    plugin: InstanceType<P[number]>;
     vaultAddress: string;
     chainId: C;
   }) => RequiredApproval[];
@@ -98,15 +109,24 @@ export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonF
       }, {} as RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>);
     }
 
-    public getRequiredActions(): RequiredApproval[] {
-      if (!requiredActions) return [];
-      return requiredActions({ input: this.getStrict(), chainId: this.chainId, vaultAddress: this.vaultAddress });
+    public async getRequiredActions(): Promise<RequiredApproval[]> {
+      if (requiredActions) {
+        return requiredActions({ input: this.getStrict(), chainId: this.chainId, vaultAddress: this.vaultAddress });
+      } else if (requiredActionsFromPlugin) {
+        const plugin = await this.getPlugin();
+        return requiredActionsFromPlugin({
+          plugin: plugin as InstanceType<P[number]>,
+          chainId: this.chainId,
+          vaultAddress: this.vaultAddress,
+        });
+      }
+      return [];
     }
 
-    public async getPlugin(): Promise<InstanceType<Plugin<any>>> {
+    public async getPlugin(): Promise<InstanceType<P[number]>> {
       const cached = this.cache.get(this._getCacheKey());
       if (cached) {
-        return cached as InstanceType<Plugin<any>>;
+        return cached as InstanceType<P[number]>;
       }
       const plugin = await prepare({
         input: this.getStrict(),
@@ -121,7 +141,7 @@ export function createSmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonF
     public async create(): Promise<IPluginCall | undefined> {
       const cached = this.cache.get(this._getCacheKey());
       if (cached) {
-        return await (cached as InstanceType<Plugin<any>>).create();
+        return await (cached as InstanceType<P[number]>).create();
       }
       const plugin = await prepare({
         input: this.getStrict(),

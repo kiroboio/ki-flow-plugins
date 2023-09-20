@@ -1,4 +1,5 @@
 import { isEqualAddress } from "../../../helpers";
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { CompoundV3 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
@@ -9,6 +10,7 @@ const abiFragment = {
     {
       name: "comet",
       type: "address",
+      canBeVariable: false,
     },
     {
       name: "asset",
@@ -21,19 +23,21 @@ const abiFragment = {
     {
       name: "receiver",
       type: "address",
+      canBeVariable: false,
     },
     {
       name: "behalfOf",
       type: "address",
+      canBeVariable: false,
     },
   ],
 } as const;
 
 export const Withdraw = createSmartPlugin({
+  supportedPlugins: [CompoundV3.withdraw, CompoundV3.withdrawTo, CompoundV3.withdrawFrom],
   abiFragment,
   async prepare(args) {
     const { asset, amount, behalfOf, receiver, comet } = args.input;
-    if (!asset || !amount || !behalfOf || !receiver || !comet) throw new Error("Invalid input");
 
     // If behalfOn === receiver === args.vaultAddress, then we are using 'withdraw' to redeem
     if (isEqualAddress(behalfOf, receiver) && isEqualAddress(receiver, args.vaultAddress)) {
@@ -72,8 +76,8 @@ export const Withdraw = createSmartPlugin({
     });
   },
   requiredActions(args) {
-    const { asset, amount, behalfOf, receiver, comet } = args.input;
-    if (!asset || !amount || !behalfOf || !receiver || !comet) throw new Error("Invalid input");
+    const { asset, amount, behalfOf, comet } = args.input;
+    if (InstanceOf.Variable(amount)) return [];
 
     const approvals: RequiredApproval[] = [
       {

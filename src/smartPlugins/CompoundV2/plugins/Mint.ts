@@ -1,4 +1,5 @@
 import { isEqualAddress, isNative } from "../../../helpers";
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { CompoundV2_cERC20, CompoundV2_cETH } from "../../../plugins";
 import { cETHAddresses, cTokens } from "../../../plugins/CompoundV2/constants";
@@ -9,6 +10,7 @@ const abiFragment = {
     {
       name: "asset",
       type: "address",
+      canBeVariable: false,
     },
     {
       name: "amount",
@@ -18,11 +20,10 @@ const abiFragment = {
 } as const;
 
 export const Mint = createSmartPlugin({
+  supportedPlugins: [CompoundV2_cETH.mint, CompoundV2_cERC20.mint],
   abiFragment,
   async prepare(args) {
     const { asset, amount } = args.input;
-    // If the asset is 0x0 or 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, then we are minting ETH
-    if (!asset || !amount) throw new Error("Invalid input");
 
     if (isNative(asset)) {
       const plugin = new CompoundV2_cETH.mint({
@@ -50,7 +51,7 @@ export const Mint = createSmartPlugin({
   },
   requiredActions(args) {
     const { amount, asset } = args.input;
-    if (!asset || !amount) throw new Error("Invalid input");
+    if (InstanceOf.Variable(amount)) return [];
 
     // If the asset is native, return []
     if (isNative(asset)) {

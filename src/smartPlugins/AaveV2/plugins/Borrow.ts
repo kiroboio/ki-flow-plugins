@@ -1,3 +1,4 @@
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { AaveV2 } from "../../../plugins";
 import { AaveV2_aTokens } from "../../../plugins/AaveV2/constants";
@@ -25,6 +26,7 @@ const abiFragment = {
 } as const;
 
 export const Borrow = createSmartPlugin({
+  supportedPlugins: [AaveV2.borrow],
   abiFragment,
   async prepare(args) {
     return new AaveV2.borrow({
@@ -34,16 +36,8 @@ export const Borrow = createSmartPlugin({
   },
   requiredActions(args) {
     const { amount, asset, interestRateMode, onBehalfOf } = args.input;
-    if (
-      !amount ||
-      !asset ||
-      !interestRateMode ||
-      !onBehalfOf ||
-      !args.vaultAddress ||
-      onBehalfOf?.toLowerCase() === args.vaultAddress
-    ) {
-      return [];
-    }
+
+    if (InstanceOf.Variable(asset) || InstanceOf.Variable(amount)) return [];
 
     // Find debt bearing token
     const token = AaveV2_aTokens.find(
@@ -56,7 +50,7 @@ export const Borrow = createSmartPlugin({
         // If interest rate mode 1, then we need to approve the stable debt token, else variable debt token
         to: interestRateMode === "1" ? token.stableDebtTokenAddress : token.variableDebtTokenAddress,
         from: onBehalfOf,
-        params: { delegatee: args.vaultAddress, amount },
+        params: { delegatee: args.vaultAddress, amount: amount },
         method: "approveDelegation",
         protocol: "AAVE",
       },

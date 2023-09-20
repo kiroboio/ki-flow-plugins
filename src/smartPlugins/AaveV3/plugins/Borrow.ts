@@ -1,3 +1,4 @@
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { AaveV3 } from "../../../plugins";
 import { AaveV3_aTokens } from "../../../plugins/AaveV3/constants";
@@ -25,6 +26,7 @@ const abiFragment = {
 } as const;
 
 export const Borrow = createSmartPlugin({
+  supportedPlugins: [AaveV3.borrow],
   abiFragment,
   async prepare(args) {
     return new AaveV3.borrow({
@@ -34,16 +36,7 @@ export const Borrow = createSmartPlugin({
   },
   requiredActions(args) {
     const { amount, asset, interestRateMode, onBehalfOf } = args.input;
-    if (
-      !amount ||
-      !asset ||
-      !interestRateMode ||
-      !onBehalfOf ||
-      !args.vaultAddress ||
-      onBehalfOf?.toLowerCase() === args.vaultAddress
-    ) {
-      return [];
-    }
+    if (InstanceOf.Variable(asset) || InstanceOf.Variable(amount)) return [];
 
     // Find debt bearing token
     const token = AaveV3_aTokens.find(

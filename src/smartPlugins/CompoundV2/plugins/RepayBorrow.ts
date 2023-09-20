@@ -1,4 +1,5 @@
 import { isEqualAddress, isNative } from "../../../helpers";
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { CompoundV2_cERC20, CompoundV2_cETH } from "../../../plugins";
 import { cETHAddresses, cTokens } from "../../../plugins/CompoundV2/constants";
@@ -9,6 +10,7 @@ const abiFragment = {
     {
       name: "asset",
       type: "address",
+      canBeVariable: false,
     },
     {
       name: "amount",
@@ -17,16 +19,21 @@ const abiFragment = {
     {
       name: "behalfOf",
       type: "address",
+      canBeVariable: false,
     },
   ],
 } as const;
 
 export const RepayBorrow = createSmartPlugin({
+  supportedPlugins: [
+    CompoundV2_cETH.repayBorrow,
+    CompoundV2_cETH.repayBorrowBehalf,
+    CompoundV2_cERC20.repayBorrow,
+    CompoundV2_cERC20.repayBorrowBehalf,
+  ],
   abiFragment,
   async prepare(args) {
     const { asset, amount, behalfOf } = args.input;
-    // If the asset is 0x0 or 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, then we are minting ETH
-    if (!asset || !amount || !behalfOf) throw new Error("Invalid input");
 
     if (isNative(asset)) {
       const cETHAddress = cETHAddresses.find((address) => address.chainId === args.chainId);
@@ -73,7 +80,8 @@ export const RepayBorrow = createSmartPlugin({
   },
   requiredActions(args) {
     const { amount, asset } = args.input;
-    if (!asset || !amount) throw new Error("Invalid input");
+
+    if (InstanceOf.Variable(amount)) return [];
 
     // If the asset is native, return []
     if (isNative(asset)) {

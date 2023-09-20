@@ -21,6 +21,7 @@ const abiFragment = {
 } as const;
 
 export const SmartTransfer = createSmartPlugin({
+  supportedPlugins: [ERC20.transfer, ERC20.transferFrom],
   abiFragment,
   async prepare(args) {
     if (args.vaultAddress === args.input.from) {

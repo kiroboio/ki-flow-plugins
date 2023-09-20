@@ -4,6 +4,7 @@ import { AlphaRouter, CurrencyAmount, IV2RouteWithValidQuote } from "@uniswap/sm
 import { ethers } from "ethers";
 
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
+import { UniswapV2 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
 import { createToken, getPluginFromRoute } from "../helpers";
 
@@ -50,6 +51,14 @@ const abiFragment = {
 } as const;
 
 export const Swap = createSmartPlugin({
+  supportedPlugins: [
+    UniswapV2.swapETHForExactTokens,
+    UniswapV2.swapExactETHForTokens,
+    UniswapV2.swapTokensForExactETH,
+    UniswapV2.swapExactTokensForETH,
+    UniswapV2.swapTokensForExactTokens,
+    UniswapV2.swapExactTokensForTokens,
+  ],
   abiFragment,
   async prepare(args) {
     const { from, to, amount, isAmountIn, recipient } = args.input;

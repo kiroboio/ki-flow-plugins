@@ -1,3 +1,4 @@
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { AaveV2 } from "../../../plugins";
 import { AaveV2_LendingPool_Addresses } from "../../../plugins/AaveV2/constants";
@@ -25,6 +26,7 @@ const abiFragment = {
 } as const;
 
 export const Repay = createSmartPlugin({
+  supportedPlugins: [AaveV2.repay],
   abiFragment,
   async prepare(args) {
     return new AaveV2.repay({
@@ -34,7 +36,7 @@ export const Repay = createSmartPlugin({
   },
   requiredActions(args) {
     const { amount, asset: to } = args.input;
-    if (!amount) return [];
+    if (InstanceOf.Variable(amount)) return [];
 
     const spender = AaveV2_LendingPool_Addresses.find((address) => address.chainId === args.chainId);
     if (!spender) throw new Error("No AaveV2 lending pool address found for this chainId");

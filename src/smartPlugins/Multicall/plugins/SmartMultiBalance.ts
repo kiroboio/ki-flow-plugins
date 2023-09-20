@@ -26,6 +26,7 @@ const abiFragment = {
 } as const;
 
 export const SmartMultiBalance = createSmartPlugin({
+  supportedPlugins: [Multicall.multiBalance],
   abiFragment,
   async prepare(args) {
     return new Multicall.multiBalance({

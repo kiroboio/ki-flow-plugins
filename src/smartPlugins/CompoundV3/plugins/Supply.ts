@@ -1,4 +1,5 @@
 import { isEqualAddress } from "../../../helpers";
+import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { CompoundV3 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
@@ -9,6 +10,7 @@ const abiFragment = {
     {
       name: "comet",
       type: "address",
+      canBeVariable: false,
     },
     {
       name: "asset",
@@ -21,19 +23,21 @@ const abiFragment = {
     {
       name: "to",
       type: "address",
+      canBeVariable: false,
     },
     {
       name: "from",
       type: "address",
+      canBeVariable: false,
     },
   ],
 } as const;
 
 export const Supply = createSmartPlugin({
+  supportedPlugins: [CompoundV3.supply, CompoundV3.supplyTo, CompoundV3.supplyFrom],
   abiFragment,
   async prepare(args) {
     const { comet, asset, amount, to, from } = args.input;
-    if (!asset || !amount || !comet || !to || !from) throw new Error("Invalid input");
 
     // If to and from are equal to args.vaultAddress, then we are using 'supply' to mint
     if (isEqualAddress(to, args.vaultAddress) && isEqualAddress(from, args.vaultAddress)) {
@@ -73,8 +77,9 @@ export const Supply = createSmartPlugin({
     });
   },
   requiredActions(args) {
-    const { amount, asset, comet, to, from } = args.input;
-    if (!asset || !amount || !comet || !to || !from) throw new Error("Invalid input");
+    const { amount, asset, comet, from } = args.input;
+
+    if (InstanceOf.Variable(amount)) return [];
 
     const approvals: RequiredApproval[] = [
       {
