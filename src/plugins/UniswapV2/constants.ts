@@ -10,3 +10,14 @@ export const UniswapV2_Router: readonly SupportedContract[] = [
     chainId: "5",
   },
 ] as const;
+
+export const UniswapV2_Factory: readonly SupportedContract[] = [
+  {
+    address: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    chainId: "1",
+  },
+  {
+    address: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    chainId: "5",
+  },
+] as const;

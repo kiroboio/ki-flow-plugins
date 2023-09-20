@@ -1,4 +1,10 @@
+import { ethers } from "ethers";
+
+import { isEqualAddress, isNative } from "../../../helpers";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
+import { UniswapV2 } from "../../../plugins";
+import { UniswapV2_Factory } from "../../../plugins/UniswapV2/constants";
+import { WETHContracts } from "../../../plugins/WETH/constants";
 
 // TODO: Question is - should it be tokenA and tokenB or the LP pool? I am leaning towards tokenA and tokenB
 // The calculation is like this:
@@ -56,74 +62,93 @@ export const AddLiquidity = createSmartPlugin({
      * 3. If the amount is tokenA, calculate how much tokenB is needed
      * 4. If the amount is tokenB, calculate how much tokenA is needed
      */
+    let isETH;
+    if (isNative(args.input.tokenA.address)) {
+      isETH = true;
+      const WETH = WETHContracts.find((w) => w.chainId === args.chainId)?.address;
+      if (!WETH) throw new Error(`WETH address for chainId ${args.chainId} not found`);
+      args.input.tokenA.address = WETH;
+    } else if (isNative(args.input.tokenB.address)) {
+      isETH = true;
+      const WETH = WETHContracts.find((w) => w.chainId === args.chainId)?.address;
+      if (!WETH) throw new Error(`WETH address for chainId ${args.chainId} not found`);
+      args.input.tokenB.address = WETH;
+    }
+
+    // Sort them by address
+    const [tokenA, tokenB] =
+      args.input.tokenA.address.toLowerCase() < args.input.tokenB.address.toLowerCase()
+        ? [args.input.tokenA, args.input.tokenB]
+        : [args.input.tokenB, args.input.tokenA];
+
+    const factoryAddress = UniswapV2_Factory.find((f) => f.chainId === args.chainId)?.address;
+    if (!factoryAddress) throw new Error(`Factory address for chainId ${args.chainId} not found`);
+
+    const factory = new ethers.Contract(
+      factoryAddress,
+      ["function getPair(address, address) external view returns (address)"],
+      args.provider
+    );
+    const pair = await factory.getPair(tokenA.address, tokenB.address);
+
+    const pairContract = new ethers.Contract(
+      pair,
+      ["function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)"],
+      args.provider
+    );
+
+    const reserves = await pairContract.getReserves();
+
+    const amountA = args.input.isAmountTokenA
+      ? args.input.amount
+      : (BigInt(args.input.amount) * BigInt(reserves.reserve1)) / BigInt(reserves.reserve0);
+    const amountB = args.input.isAmountTokenA
+      ? (BigInt(args.input.amount) * BigInt(reserves.reserve0)) / BigInt(reserves.reserve1)
+      : args.input.amount;
+
+    const amountAMin = (BigInt(amountA) * BigInt(10000 - +args.input.slippage)) / BigInt(10000);
+    const amountBMin = (BigInt(amountB) * BigInt(10000 - +args.input.slippage)) / BigInt(10000);
+
+    if (isETH) {
+      const WETH = WETHContracts.find((w) => w.chainId === args.chainId)?.address;
+      if (!WETH) throw new Error(`WETH address for chainId ${args.chainId} not found`);
+      const [ETHAmount, ETHAmountMin] = isEqualAddress(tokenA.address, WETH)
+        ? [amountA, amountAMin]
+        : [amountB, amountBMin];
+      const [token, amount, amountMin] = isEqualAddress(tokenA.address, WETH)
+        ? [tokenB, amountB, amountBMin]
+        : [tokenA, amountA, amountAMin];
+
+      const plugin = new UniswapV2.addLiquidityETH({
+        chainId: args.chainId,
+        input: {
+          token: token.address,
+          amountTokenDesired: amount.toString(),
+          amountTokenMin: amountMin.toString(),
+          amountETHMin: ETHAmountMin.toString(),
+          deadline: (Math.floor(Date.now() / 1000) + 60 * 20).toString(),
+          to: args.input.recipient,
+        },
+      });
+
+      plugin.setValue(ETHAmount.toString());
+
+      return plugin;
+    }
+
+    return new UniswapV2.addLiquidity({
+      chainId: args.chainId,
+      input: {
+        tokenA: tokenA.address,
+        tokenB: tokenB.address,
+        amountADesired: amountA.toString(),
+        amountBDesired: amountB.toString(),
+        amountAMin: amountAMin.toString(),
+        amountBMin: amountBMin.toString(),
+        deadline: (Math.floor(Date.now() / 1000) + 60 * 20).toString(),
+        to: args.input.recipient,
+      },
+    });
   },
-  requiredActions(args) {},
+  // TODO: requiredActions
 });
-
-// Below is a test for this Swap plugin
-// const plugin = new SmartPlugins.UniswapV2.Swap({
-//   chainId: "1",
-//   provider: new ethers.providers.JsonRpcProvider(
-//     "https://eth-mainnet.g.alchemy.com/v2/<key>"
-//   ),
-//   vaultAddress: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-// });
-
-// plugin.set({
-//   from: {
-//     address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC,
-//     decimals: "6",
-//   },
-//   to: {
-//     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-//     decimals: "18",
-//   },
-//   amount: "1600" + "0".repeat(6),
-//   isExactIn: true,
-//   recipient: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
-//   slippage: "500",
-// });
-
-// const create = await plugin.create();
-
-// if (!create) return;
-
-// const UniInterface = new ethers.utils.Interface(UniswapV2Abi);
-
-// // USDC Whale 0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503
-
-// const calls = [
-//   {
-//     from: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503",
-//     to: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-
-//     data: Interfaces.ERC20.encodeFunctionData("approve", [
-//       "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-//       "2000" + "0".repeat(6),
-//     ]),
-//   },
-//   {
-//     from: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503",
-//     to: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-//     data: UniInterface.encodeFunctionData(
-//       create.method,
-//       create.params.map((param) => param.value)
-//     ),
-//   },
-// ];
-
-// const res = await fetch("https://mainnet.gateway.tenderly.co/<key>", {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-//   body: JSON.stringify({
-//     id: 0,
-//     jsonrpc: "2.0",
-//     method: "tenderly_simulateBundle",
-//     params: [calls, "latest"],
-//   }),
-// });
-// const data = await res.json();
-
-// console.log(JSON.stringify(data, null, 2));
