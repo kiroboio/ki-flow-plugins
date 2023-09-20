@@ -220,6 +220,15 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     });
   }
 
+  public isPlugin(data: IPluginCall) {
+    const isMethod = data.method === this.method;
+    const isParams = data.params.every((p, i) => {
+      return p.name === this.params[i].name && p.type === this.params[i].type;
+    });
+
+    return isMethod && isParams;
+  }
+
   public getCallType(): CallType {
     if (this.functionType === "payable" || this.functionType === "nonpayable") {
       return "ACTION";

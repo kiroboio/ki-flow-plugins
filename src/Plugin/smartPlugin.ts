@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import NodeCache from "node-cache";
 
+import { parseParams } from "../helpers/parseParams";
 import {
   ChainId,
   EnhancedJsonFragment,
@@ -30,6 +31,7 @@ export function createSmartPlugin<
   A extends EnhancedJsonFragment = EnhancedJsonFragment,
   C extends ChainId = ChainId
 >({
+  supportedPlugins,
   prepare,
   abiFragment,
   prepareOutputs,
@@ -123,6 +125,23 @@ export function createSmartPlugin<
       return [];
     }
 
+    public getRequiredActionsFromCall(call: IPluginCall): RequiredApproval[] {
+      if (!requiredActionsFromPlugin) throw new Error("requiredActionsFromPlugin not defined");
+
+      const Plugin = supportedPlugins.find((p) => {
+        const plugin = new p({ chainId: "1" });
+        return plugin.isPlugin(call);
+      });
+      if (!Plugin) throw new Error("Plugin not supported for this data");
+      const plugin = new Plugin({ chainId: "1", input: parseParams(call.params) });
+
+      return requiredActionsFromPlugin({
+        plugin: plugin as InstanceType<P[number]>,
+        chainId: this.chainId,
+        vaultAddress: this.vaultAddress,
+      });
+    }
+
     public async getPlugin(): Promise<InstanceType<P[number]>> {
       const cached = this.cache.get(this._getCacheKey());
       if (cached) {
@@ -155,6 +174,16 @@ export function createSmartPlugin<
 
     public _getCacheKey() {
       return JSON.stringify(this.get());
+    }
+
+    static isSmartPlugin(data: IPluginCall) {
+      const Plugin = supportedPlugins.find((p) => {
+        const plugin = new p({ chainId: "1" });
+        return plugin.isPlugin(data);
+      });
+
+      if (!Plugin) return false;
+      return true;
     }
   };
 }
