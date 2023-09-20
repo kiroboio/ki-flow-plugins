@@ -7,9 +7,6 @@ import { UniswapV2_Factory } from "../../../plugins/UniswapV2/constants";
 import { WETHContracts } from "../../../plugins/WETH/constants";
 
 // TODO: Question is - should it be tokenA and tokenB or the LP pool? I am leaning towards tokenA and tokenB
-// The calculation is like this:
-// reserveA * 1e18 / reserveB = How much per 1 tokenB
-// reserveB * 1e18 / reserveA = How much per 1 tokenA
 
 const abiFragment = {
   name: "AddLiquidity",
@@ -75,7 +72,6 @@ export const AddLiquidity = createSmartPlugin({
       args.input.tokenB.address = WETH;
     }
 
-    // Sort them by address
     const [tokenA, tokenB] =
       args.input.tokenA.address.toLowerCase() < args.input.tokenB.address.toLowerCase()
         ? [args.input.tokenA, args.input.tokenB]
