@@ -26,10 +26,17 @@ import { Plugin } from "./plugin";
  * - Some Smart plugins may require to get plugin from 'prepare' to correctly get 'requiredActions'.
  */
 
+type RequiredActionsFunction<C extends ChainId, A extends EnhancedJsonFragment> = (args: {
+  input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+  vaultAddress: string;
+  chainId: C;
+}) => RequiredApproval[];
+
 export function createSmartPlugin<
   P extends readonly Plugin<any>[] = readonly Plugin<any>[],
   A extends EnhancedJsonFragment = EnhancedJsonFragment,
-  C extends ChainId = ChainId
+  C extends ChainId = ChainId,
+  RF extends RequiredActionsFunction<C, A> = RequiredActionsFunction<C, A>
 >({
   supportedPlugins,
   prepare,
@@ -49,13 +56,10 @@ export function createSmartPlugin<
   prepareOutputs?: (args: {
     input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) => Record<string, Output>;
-  requiredActions?: (args: {
-    input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
-    vaultAddress: string;
-    chainId: C;
-  }) => RequiredApproval[];
+  requiredActions?: RF;
   requiredActionsFromPlugin?: (args: {
     plugin: InstanceType<P[number]>;
+    requiredActions?: RF;
     vaultAddress: string;
     chainId: C;
   }) => RequiredApproval[];
@@ -133,7 +137,11 @@ export function createSmartPlugin<
         return plugin.isPlugin(call);
       });
       if (!Plugin) throw new Error("Plugin not supported for this data");
-      const plugin = new Plugin({ chainId: "1", input: parseParams(call.params) });
+      const plugin = new Plugin({
+        chainId: "1",
+        input: parseParams(call.params),
+        contractAddress: typeof call.to === "string" ? call.to : undefined,
+      });
 
       return requiredActionsFromPlugin({
         plugin: plugin as InstanceType<P[number]>,

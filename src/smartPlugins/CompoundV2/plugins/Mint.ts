@@ -72,4 +72,29 @@ export const Mint = createSmartPlugin({
       },
     ];
   },
+  requiredActionsFromPlugin(args) {
+    // If plugin is payable, return []
+    if (args.plugin.functionType === "payable") return [];
+
+    // Else we have ERC20 plugin
+    const { mintAmount } = args.plugin.get();
+    const cERC20Address = args.plugin.contractAddress;
+
+    if (!cERC20Address || !mintAmount || InstanceOf.Variable(cERC20Address) || InstanceOf.Variable(mintAmount))
+      return [];
+
+    const to = cTokens.find((token) => isEqualAddress(token.address, cERC20Address))?.assetAddress;
+
+    if (!to) return [];
+
+    return [
+      {
+        to,
+        from: args.vaultAddress,
+        params: { spender: cERC20Address, amount: mintAmount },
+        method: "approve",
+        protocol: "ERC20",
+      },
+    ];
+  },
 });

@@ -46,4 +46,21 @@ export const Deposit = createSmartPlugin({
       },
     ];
   },
+  requiredActionsFromPlugin(args) {
+    const { amount, asset: to } = args.plugin.get();
+
+    if (!to || !amount || InstanceOf.Variable(amount) || InstanceOf.Variable(to)) return [];
+
+    const spender = AaveV2_LendingPool_Addresses.find((address) => address.chainId === args.chainId);
+    if (!spender) throw new Error("No AaveV2 lending pool address found for this chainId");
+    return [
+      {
+        to,
+        from: args.vaultAddress,
+        params: { spender: spender.address, amount },
+        method: "approve",
+        protocol: "ERC20",
+      },
+    ];
+  },
 });

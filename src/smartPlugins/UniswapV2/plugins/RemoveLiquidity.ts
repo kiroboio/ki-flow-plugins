@@ -92,5 +92,4 @@ export const RemoveLiquidity = createSmartPlugin({
       },
     ];
   },
-  // requiredActionsFromPlugin(args) {},
 });

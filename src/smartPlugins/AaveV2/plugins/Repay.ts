@@ -50,4 +50,20 @@ export const Repay = createSmartPlugin({
       },
     ];
   },
+  requiredActionsFromPlugin(args) {
+    const { amount, asset: to, onBehalfOf, rateMode } = args.plugin.get();
+
+    if (!to || !amount || !onBehalfOf || !rateMode || !args.requiredActions) return [];
+
+    return args.requiredActions?.({
+      chainId: args.chainId,
+      input: {
+        amount,
+        asset: to,
+        onBehalfOf: onBehalfOf,
+        rateMode: rateMode,
+      },
+      vaultAddress: args.vaultAddress,
+    });
+  },
 });
