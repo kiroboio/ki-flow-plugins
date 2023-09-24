@@ -1,5 +1,5 @@
 import { isEqualAddress } from "../../../helpers";
-import { InstanceOf } from "../../../helpers/instanceOf";
+import { InstanceOf, isVariableOrUndefined } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { CompoundV3 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
@@ -102,6 +102,51 @@ export const Supply = createSmartPlugin({
         protocol: "COMPOUNDV3",
       });
     }
+
+    return approvals;
+  },
+  requiredActionsFromPlugin(args) {
+    // If plugin is payable, return []
+
+    const approvals: RequiredApproval[] = [];
+    let from = args.vaultAddress;
+    let amountVal;
+    let assetVal;
+    const spender = args.plugin.contractAddress;
+    if (isVariableOrUndefined(spender)) return [];
+
+    if (args.plugin.method === "supply" || args.plugin.method === "supplyTo") {
+      const { amount, asset } = args.plugin.get();
+      if (isVariableOrUndefined(amount) || isVariableOrUndefined(asset)) return [];
+      amountVal = amount;
+      assetVal = asset;
+    } else if (args.plugin.method === "supplyFrom") {
+      const { amount, asset, from: fromAddress } = args.plugin.get();
+      if (isVariableOrUndefined(amount) || isVariableOrUndefined(asset) || isVariableOrUndefined(fromAddress))
+        return [];
+      amountVal = amount;
+      from = fromAddress;
+      assetVal = asset;
+      if (!isEqualAddress(from, args.vaultAddress)) {
+        approvals.push({
+          to: asset,
+          from: from,
+          params: { manager: args.vaultAddress, isAllowed: true },
+          method: "allow",
+          protocol: "COMPOUNDV3",
+        });
+      }
+    }
+
+    if (!amountVal || !assetVal) return [];
+
+    approvals.push({
+      to: assetVal,
+      from: from,
+      params: { spender, amount: amountVal },
+      method: "approve",
+      protocol: "ERC20",
+    });
 
     return approvals;
   },

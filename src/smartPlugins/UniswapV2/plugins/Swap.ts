@@ -3,6 +3,7 @@ import { TradeType } from "@uniswap/sdk-core";
 import { AlphaRouter, CurrencyAmount, IV2RouteWithValidQuote } from "@uniswap/smart-order-router";
 import { ethers } from "ethers";
 
+import { InstanceOf, isVariableOrUndefined } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV2 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
@@ -118,6 +119,35 @@ export const Swap = createSmartPlugin({
     ];
 
     return approvals;
+  },
+  requiredActionsFromPlugin(args) {
+    const method = args.plugin.method;
+    let toVal;
+    let amountVal;
+    if (method === "swapExactTokensForETH" || method === "swapExactTokensForTokens") {
+      const input = args.plugin.get();
+      if (InstanceOf.Variable(input.amountIn)) return [];
+      toVal = input.path[0];
+      amountVal = input.amountIn;
+    }
+    if (method === "swapTokensForExactETH" || method === "swapTokensForExactTokens") {
+      const input = args.plugin.get();
+      if (InstanceOf.Variable(input.amountInMax)) return [];
+      toVal = input.path[0];
+      amountVal = input.amountInMax;
+    }
+
+    if (isVariableOrUndefined(toVal) || isVariableOrUndefined(amountVal)) return [];
+
+    return [
+      {
+        to: toVal,
+        from: args.vaultAddress,
+        params: { spender: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", amount: amountVal },
+        method: "approve",
+        protocol: "ERC20",
+      },
+    ];
   },
 });
 

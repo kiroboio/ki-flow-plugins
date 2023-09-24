@@ -20,6 +20,7 @@ import { Plugin } from "./plugin";
 // - optional helpers when constructing plugin (for example, cache for Uniswap). After talking with Sumbat - not mandatory.
 
 // TODO: For now the cache and _getCacheKey are public, should be made private in the future.
+// TODO: Add gas calculation function
 
 /* Issues that came into my mind:
  * - Should we still have the getPlugin function? If yes then we might have 2 problems - how to get required actions and how to run the getPlugin from EIP712 data
