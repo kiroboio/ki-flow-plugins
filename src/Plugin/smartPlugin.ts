@@ -45,6 +45,7 @@ export function createSmartPlugin<
   prepareOutputs,
   requiredActions,
   requiredActionsFromPlugin,
+  estimateGas,
 }: {
   abiFragment: A;
   supportedPlugins: P;
@@ -64,6 +65,11 @@ export function createSmartPlugin<
     vaultAddress: string;
     chainId: C;
   }) => RequiredApproval[];
+  estimateGas?: (args: {
+    input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+    vaultAddress: string;
+    chainId: C;
+  }) => string;
   // }): new (args: { chainId: C; vaultAddress: string; provider: ethers.providers.JsonRpcProvider }) => ISmartPlugin<A, C> {
 }) {
   return class {
@@ -92,6 +98,13 @@ export function createSmartPlugin<
           return { ...acc, [cur.name]: new Output({ innerIndex: index, name: cur.name, type: cur.type }) };
         }, {} as Record<string, Output>) || {}
       );
+    }
+
+    public estimateGas() {
+      if (estimateGas) {
+        return estimateGas({ input: this.getStrict(), chainId: this.chainId, vaultAddress: this.vaultAddress });
+      }
+      return undefined;
     }
 
     public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
@@ -177,6 +190,10 @@ export function createSmartPlugin<
         vaultAddress: this.vaultAddress,
         provider: this.provider,
       });
+      const gas = this.estimateGas();
+      if (gas) {
+        plugin.setOptions({ gasLimit: gas });
+      }
       this.cache.set(this._getCacheKey(), plugin);
       return await plugin.create();
     }
