@@ -192,7 +192,7 @@ export function createSmartPlugin<
       });
       const gas = this.estimateGas();
       if (gas) {
-        plugin.setOptions({ gasLimit: gas });
+        plugin.setOptions({ gasLimit: (BigInt(gas) + 40000n).toString() });
       }
       this.cache.set(this._getCacheKey(), plugin);
       return await plugin.create();
