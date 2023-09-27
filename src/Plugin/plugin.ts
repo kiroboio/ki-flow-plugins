@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import _ from "lodash";
 
+import { CALL_OVERHEAD } from "../constants";
 import {
   type JsonFragment,
   CallType,
@@ -88,8 +89,8 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   public async getGasLimit() {
-    if (!this.gas) return "0";
-    return this.gas;
+    if (!this.gas) return (80000n + CALL_OVERHEAD).toString(); // default gas limit
+    return (BigInt(this.gas) + CALL_OVERHEAD).toString();
   }
 
   public setValue(value: ETHValueInput<A["stateMutability"]> | Variable) {

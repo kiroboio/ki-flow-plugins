@@ -11,6 +11,7 @@ export const AaveV2_LendingPoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "26469",
   },
   {
     inputs: [],
@@ -24,6 +25,7 @@ export const AaveV2_LendingPoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "26488",
   },
   {
     inputs: [
@@ -57,7 +59,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    gas: "650000",
+    gas: "520000",
   },
   {
     inputs: [
@@ -86,7 +88,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
-    gas: "580000",
+    gas: "540000",
   },
   {
     inputs: [
@@ -192,6 +194,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "450000",
   },
   {
     inputs: [
@@ -210,6 +213,7 @@ export const AaveV2_LendingPoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "280000",
   },
   {
     inputs: [
@@ -301,7 +305,7 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
-    gas: "105000",
+    gas: "40000",
   },
   {
     inputs: [
@@ -396,7 +400,7 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
-    gas: "119000",
+    gas: "65000",
   },
   {
     inputs: [
@@ -461,6 +465,6 @@ export const AaveV2_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
-    gas: "245000",
+    gas: "120411",
   },
 ] as const;
