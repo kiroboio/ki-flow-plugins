@@ -5,6 +5,7 @@ export const ChainlinkOracleABI = [
     outputs: [{ internalType: "uint8", name: "decimals", type: "uint8" }],
     stateMutability: "view",
     type: "function",
+    gas: "32000",
   },
   {
     inputs: [],
@@ -18,5 +19,6 @@ export const ChainlinkOracleABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "32000",
   },
 ] as const;
