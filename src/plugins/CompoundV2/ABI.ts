@@ -7,6 +7,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "170000",
   },
   {
     constant: true,
@@ -16,6 +17,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "27000",
   },
   {
     constant: false,
@@ -25,6 +27,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "90000",
   },
   {
     constant: true,
@@ -34,6 +37,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "26000",
   },
   {
     constant: true,
@@ -43,19 +47,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      { name: "from", type: "address" },
-      { name: "to", type: "address" },
-      { name: "amount", type: "uint256" },
-    ],
-    name: "transferFrom",
-    outputs: [{ name: "success", type: "bool" }],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    gas: "45000",
   },
   {
     constant: false,
@@ -68,15 +60,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "decimals",
-    outputs: [{ name: "decimals", type: "uint256" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    gas: "175000",
   },
   {
     constant: false,
@@ -86,6 +70,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "90000",
   },
   {
     constant: true,
@@ -95,6 +80,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     constant: true,
@@ -104,6 +90,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "27000",
   },
   {
     constant: true,
@@ -113,15 +100,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "initialExchangeRateMantissa",
-    outputs: [{ name: "initialExchangeRateMantissa", type: "uint256" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    gas: "27000",
   },
   {
     constant: true,
@@ -131,15 +110,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
-  },
-  {
-    constant: true,
-    inputs: [{ name: "owner", type: "address" }],
-    name: "balanceOf",
-    outputs: [{ name: "balance", type: "uint256" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    gas: "40000",
   },
   {
     constant: false,
@@ -149,6 +120,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "85000",
   },
   {
     constant: false,
@@ -158,6 +130,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "330000",
   },
   {
     constant: true,
@@ -167,6 +140,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "27000",
   },
   {
     constant: true,
@@ -176,6 +150,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "45000",
   },
   {
     constant: false,
@@ -185,18 +160,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      { name: "to", type: "address" },
-      { name: "amount", type: "uint256" },
-    ],
-    name: "transfer",
-    outputs: [{ name: "success", type: "bool" }],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    gas: "205000",
   },
   {
     constant: true,
@@ -206,19 +170,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      { name: "liquidator", type: "address" },
-      { name: "borrower", type: "address" },
-      { name: "seizeTokens", type: "uint256" },
-    ],
-    name: "seize",
-    outputs: [{ name: "errorCode", type: "uint256" }],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    gas: "65000",
   },
   {
     constant: false,
@@ -228,6 +180,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "95000",
   },
   {
     constant: true,
@@ -242,6 +195,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "60000",
   },
   {
     constant: false,
@@ -251,6 +205,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "380000",
   },
   {
     constant: false,
@@ -260,18 +215,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      { name: "owner", type: "address" },
-      { name: "spender", type: "address" },
-    ],
-    name: "allowance",
-    outputs: [{ name: "allowance", type: "uint256" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    gas: "440000",
   },
   {
     constant: false,
@@ -285,6 +229,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "630000",
   },
   {
     constant: true,
@@ -294,6 +239,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "60000",
   },
   {
     constant: true,
@@ -303,6 +249,7 @@ export const cERC20_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
 ] as const;
 
@@ -316,15 +263,7 @@ export const cETH_ABI = [
     payable: true,
     stateMutability: "payable",
     type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "decimals",
-    outputs: [{ name: "", type: "uint256" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    gas: "125000",
   },
   {
     constant: false,
@@ -334,6 +273,7 @@ export const cETH_ABI = [
     payable: true,
     stateMutability: "payable",
     type: "function",
+    gas: "128000",
   },
   {
     constant: false,
@@ -346,24 +286,27 @@ export const cETH_ABI = [
     payable: true,
     stateMutability: "payable",
     type: "function",
+    gas: "630000",
   },
   {
     constant: true,
     inputs: [],
     name: "supplyRatePerBlock",
-    outputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "supplyRatePerBlock", type: "uint256" }],
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "55000",
   },
   {
     constant: false,
     inputs: [{ name: "borrowAmount", type: "uint256" }],
     name: "borrow",
-    outputs: [{ name: "", type: "uint256" }],
+    outputs: [{ name: "errorCode", type: "uint256" }],
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "490000",
   },
   {
     constant: false,
@@ -373,6 +316,7 @@ export const cETH_ABI = [
     payable: true,
     stateMutability: "payable",
     type: "function",
+    gas: "120000",
   },
 ] as const;
 
@@ -389,6 +333,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "50000",
   },
   // {
   //   constant: false,
@@ -402,20 +347,20 @@ export const Comptroller_ABI = [
   //   stateMutability: "nonpayable",
   //   type: "function",
   // },
-  {
-    constant: false,
-    inputs: [
-      { internalType: "address[]", name: "holders", type: "address[]" },
-      { internalType: "contract CToken[]", name: "cTokens", type: "address[]" },
-      { internalType: "bool", name: "borrowers", type: "bool" },
-      { internalType: "bool", name: "suppliers", type: "bool" },
-    ],
-    name: "claimComp", // claimComp(address[],address[],bool,bool)
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+  // {
+  //   constant: false,
+  //   inputs: [
+  //     { internalType: "address[]", name: "holders", type: "address[]" },
+  //     { internalType: "contract CToken[]", name: "cTokens", type: "address[]" },
+  //     { internalType: "bool", name: "borrowers", type: "bool" },
+  //     { internalType: "bool", name: "suppliers", type: "bool" },
+  //   ],
+  //   name: "claimComp", // claimComp(address[],address[],bool,bool)
+  //   outputs: [],
+  //   payable: false,
+  //   stateMutability: "nonpayable",
+  //   type: "function",
+  // },
   {
     constant: false,
     inputs: [{ internalType: "address", name: "holder", type: "address" }],
@@ -424,6 +369,17 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "2000000",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "getCompAddress",
+    outputs: [{ internalType: "address", name: "compAddress", type: "address" }],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+    gas: "30000",
   },
   {
     constant: true,
@@ -433,6 +389,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "33000",
   },
   {
     constant: true,
@@ -442,6 +399,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "35000",
   },
   {
     constant: false,
@@ -451,6 +409,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "103000",
   },
   {
     constant: false,
@@ -460,6 +419,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "180000",
   },
   {
     constant: true,
@@ -473,15 +433,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "getCompAddress",
-    outputs: [{ internalType: "address", name: "compAddress", type: "address" }],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    gas: "38000",
   },
   {
     constant: true,
@@ -491,6 +443,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "30000",
   },
   {
     constant: true,
@@ -504,6 +457,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     constant: true,
@@ -513,6 +467,7 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "35000",
   },
   {
     constant: true,
@@ -522,5 +477,6 @@ export const Comptroller_ABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "35000",
   },
 ] as const;
