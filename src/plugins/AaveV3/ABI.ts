@@ -11,6 +11,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "30000",
   },
   {
     inputs: [],
@@ -24,6 +25,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "30000",
   },
   {
     inputs: [
@@ -58,51 +60,6 @@ export const AaveV3_PoolABI = [
     stateMutability: "nonpayable",
     type: "function",
     gas: "440000",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint8",
-        name: "id",
-        type: "uint8",
-      },
-      {
-        components: [
-          {
-            internalType: "uint16",
-            name: "ltv",
-            type: "uint16",
-          },
-          {
-            internalType: "uint16",
-            name: "liquidationThreshold",
-            type: "uint16",
-          },
-          {
-            internalType: "uint16",
-            name: "liquidationBonus",
-            type: "uint16",
-          },
-          {
-            internalType: "address",
-            name: "priceSource",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "label",
-            type: "string",
-          },
-        ],
-        internalType: "struct DataTypes.EModeCategory",
-        name: "category",
-        type: "tuple",
-      },
-    ],
-    name: "configureEModeCategory",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
   {
     inputs: [
@@ -151,6 +108,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "30000",
   },
   {
     inputs: [
@@ -170,6 +128,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "35000",
   },
   {
     inputs: [
@@ -189,6 +148,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "35000",
   },
   {
     inputs: [
@@ -233,6 +193,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "210000",
   },
   {
     inputs: [
@@ -252,6 +213,7 @@ export const AaveV3_PoolABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "35000",
   },
   {
     inputs: [
@@ -285,6 +247,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "630000",
   },
   {
     inputs: [
@@ -337,6 +300,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "215000",
   },
   {
     inputs: [
@@ -350,6 +314,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "70000",
   },
   {
     inputs: [
@@ -368,6 +333,7 @@ export const AaveV3_PoolABI = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
+    gas: "130000",
   },
   {
     inputs: [
@@ -397,24 +363,6 @@ export const AaveV3_PoolABI = [
     stateMutability: "nonpayable",
     type: "function",
     gas: "270000",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "asset",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "interestRateMode",
-        type: "uint256",
-      },
-    ],
-    name: "swapBorrowRateMode",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
   {
     inputs: [
@@ -461,6 +409,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "78693",
   },
   {
     inputs: [
@@ -480,6 +429,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [],
@@ -493,6 +443,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "pure",
     type: "function",
+    gas: "25000",
   },
   {
     inputs: [
@@ -512,6 +463,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "63000",
   },
   {
     inputs: [
@@ -531,6 +483,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -550,6 +503,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -574,6 +528,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -638,6 +593,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -712,6 +668,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "115000",
   },
   {
     inputs: [
@@ -731,6 +688,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -760,6 +718,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "65000",
   },
   {
     inputs: [
@@ -779,6 +738,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -798,6 +758,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "95000",
   },
   {
     inputs: [
@@ -817,6 +778,7 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "40000",
   },
   {
     inputs: [
@@ -881,5 +843,6 @@ export const AaveV3_ProtocolDataProviderABI = [
     ],
     stateMutability: "view",
     type: "function",
+    gas: "180000",
   },
 ] as const;
