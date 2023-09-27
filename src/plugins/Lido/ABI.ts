@@ -1,12 +1,13 @@
 export const LidoSTETHABI = [
   {
     constant: true,
-    inputs: [{ name: "_ethAmount", type: "uint256" }],
+    inputs: [{ name: "ethAmount", type: "uint256" }],
     name: "getSharesByPooledEth",
     outputs: [{ name: "sharesByPooledETH", type: "uint256" }],
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "65000",
   },
   {
     constant: true,
@@ -16,6 +17,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "52000",
   },
   {
     constant: true,
@@ -25,16 +27,8 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "67000",
   },
-  // {
-  //   constant: true,
-  //   inputs: [],
-  //   name: "getBufferedEther",
-  //   outputs: [{ name: "", type: "uint256" }],
-  //   payable: false,
-  //   stateMutability: "view",
-  //   type: "function",
-  // },
   {
     constant: true,
     inputs: [],
@@ -43,6 +37,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "53000",
   },
   {
     constant: true,
@@ -60,6 +55,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "62000",
   },
   {
     constant: false,
@@ -73,6 +69,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "110000",
   },
   {
     constant: true,
@@ -82,6 +79,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "69000",
   },
   {
     constant: true,
@@ -91,6 +89,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "56000",
   },
   {
     constant: false,
@@ -103,6 +102,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "nonpayable",
     type: "function",
+    gas: "110000",
   },
   {
     constant: false,
@@ -112,20 +112,8 @@ export const LidoSTETHABI = [
     payable: true,
     stateMutability: "payable",
     type: "function",
+    gas: "105000",
   },
-  // {
-  //   constant: false,
-  //   inputs: [
-  //     { name: "_maxDepositsCount", type: "uint256" },
-  //     { name: "_stakingModuleId", type: "uint256" },
-  //     { name: "_depositCalldata", type: "bytes" },
-  //   ],
-  //   name: "deposit",
-  //   outputs: [],
-  //   payable: false,
-  //   stateMutability: "nonpayable",
-  //   type: "function",
-  // },
   {
     constant: true,
     inputs: [],
@@ -134,6 +122,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "50000",
   },
   {
     constant: true,
@@ -143,6 +132,7 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "86000",
   },
   {
     constant: true,
@@ -152,5 +142,6 @@ export const LidoSTETHABI = [
     payable: false,
     stateMutability: "view",
     type: "function",
+    gas: "55000",
   },
 ] as const;
