@@ -54,7 +54,7 @@ export const ERC20ABI = [
         type: "uint256",
       },
     ],
-    name: "transferFrom",
+    name: "transferFrom", // transferFrom(address,address,uint256)
     outputs: [
       {
         name: "success",
@@ -116,7 +116,7 @@ export const ERC20ABI = [
         type: "uint256",
       },
     ],
-    name: "transfer",
+    name: "transfer", // transfer(address,uint256)
     outputs: [
       {
         name: "success",
