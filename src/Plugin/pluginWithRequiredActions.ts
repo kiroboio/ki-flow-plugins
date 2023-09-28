@@ -9,6 +9,7 @@ export function createPluginWithRequiredActions<P extends Plugin<any> = Plugin<a
   requiredActions: (args: {
     input: ReturnType<InstanceType<P>["get"]>;
     vaultAddress: string;
+    contractAddress?: string;
     chainId: ChainId;
   }) => RequiredApproval[];
 }) {
@@ -30,6 +31,7 @@ export function createPluginWithRequiredActions<P extends Plugin<any> = Plugin<a
       return requiredActions({
         input: this.get() as ReturnType<InstanceType<P>["get"]>,
         vaultAddress: this.vaultAddress,
+        contractAddress: this.contractAddress,
         chainId: this.chainId,
       });
     }
