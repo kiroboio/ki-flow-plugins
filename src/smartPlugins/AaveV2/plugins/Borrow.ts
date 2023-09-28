@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-
 import { isEqualAddress } from "../../../helpers";
 import { InstanceOf } from "../../../helpers/instanceOf";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
@@ -89,8 +87,5 @@ export const Borrow = createSmartPlugin({
         protocol: "AAVE",
       },
     ];
-  },
-  estimateGas() {
-    return ethers.utils.parseUnits("270000", "gwei").toString();
   },
 });
