@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { CurvePoolABI } from "./ABI";
 
 // TODO: For Curve there should be 3 different plugins, because pool has strict array lengths and pool can have 2, 3 or 4 assets.
@@ -10,3 +11,6 @@ const CurvePool = createProtocolPluginsAsObject({
 });
 
 export const Curve = { ...CurvePool };
+
+export type Curve = typeof Curve;
+export type CurveArray = ProtocolPlugins<Curve>;

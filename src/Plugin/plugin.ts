@@ -251,7 +251,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
   protocol: I;
   supportedContracts?: readonly SupportedContract[];
 }) {
-  return class Plugin extends PluginFunction<F> {
+  return class Plugin extends PluginFunction<F, I> {
     constructor(args: {
       chainId: ChainId;
       contractAddress?: string;

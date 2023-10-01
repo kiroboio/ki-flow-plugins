@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { AaveV2_ProtocolDataProviderABI } from "../AaveV2/ABI";
 import { AaveV3_PoolABI } from "./ABI";
 import { AaveV3_Pool_Addresses, AaveV3_ProtocolDataProvider_Addresses } from "./constants";
@@ -15,3 +16,6 @@ const ProtocolDataProvider = createProtocolPluginsAsObject({
 });
 
 export const AaveV3 = { ...Pool, ...ProtocolDataProvider };
+
+export type AaveV3 = typeof AaveV3;
+export type AaveV3Array = ProtocolPlugins<AaveV3>;

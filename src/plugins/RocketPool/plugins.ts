@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { RocketPoolABI, RocketPoolDepositABI } from "./ABI";
 import { RocketPoolAddresses, RocketPoolDepositAddresses } from "./constants";
 
@@ -15,3 +16,6 @@ const RocketPoolToken = createProtocolPluginsAsObject({
 });
 
 export const RocketPool = { ...RocketPoolDeposit, ...RocketPoolToken };
+
+export type RocketPool = typeof RocketPool;
+export type RocketPoolArray = ProtocolPlugins<RocketPool>;

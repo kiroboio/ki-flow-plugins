@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { Sushiswap_MasterChefV2_ABI, Sushiswap_Router_ABI } from "./ABI";
 import { Sushi_MasterChefV2, Sushiswap_Router } from "./constants";
 
@@ -15,3 +16,6 @@ const MasterChefV2 = createProtocolPluginsAsObject({
 });
 
 export const Sushiswap = { ...Router, ...MasterChefV2 };
+
+export type Sushiswap = typeof Sushiswap;
+export type SushiswapArray = ProtocolPlugins<Sushiswap>;

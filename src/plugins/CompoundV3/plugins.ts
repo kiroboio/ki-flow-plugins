@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { cometABI } from "./ABI";
 import { comets } from "./constants";
 
@@ -11,3 +12,6 @@ const comet = createProtocolPluginsAsObject({
 });
 
 export const CompoundV3 = { ...comet };
+
+export type CompoundV3 = typeof CompoundV3;
+export type CompoundV3Array = ProtocolPlugins<CompoundV3>;

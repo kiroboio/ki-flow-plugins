@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { WETHABI } from "./ABI";
 import { WETHContracts } from "./constants";
 
@@ -7,3 +8,6 @@ export const WETH = createProtocolPluginsAsObject({
   abi: WETHABI,
   supportedContracts: WETHContracts,
 });
+
+export type WETH = typeof WETH;
+export type WETHArray = ProtocolPlugins<WETH>;

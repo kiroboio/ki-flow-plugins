@@ -130,3 +130,5 @@ export type PluginFunctionInput<A extends readonly EnhancedJsonFragmentType[]> =
     HandleUndefined<Extract<A[number], { name: K }>["canBeVariable"], true>
   >;
 };
+
+export type ProtocolPlugins<T> = T extends { [key: string]: infer V } ? V[] : never;

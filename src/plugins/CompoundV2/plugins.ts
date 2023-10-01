@@ -1,4 +1,5 @@
 import { createProtocolPluginsAsObject } from "../../Plugin";
+import { ProtocolPlugins } from "../../types";
 import { cERC20_ABI, cETH_ABI } from "./ABI";
 import { cETHAddresses, cTokens } from "./constants";
 
@@ -17,3 +18,6 @@ export const CompoundV2_cERC20 = createProtocolPluginsAsObject({
 });
 
 export const CompoundV2 = { ...CompoundV2_cERC20 };
+
+export type CompoundV2 = typeof CompoundV2;
+export type CompoundV2Array = ProtocolPlugins<CompoundV2>;
