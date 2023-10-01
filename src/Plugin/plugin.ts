@@ -16,9 +16,7 @@ import {
 import { getOutputs } from "./outputs";
 import { FunctionParameter } from "./parameter";
 
-type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
-
-export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment> {
+export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment, I extends string = string> {
   public readonly chainId: ChainId;
   public readonly method: A["name"];
   public readonly params: FunctionParameter[] = [];
@@ -27,6 +25,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly abiFragment: A;
   public readonly outputParams: FunctionParameter[] = [];
   public readonly supportedContracts: readonly SupportedContract[] = [];
+  public readonly id: `${I}_${A["name"]}`;
 
   public contractAddress?: string;
   public ethValue: string | Variable = "0";
@@ -34,6 +33,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public options: A["options"] = {};
 
   constructor(args: {
+    protocol: I;
     abiFragment: A;
     chainId: ChainId;
     contractAddress?: string;
@@ -47,6 +47,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.abiFragment = args.abiFragment;
+    this.id = `${args.protocol}_${args.abiFragment.name}`;
     if (args.abiFragment.gas) this.gas = args.abiFragment.gas;
     if (args.abiFragment.options) {
       this.options = args.abiFragment.options;
@@ -238,11 +239,13 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 }
 
-export function createPlugin<F extends Readonly<JsonFragment>>({
+export function createPlugin<F extends Readonly<JsonFragment>, I extends string>({
   abiFragment,
+  protocol,
   supportedContracts,
 }: {
   abiFragment: F;
+  protocol: I;
   supportedContracts?: readonly SupportedContract[];
 }) {
   return class Plugin extends PluginFunction<F> {
@@ -252,6 +255,7 @@ export function createPlugin<F extends Readonly<JsonFragment>>({
       input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
     }) {
       super({
+        protocol,
         abiFragment,
         chainId: args.chainId,
         contractAddress: args.contractAddress,
@@ -281,10 +285,12 @@ export function createProtocolPlugins<F extends JsonFragment>({
 
 export type Plugin<F extends JsonFragment> = ReturnType<typeof createPlugin<F>>;
 
-export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>({
+export function createProtocolPluginsAsObject<F extends readonly JsonFragment[], I extends string>({
   abi,
   supportedContracts,
+  protocol,
 }: {
+  protocol: I;
   abi: F;
   supportedContracts?: readonly SupportedContract[];
 }): {
@@ -296,7 +302,7 @@ export function createProtocolPluginsAsObject<F extends readonly JsonFragment[]>
       (acc, cur) => {
         return {
           ...acc,
-          [cur.name]: createPlugin({ abiFragment: cur, supportedContracts }),
+          [cur.name]: createPlugin({ abiFragment: cur, supportedContracts, protocol }),
         };
       },
       {} as {

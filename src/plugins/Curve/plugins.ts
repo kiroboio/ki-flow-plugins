@@ -5,6 +5,7 @@ import { CurvePoolABI } from "./ABI";
 // For example, uint256[2], uint256[3], uint256[4] etc.
 
 const CurvePool = createProtocolPluginsAsObject({
+  protocol: "Curve",
   abi: CurvePoolABI,
 });
 

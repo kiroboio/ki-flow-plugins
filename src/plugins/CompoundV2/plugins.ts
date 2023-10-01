@@ -5,11 +5,13 @@ import { cETHAddresses, cTokens } from "./constants";
 // TODO: cToken mint and redeem should be a smart plugin, because they share the same method name with different parameters
 
 export const CompoundV2_cETH = createProtocolPluginsAsObject({
+  protocol: "CompoundV2_cETH",
   abi: cETH_ABI,
   supportedContracts: cETHAddresses,
 });
 
 export const CompoundV2_cERC20 = createProtocolPluginsAsObject({
+  protocol: "CompoundV2_cERC20",
   abi: cERC20_ABI,
   supportedContracts: cTokens,
 });
