@@ -16,6 +16,8 @@ import {
 import { getOutputs } from "./outputs";
 import { FunctionParameter } from "./parameter";
 
+type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
+
 export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment, I extends string = string> {
   public readonly chainId: ChainId;
   public readonly method: A["name"];
@@ -215,6 +217,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
   public clone(): PluginFunction<A> {
     return new PluginFunction({
+      protocol: this.id.split("_")[0] as I,
       abiFragment: this.abiFragment,
       chainId: this.chainId,
       contractAddress: this.contractAddress,
@@ -266,10 +269,12 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
   };
 }
 
-export function createProtocolPlugins<F extends JsonFragment>({
+export function createProtocolPlugins<F extends JsonFragment, I extends string>({
   abi,
   supportedContracts,
+  protocol,
 }: {
+  protocol: I;
   abi: readonly F[];
   supportedContracts?: SupportedContract[];
 }) {
@@ -277,13 +282,14 @@ export function createProtocolPlugins<F extends JsonFragment>({
     .filter((f) => f.type === "function")
     .map((f) =>
       createPlugin({
+        protocol,
         abiFragment: f,
         supportedContracts,
       })
     );
 }
 
-export type Plugin<F extends JsonFragment> = ReturnType<typeof createPlugin<F>>;
+export type Plugin<F extends JsonFragment, I extends string> = ReturnType<typeof createPlugin<F, I>>;
 
 export function createProtocolPluginsAsObject<F extends readonly JsonFragment[], I extends string>({
   abi,
@@ -294,7 +300,7 @@ export function createProtocolPluginsAsObject<F extends readonly JsonFragment[],
   abi: F;
   supportedContracts?: readonly SupportedContract[];
 }): {
-  [K in Extract<F[number], { type: "function" }>["name"]]: Plugin<Extract<F[number], { name: K; type: "function" }>>;
+  [K in Extract<F[number], { type: "function" }>["name"]]: Plugin<Extract<F[number], { name: K; type: "function" }>, I>;
 } {
   const data = abi
     .filter((f) => f.type === "function")
@@ -307,7 +313,8 @@ export function createProtocolPluginsAsObject<F extends readonly JsonFragment[],
       },
       {} as {
         [K in Extract<F[number], { type: "function" }>["name"]]: Plugin<
-          Extract<F[number], { name: K; type: "function" }>
+          Extract<F[number], { name: K; type: "function" }>,
+          I
         >;
       }
     );

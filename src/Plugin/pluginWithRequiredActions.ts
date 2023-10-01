@@ -1,7 +1,7 @@
 import { ChainId, RequiredApproval } from "../types";
 import { Plugin } from "./plugin";
 
-export function createPluginWithRequiredActions<P extends Plugin<any> = Plugin<any>>({
+export function createPluginWithRequiredActions<P extends Plugin<any, string> = Plugin<any, string>>({
   plugin,
   requiredActions,
 }: {

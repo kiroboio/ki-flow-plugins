@@ -34,7 +34,7 @@ type RequiredActionsFunction<C extends ChainId, A extends EnhancedJsonFragment> 
 }) => RequiredApproval[];
 
 export function createSmartPlugin<
-  P extends readonly Plugin<any>[] = readonly Plugin<any>[],
+  P extends readonly Plugin<any, string>[] = readonly Plugin<any, string>[],
   A extends EnhancedJsonFragment = EnhancedJsonFragment,
   C extends ChainId = ChainId,
   RF extends RequiredActionsFunction<C, A> = RequiredActionsFunction<C, A>
@@ -228,7 +228,7 @@ export interface ISmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonFragm
   get(): PluginFunctionInput<HandleUndefined<A["inputs"]>>;
   getStrict(): RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   getRequiredActions(): RequiredApproval[];
-  getPlugin(): Promise<InstanceType<Plugin<any>>>;
+  getPlugin(): Promise<InstanceType<Plugin<any, string>>>;
   create(): Promise<IPluginCall | undefined>;
   _getCacheKey(): string;
 }
