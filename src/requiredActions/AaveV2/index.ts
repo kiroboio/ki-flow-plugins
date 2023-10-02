@@ -1,1 +1,3 @@
-export const PROTOCOL = "AaveV2" as const;
+import { AaveV2Deposit } from "./deposit";
+
+export const AaveV2RequiredActions = [AaveV2Deposit];

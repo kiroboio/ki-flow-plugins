@@ -11,5 +11,5 @@ const Router = createProtocolPluginsAsObject({
 
 export const UniswapV2 = { ...Router };
 
-export type UniswapV2 = typeof UniswapV2;
-export type UniswapV2Array = ProtocolPlugins<UniswapV2>;
+export type IUniswapV2 = typeof UniswapV2;
+export type UniswapV2Array = ProtocolPlugins<IUniswapV2>;

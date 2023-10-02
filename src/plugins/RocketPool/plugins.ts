@@ -17,5 +17,5 @@ const RocketPoolToken = createProtocolPluginsAsObject({
 
 export const RocketPool = { ...RocketPoolDeposit, ...RocketPoolToken };
 
-export type RocketPool = typeof RocketPool;
-export type RocketPoolArray = ProtocolPlugins<RocketPool>;
+export type IRocketPool = typeof RocketPool;
+export type RocketPoolArray = ProtocolPlugins<IRocketPool>;

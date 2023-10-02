@@ -11,5 +11,5 @@ const Oracle = createProtocolPluginsAsObject({
 
 export const Chainlink = { ...Oracle };
 
-export type Chainlink = typeof Chainlink;
-export type ChainlinkArray = ProtocolPlugins<Chainlink>;
+export type IChainlink = typeof Chainlink;
+export type ChainlinkArray = ProtocolPlugins<IChainlink>;

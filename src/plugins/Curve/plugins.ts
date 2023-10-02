@@ -12,5 +12,5 @@ const CurvePool = createProtocolPluginsAsObject({
 
 export const Curve = { ...CurvePool };
 
-export type Curve = typeof Curve;
-export type CurveArray = ProtocolPlugins<Curve>;
+export type ICurve = typeof Curve;
+export type CurveArray = ProtocolPlugins<ICurve>;

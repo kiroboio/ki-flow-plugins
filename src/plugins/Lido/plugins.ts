@@ -8,5 +8,5 @@ export const Lido = {
   ...LidoSTETH,
 };
 
-export type Lido = typeof Lido;
-export type LidoArray = ProtocolPlugins<Lido>;
+export type ILido = typeof Lido;
+export type LidoArray = ProtocolPlugins<ILido>;

@@ -17,5 +17,5 @@ const MasterChefV2 = createProtocolPluginsAsObject({
 
 export const Sushiswap = { ...Router, ...MasterChefV2 };
 
-export type Sushiswap = typeof Sushiswap;
-export type SushiswapArray = ProtocolPlugins<Sushiswap>;
+export type ISushiswap = typeof Sushiswap;
+export type SushiswapArray = ProtocolPlugins<ISushiswap>;

@@ -19,5 +19,5 @@ export const CompoundV2_cERC20 = createProtocolPluginsAsObject({
 
 export const CompoundV2 = { ...CompoundV2_cERC20 };
 
-export type CompoundV2 = typeof CompoundV2;
-export type CompoundV2Array = ProtocolPlugins<CompoundV2>;
+export type ICompoundV2 = typeof CompoundV2;
+export type CompoundV2Array = ProtocolPlugins<ICompoundV2>;

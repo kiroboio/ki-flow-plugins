@@ -9,5 +9,5 @@ export const WETH = createProtocolPluginsAsObject({
   supportedContracts: WETHContracts,
 });
 
-export type WETH = typeof WETH;
-export type WETHArray = ProtocolPlugins<WETH>;
+export type IWETH = typeof WETH;
+export type WETHArray = ProtocolPlugins<IWETH>;

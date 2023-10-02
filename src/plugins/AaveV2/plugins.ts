@@ -16,5 +16,5 @@ const ProtocolDataProvider = createProtocolPluginsAsObject({
 
 export const AaveV2 = { ...LendingPool, ...ProtocolDataProvider };
 
-export type AaveV2 = typeof AaveV2;
-export type AaveV2Array = ProtocolPlugins<AaveV2>;
+export type IAaveV2 = typeof AaveV2;
+export type AaveV2Array = ProtocolPlugins<IAaveV2>;

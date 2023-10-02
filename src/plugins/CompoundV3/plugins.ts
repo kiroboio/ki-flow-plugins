@@ -13,5 +13,5 @@ const comet = createProtocolPluginsAsObject({
 
 export const CompoundV3 = { ...comet };
 
-export type CompoundV3 = typeof CompoundV3;
-export type CompoundV3Array = ProtocolPlugins<CompoundV3>;
+export type ICompoundV3 = typeof CompoundV3;
+export type CompoundV3Array = ProtocolPlugins<ICompoundV3>;

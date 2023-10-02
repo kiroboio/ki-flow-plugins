@@ -6,5 +6,5 @@ import { KiroboMulticallABI } from "./ABI";
 // In that way we can calculate correct outputs for multicall
 export const Multicall = createProtocolPluginsAsObject({ protocol: "KiroboMulticall", abi: KiroboMulticallABI });
 
-export type Multicall = typeof Multicall;
-export type MulticallArray = ProtocolPlugins<Multicall>;
+export type IMulticall = typeof Multicall;
+export type MulticallArray = ProtocolPlugins<IMulticall>;
