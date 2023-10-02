@@ -1,10 +1,10 @@
-import { isEqualAddress } from "../../../helpers";
-import { isVariableOrUndefined } from "../../../helpers/instanceOf";
-import { createPluginWithRequiredActions } from "../../../Plugin/pluginWithRequiredActions";
-import { CompoundV2_cERC20 } from "../../../plugins/CompoundV2";
-import { cTokens } from "../../../plugins/CompoundV2/constants";
+import { isEqualAddress } from "../../helpers";
+import { isVariableOrUndefined } from "../../helpers/instanceOf";
+import { CompoundV2_cERC20 } from "../../plugins";
+import { cTokens } from "../../plugins/CompoundV2/constants";
+import { createRequiredActionForPlugin } from "../requiredAction";
 
-export const cERC20RepayBorrowBehalf = createPluginWithRequiredActions({
+export const CompoundV2_cERC20RepayBorrow = createRequiredActionForPlugin({
   plugin: CompoundV2_cERC20.repayBorrow,
   requiredActions(args) {
     const { repayAmount } = args.input;
