@@ -13,7 +13,8 @@ export const CompoundV3SupplyFrom = createRequiredActionForPlugin({
       isVariableOrUndefined(amount) ||
       isVariableOrUndefined(asset) ||
       isVariableOrUndefined(args.contractAddress) ||
-      isVariableOrUndefined(from)
+      isVariableOrUndefined(from) ||
+      isVariableOrUndefined(args.vaultAddress)
     )
       return [];
 

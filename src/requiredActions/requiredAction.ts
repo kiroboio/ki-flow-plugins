@@ -1,5 +1,5 @@
 import { Plugin } from "../Plugin";
-import { ChainId, RequiredApproval } from "../types";
+import { ChainId, RequiredApproval, Variable } from "../types";
 
 export function createRequiredActionForPlugin<P extends Plugin<any, string>>({
   plugin,
@@ -8,8 +8,8 @@ export function createRequiredActionForPlugin<P extends Plugin<any, string>>({
   plugin: P;
   requiredActions: (args: {
     input: ReturnType<InstanceType<P>["get"]>;
-    vaultAddress: string;
-    contractAddress?: string;
+    vaultAddress: string | Variable;
+    contractAddress: string | Variable;
     chainId: ChainId;
   }) => RequiredApproval[];
 }) {

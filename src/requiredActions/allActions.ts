@@ -8,4 +8,4 @@ export const AllRequiredActions = [
   AaveV3RequiredActions,
   CompoundV2RequiredActions,
   CompoundV3RequiredActions,
-];
+].flat();

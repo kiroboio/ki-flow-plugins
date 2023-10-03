@@ -61,6 +61,7 @@ export interface CallOptions {
 export interface IPluginCall {
   value?: string | Variable;
   to: string | Variable;
+  from: string | Variable;
   method: string;
   params: Param[];
   options?: CallOptions;
