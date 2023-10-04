@@ -73,30 +73,4 @@ export const Withdraw = createSmartPlugin({
       },
     });
   },
-  // requiredActions(args) {
-  //   const { asset, amount, behalfOf, comet } = args.input;
-  //   if (InstanceOf.Variable(amount)) return [];
-
-  //   const approvals: RequiredApproval[] = [
-  //     {
-  //       to: asset,
-  //       from: behalfOf,
-  //       params: { spender: comet, amount },
-  //       method: "approve",
-  //       protocol: "ERC20",
-  //     },
-  //   ];
-
-  //   if (!isEqualAddress(behalfOf, args.vaultAddress)) {
-  //     approvals.push({
-  //       to: comet,
-  //       from: behalfOf,
-  //       params: { manager: args.vaultAddress, isAllowed: true },
-  //       method: "allow",
-  //       protocol: "COMPOUNDV3",
-  //     });
-  //   }
-
-  //   return approvals;
-  // },
 });

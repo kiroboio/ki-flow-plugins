@@ -46,19 +46,4 @@ export const Deposit = createSmartPlugin({
       },
     ];
   },
-  requiredActionsFromPlugin(args) {
-    const { amount, asset: to, onBehalfOf } = args.plugin.get();
-
-    if (!to || !amount || !onBehalfOf || !args.requiredActions) return [];
-
-    return args.requiredActions?.({
-      chainId: args.chainId,
-      input: {
-        amount,
-        asset: to,
-        onBehalfOf: onBehalfOf,
-      },
-      vaultAddress: args.vaultAddress,
-    });
-  },
 });

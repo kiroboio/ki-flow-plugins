@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import NodeCache from "node-cache";
 
-import { parseParams } from "../helpers/parseParams";
 import {
   ChainId,
   EnhancedJsonFragment,
@@ -44,7 +43,6 @@ export function createSmartPlugin<
   abiFragment,
   prepareOutputs,
   requiredActions,
-  requiredActionsFromPlugin,
   estimateGas,
 }: {
   abiFragment: A;
@@ -59,12 +57,6 @@ export function createSmartPlugin<
     input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) => Record<string, Output>;
   requiredActions?: RF;
-  requiredActionsFromPlugin?: (args: {
-    plugin: InstanceType<P[number]>;
-    requiredActions?: RF;
-    vaultAddress: string;
-    chainId: C;
-  }) => RequiredApproval[];
   estimateGas?: (args: {
     input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     vaultAddress: string;
@@ -132,36 +124,8 @@ export function createSmartPlugin<
     public async getRequiredActions(): Promise<RequiredApproval[]> {
       if (requiredActions) {
         return requiredActions({ input: this.getStrict(), chainId: this.chainId, vaultAddress: this.vaultAddress });
-      } else if (requiredActionsFromPlugin) {
-        const plugin = await this.getPlugin();
-        return requiredActionsFromPlugin({
-          plugin: plugin as InstanceType<P[number]>,
-          chainId: this.chainId,
-          vaultAddress: this.vaultAddress,
-        });
       }
       return [];
-    }
-
-    public getRequiredActionsFromCall(call: IPluginCall): RequiredApproval[] {
-      if (!requiredActionsFromPlugin) throw new Error("requiredActionsFromPlugin not defined");
-
-      const Plugin = supportedPlugins.find((p) => {
-        const plugin = new p({ chainId: "1" });
-        return plugin.isPlugin(call);
-      });
-      if (!Plugin) throw new Error("Plugin not supported for this data");
-      const plugin = new Plugin({
-        chainId: "1",
-        input: parseParams(call.params),
-        contractAddress: typeof call.to === "string" ? call.to : undefined,
-      });
-
-      return requiredActionsFromPlugin({
-        plugin: plugin as InstanceType<P[number]>,
-        chainId: this.chainId,
-        vaultAddress: this.vaultAddress,
-      });
     }
 
     public async getPlugin(): Promise<InstanceType<P[number]>> {

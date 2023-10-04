@@ -54,20 +54,4 @@ export const Borrow = createSmartPlugin({
       },
     ];
   },
-  requiredActionsFromPlugin(args) {
-    const { amount, asset: to, onBehalfOf, interestRateMode } = args.plugin.get();
-
-    if (!to || !amount || !onBehalfOf || !interestRateMode || !args.requiredActions) return [];
-
-    return args.requiredActions?.({
-      chainId: args.chainId,
-      input: {
-        amount,
-        asset: to,
-        onBehalfOf: onBehalfOf,
-        interestRateMode: interestRateMode,
-      },
-      vaultAddress: args.vaultAddress,
-    });
-  },
 });

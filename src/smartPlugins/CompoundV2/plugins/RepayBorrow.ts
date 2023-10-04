@@ -102,26 +102,4 @@ export const RepayBorrow = createSmartPlugin({
       },
     ];
   },
-  requiredActionsFromPlugin(args) {
-    // If plugin is payable, return []
-    if (args.plugin.functionType === "payable") return [];
-
-    const { repayAmount } = args.plugin.get();
-
-    const asset = args.plugin.contractAddress;
-
-    if (!asset || !repayAmount || InstanceOf.Variable(repayAmount) || InstanceOf.Variable(asset)) return [];
-
-    const cERC20Address = cTokens.find((token) => isEqualAddress(token.address, asset));
-    if (!cERC20Address) throw new Error(`cERC20 address not found for asset ${asset}`);
-    return [
-      {
-        to: cERC20Address.assetAddress,
-        from: args.vaultAddress,
-        params: { spender: asset, amount: repayAmount },
-        method: "approve",
-        protocol: "ERC20",
-      },
-    ];
-  },
 });
