@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 import { Plugin } from "../Plugin";
 import { ChainId, RequiredApproval, Variable } from "../types";
 
@@ -9,9 +11,10 @@ export function createRequiredActionForPlugin<P extends Plugin<any, string>>({
   requiredActions: (args: {
     input: ReturnType<InstanceType<P>["get"]>;
     vaultAddress?: string | Variable;
+    provider: ethers.providers.Provider;
     contractAddress: string | Variable;
     chainId: ChainId;
-  }) => RequiredApproval[];
+  }) => Promise<RequiredApproval[]> | RequiredApproval[];
 }) {
   const pl = new plugin({ chainId: "1" });
   return [pl.id, requiredActions] as const;

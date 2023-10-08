@@ -1,13 +1,17 @@
+import { ethers } from "ethers";
+
 import { parseParams } from "../helpers/parseParams";
 import { ChainId, IPluginCall } from "../types";
 import { AllRequiredActions } from "./allActions";
 
-export function getRequiredActions<I extends string>({
+export async function getRequiredActions<I extends string>({
   pluginId,
   call,
+  provider,
   chainId,
 }: {
   pluginId: I;
+  provider: ethers.providers.Provider;
   call: IPluginCall;
   chainId: ChainId;
 }) {
@@ -18,9 +22,10 @@ export function getRequiredActions<I extends string>({
 
   const params = parseParams(call.params);
 
-  return requiredActions({
+  return await requiredActions({
     chainId,
     contractAddress: call.to,
+    provider,
     input: params,
     vaultAddress: call.from,
   });
