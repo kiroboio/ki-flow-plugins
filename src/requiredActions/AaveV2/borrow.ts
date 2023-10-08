@@ -1,5 +1,5 @@
 import { isEqualAddress } from "../../helpers";
-import { InstanceOf } from "../../helpers/instanceOf";
+import { isVariableOrUndefined } from "../../helpers/instanceOf";
 import { AaveV2 } from "../../plugins";
 import { AaveV2_aTokens } from "../../plugins/AaveV2/constants";
 import { createRequiredActionForPlugin } from "../requiredAction";
@@ -11,12 +11,11 @@ export const AaveV2Borrow = createRequiredActionForPlugin({
     const { interestRateMode, onBehalfOf, asset, amount } = input;
 
     if (
-      !interestRateMode ||
-      !onBehalfOf ||
-      !asset ||
-      !amount ||
-      InstanceOf.Variable(asset) ||
-      InstanceOf.Variable(amount)
+      isVariableOrUndefined(asset) ||
+      isVariableOrUndefined(amount) ||
+      isVariableOrUndefined(interestRateMode) ||
+      isVariableOrUndefined(onBehalfOf) ||
+      isVariableOrUndefined(args.vaultAddress)
     )
       return [];
 

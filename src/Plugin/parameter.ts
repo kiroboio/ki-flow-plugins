@@ -166,6 +166,7 @@ export class FunctionParameter<
       if (typeof value !== "boolean") {
         throw new Error(`${this.name}: Expected boolean, got ${typeof value}`);
       }
+      return;
     }
     if (typeof value !== "string") {
       throw new Error(`${this.name}: Expected string, got ${typeof value}`);

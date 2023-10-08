@@ -8,7 +8,7 @@ export function createRequiredActionForPlugin<P extends Plugin<any, string>>({
   plugin: P;
   requiredActions: (args: {
     input: ReturnType<InstanceType<P>["get"]>;
-    vaultAddress: string | Variable;
+    vaultAddress?: string | Variable;
     contractAddress: string | Variable;
     chainId: ChainId;
   }) => RequiredApproval[];

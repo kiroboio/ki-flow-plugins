@@ -6,6 +6,10 @@
   "repository": "git@github.com:kiroboio/ki-flow-plugins.git",
   "author": "Brendons Karelis <bk@kirobo.id>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "script": "ts-node --project tsconfig.json"
+  },
   "devDependencies": {
     "@types/lodash": "^4.14.198",
     "@types/node": "^20.6.0",

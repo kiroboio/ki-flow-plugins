@@ -33,11 +33,13 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public ethValue: string | Variable = "0";
   public rpcUrl?: string;
   public options: A["options"] = {};
+  public vaultAddress: string | undefined;
 
   constructor(args: {
     protocol: I;
     abiFragment: A;
     chainId: ChainId;
+    vaultAddress?: string;
     contractAddress?: string;
     supportedContracts?: readonly SupportedContract[];
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
@@ -50,6 +52,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.abiFragment = args.abiFragment;
     this.id = `${args.protocol}_${args.abiFragment.name}`;
+    if (args.vaultAddress) this.vaultAddress = args.vaultAddress;
     if (args.abiFragment.gas) this.gas = args.abiFragment.gas;
     if (args.abiFragment.options) {
       this.options = args.abiFragment.options;
@@ -145,6 +148,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       params,
       value: this.ethValue,
       to: this.contractAddress,
+      from: this.vaultAddress,
       options: {
         callType: this.getCallType(),
         gasLimit: await this.getGasLimit(),
@@ -222,6 +226,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       chainId: this.chainId,
       contractAddress: this.contractAddress,
       input: this.get(),
+      vaultAddress: this.vaultAddress,
     });
   }
 
@@ -254,6 +259,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
   return class Plugin extends PluginFunction<F, I> {
     constructor(args: {
       chainId: ChainId;
+      vaultAddress?: string;
       contractAddress?: string;
       input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
     }) {
@@ -264,6 +270,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
         contractAddress: args.contractAddress,
         supportedContracts,
         input: args.input,
+        vaultAddress: args.vaultAddress,
       });
     }
   };

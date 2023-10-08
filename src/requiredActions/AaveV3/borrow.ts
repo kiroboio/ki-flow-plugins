@@ -10,10 +10,11 @@ export const AaveV3Borrow = createRequiredActionForPlugin({
     const { interestRateMode, onBehalfOf, asset, amount } = input;
 
     if (
+      isVariableOrUndefined(asset) ||
+      isVariableOrUndefined(amount) ||
       isVariableOrUndefined(interestRateMode) ||
       isVariableOrUndefined(onBehalfOf) ||
-      isVariableOrUndefined(asset) ||
-      isVariableOrUndefined(amount)
+      isVariableOrUndefined(args.vaultAddress)
     )
       return [];
 

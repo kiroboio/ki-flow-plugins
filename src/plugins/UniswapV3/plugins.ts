@@ -3,6 +3,7 @@ import { ProtocolPlugins } from "../../types";
 import { UniswapV3_Router_ABI } from "./ABI";
 import { UniswapV3_Router } from "./constants";
 
+// TODO: Add NonfungiblePositionManager plugins - mint, increaseLiquidity, decreaseLiquidity, collect
 const Router = createProtocolPluginsAsObject({
   protocol: "UniswapV3",
   abi: UniswapV3_Router_ABI,

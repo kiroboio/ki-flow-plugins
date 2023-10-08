@@ -5,3 +5,4 @@ export * from "./CompoundV3";
 export * from "./ERC20";
 export * from "./Multicall";
 export * from "./UniswapV2";
+export * from "./UniswapV3";
