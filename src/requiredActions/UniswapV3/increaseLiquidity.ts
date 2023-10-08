@@ -28,7 +28,6 @@ export const UniswapV3IncreaseLiquidity = createRequiredActionForPlugin({
 
     // Fetch position data
     const NonfungiblePositionManager = new ethers.Contract(NPMAddress, NonfungiblePositionManager_ABI, args.provider);
-
     const position = await NonfungiblePositionManager.positions(tokenId);
 
     return [
