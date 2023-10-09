@@ -67,6 +67,7 @@ export interface EnhancedJsonFragmentType extends JsonFragmentType {
   readonly canBeVariable?: boolean;
   readonly components?: ReadonlyArray<EnhancedJsonFragmentType>;
   readonly hashed?: boolean;
+  readonly options?: string[];
 }
 
 export interface EnhancedJsonFragment extends JsonFragment {
@@ -123,6 +124,13 @@ export type FunctionParameterValue<
   : T extends `${infer _}[${string}`
   ? Array<FunctionParameterValue<N, _, C>>
   : FunctionParameter<N, T, C>;
+
+export type FPValue<
+  N extends string,
+  T extends string,
+  C extends readonly EnhancedJsonFragmentType[],
+  O extends readonly string[] | undefined
+> = O extends string[] ? O[number] : FunctionParameterValue<N, T, C>;
 
 export type PluginFunctionInput<A extends readonly EnhancedJsonFragmentType[]> = {
   [K in A[number]["name"]]: FunctionParameterInput<

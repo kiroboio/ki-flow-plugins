@@ -1,26 +1,41 @@
 import { InstanceOf } from "../helpers/instanceOf";
-import { EnhancedJsonFragmentType, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
+import { EnhancedJsonFragmentType, FPValue, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
 
 export class FunctionParameter<
   N extends string = string,
   I extends string = string,
   C extends readonly EnhancedJsonFragmentType[] = readonly EnhancedJsonFragmentType[],
-  V extends boolean = boolean
+  V extends boolean = boolean,
+  H extends boolean = boolean,
+  O extends readonly string[] | undefined = string[] | undefined
 > {
   public readonly name: N;
   public readonly internalType: I;
   public readonly components: FunctionParameter[];
   public readonly canBeVariable: V;
-  public readonly hashed: boolean = false;
+  public readonly hashed: H;
+  public readonly options?: O;
 
-  public value?: FunctionParameterValue<N, I, C>;
+  public value?: FPValue<N, I, C, O>;
 
-  constructor(args: { name: N; type: I; components?: C; canBeVariable?: V; hashed?: boolean }) {
+  constructor(args: { name: N; type: I; components?: C; canBeVariable?: V; hashed?: H; options?: O }) {
     this.name = args.name;
     this.internalType = args.type;
     this.components = args.components?.map((c) => new FunctionParameter(c)) || [];
     this.canBeVariable = args.canBeVariable || (true as V);
-    if (args.hashed) this.hashed = args.hashed;
+    this.hashed = args.hashed || (false as H);
+    if (this.options) {
+      // Options are not allowed on tuples and arrays
+      if (this._isTuple() || this._isArray()) {
+        throw new Error(`${this.name}: Options are not allowed on tuples or arrays`);
+      }
+
+      // If there are options, we need to validate them to make sure they are valid
+      args.options?.forEach((o) => {
+        this._validateValue(o);
+      });
+      this.options = args.options;
+    }
   }
 
   get type(): string {
@@ -72,7 +87,7 @@ export class FunctionParameter<
       return this.get();
     }
     this._validateValue(value);
-    this.value = value as unknown as FunctionParameterValue<N, I, C>;
+    this.value = value as unknown as FPValue<N, I, C, O>;
     return this.get();
   }
 
