@@ -66,6 +66,7 @@ export interface JsonFragment {
 export interface EnhancedJsonFragmentType extends JsonFragmentType {
   readonly canBeVariable?: boolean;
   readonly components?: ReadonlyArray<EnhancedJsonFragmentType>;
+  readonly hashed?: boolean;
 }
 
 export interface EnhancedJsonFragment extends JsonFragment {

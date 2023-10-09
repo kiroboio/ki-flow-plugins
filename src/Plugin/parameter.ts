@@ -11,14 +11,16 @@ export class FunctionParameter<
   public readonly internalType: I;
   public readonly components: FunctionParameter[];
   public readonly canBeVariable: V;
+  public readonly hashed: boolean = false;
 
   public value?: FunctionParameterValue<N, I, C>;
 
-  constructor(args: { name: N; type: I; components?: C; canBeVariable?: V }) {
+  constructor(args: { name: N; type: I; components?: C; canBeVariable?: V; hashed?: boolean }) {
     this.name = args.name;
     this.internalType = args.type;
     this.components = args.components?.map((c) => new FunctionParameter(c)) || [];
     this.canBeVariable = args.canBeVariable || (true as V);
+    if (args.hashed) this.hashed = args.hashed;
   }
 
   get type(): string {
@@ -110,6 +112,7 @@ export class FunctionParameter<
     const baseParam = {
       name: this.name,
       type: this.type,
+      hashed: this.hashed,
     };
     if (this._isTuple()) {
       // Check if the tuple is an array
