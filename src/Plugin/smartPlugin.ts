@@ -65,8 +65,8 @@ export function createSmartPlugin<
   // }): new (args: { chainId: C; vaultAddress: string; provider: ethers.providers.JsonRpcProvider }) => ISmartPlugin<A, C> {
 }) {
   return class {
-    public readonly name: A["name"] = abiFragment.name;
     public readonly chainId: C;
+    public readonly name: A["name"] = abiFragment.name;
     public readonly vaultAddress: string;
     public readonly params: readonly FunctionParameter[] = [];
     public readonly provider: ethers.providers.JsonRpcProvider;
@@ -74,11 +74,23 @@ export function createSmartPlugin<
     // Create a cache, where plugins from getPlugin are stored with the input as the key. stdLLL should be 3 minutes.
     public cache = new NodeCache({ stdTTL: 180 });
 
-    constructor(args: { chainId: C; vaultAddress: string; provider: ethers.providers.JsonRpcProvider }) {
+    constructor(args: {
+      chainId: C;
+      vaultAddress: string;
+      provider: ethers.providers.JsonRpcProvider;
+      input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+    }) {
       this.chainId = args.chainId;
       this.vaultAddress = args.vaultAddress;
       this.params = abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
       this.provider = args.provider;
+    }
+
+    get inputs() {
+      const params = this.params.reduce((acc, cur) => {
+        return { ...acc, [cur.name]: cur.get() };
+      }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
+      return { params, set: this.set.bind(this), get: this.get.bind(this) };
     }
 
     get outputs(): Record<string, Output> {
@@ -160,6 +172,35 @@ export function createSmartPlugin<
       }
       this.cache.set(this._getCacheKey(), plugin);
       return await plugin.create();
+    }
+
+    public async simulate({ from }: { from: string }) {
+      const plugin = await this.getPlugin();
+      const signer = this.provider.getSigner(from);
+      const contract = new ethers.Contract(plugin.contractAddress as string, [plugin.abiFragment], signer);
+      const result = await contract.callStatic[plugin.method](...(plugin.get() as any));
+
+      return {
+        success: true,
+        result,
+      };
+    }
+
+    public async safeSimulate({ from }: { from: string }) {
+      try {
+        return await this.simulate({ from });
+      } catch (e) {
+        if (typeof e === "object" && e && "reason" in e) {
+          return {
+            success: false,
+            result: e.reason,
+          };
+        }
+        return {
+          success: false,
+          result: e,
+        };
+      }
     }
 
     public _getCacheKey() {
