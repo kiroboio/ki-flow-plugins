@@ -67,7 +67,7 @@ export interface EnhancedJsonFragmentType extends JsonFragmentType {
   readonly canBeVariable?: boolean;
   readonly components?: ReadonlyArray<EnhancedJsonFragmentType>;
   readonly hashed?: boolean;
-  readonly options?: string[];
+  readonly options?: readonly string[];
 }
 
 export interface EnhancedJsonFragment extends JsonFragment {
@@ -107,6 +107,13 @@ export type FunctionParameterInput<
   ? Array<FunctionParameterInput<_, C>>
   : HandleValueType<T, V> | undefined;
 
+export type FPInput<
+  T extends string,
+  C extends readonly EnhancedJsonFragmentType[],
+  O extends readonly string[] | undefined,
+  V extends boolean = true
+> = O extends readonly string[] ? O[number] : FunctionParameterInput<T, C, V>;
+
 export type FunctionParameterValue<
   N extends string,
   T extends string,
@@ -130,12 +137,13 @@ export type FPValue<
   T extends string,
   C extends readonly EnhancedJsonFragmentType[],
   O extends readonly string[] | undefined
-> = O extends string[] ? O[number] : FunctionParameterValue<N, T, C>;
+> = O extends readonly string[] ? O[number] : FunctionParameterValue<N, T, C>;
 
 export type PluginFunctionInput<A extends readonly EnhancedJsonFragmentType[]> = {
-  [K in A[number]["name"]]: FunctionParameterInput<
+  [K in A[number]["name"]]: FPInput<
     Extract<A[number], { name: K }>["type"],
     HandleUndefined<Extract<A[number], { name: K }>["components"]>,
+    Extract<A[number], { name: K }>["options"],
     HandleUndefined<Extract<A[number], { name: K }>["canBeVariable"], true>
   >;
 };

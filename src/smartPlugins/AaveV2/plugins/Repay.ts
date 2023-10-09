@@ -17,6 +17,7 @@ const abiFragment = {
     {
       name: "rateMode",
       type: "uint256",
+      options: ["1", "2"],
     },
     {
       name: "onBehalfOf",

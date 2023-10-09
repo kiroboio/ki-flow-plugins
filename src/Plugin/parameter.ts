@@ -7,7 +7,7 @@ export class FunctionParameter<
   C extends readonly EnhancedJsonFragmentType[] = readonly EnhancedJsonFragmentType[],
   V extends boolean = boolean,
   H extends boolean = boolean,
-  O extends readonly string[] | undefined = string[] | undefined
+  O extends readonly string[] | undefined = readonly string[] | undefined
 > {
   public readonly name: N;
   public readonly internalType: I;
@@ -95,7 +95,7 @@ export class FunctionParameter<
     if (this._isTuple()) {
       if (this._isArray()) {
         const outputVal: FunctionParameterInput<"tuple[]", C> = [];
-        const inputVal = this.value as FunctionParameterValue<N, "tuple[]", C>;
+        const inputVal = this.value as unknown as FunctionParameterValue<N, "tuple[]", C>;
         inputVal.forEach((v) => {
           const arrayVal: FunctionParameterInput<"tuple", C> = {};
           Object.entries<any>(v).forEach((k) => {
@@ -132,7 +132,7 @@ export class FunctionParameter<
     if (this._isTuple()) {
       // Check if the tuple is an array
       if (this._isArray()) {
-        const val = this.value as FunctionParameterValue<N, "tuple[]", C>;
+        const val = this.value as unknown as FunctionParameterValue<N, "tuple[]", C>;
         return {
           ...baseParam,
           customType: true,
@@ -188,6 +188,13 @@ export class FunctionParameter<
     }
     if (typeof value !== "string") {
       throw new Error(`${this.name}: Expected string, got ${typeof value}`);
+    }
+    // Check if there are options. If there are, check if the value is one of the options
+    if (this.options) {
+      if (!this.options.includes(value)) {
+        throw new Error(`${this.name}: Invalid value. Expected one of ${this.options.join(", ")}`);
+      }
+      return;
     }
     if (type.startsWith("uint")) {
       if (value.includes(".")) {
