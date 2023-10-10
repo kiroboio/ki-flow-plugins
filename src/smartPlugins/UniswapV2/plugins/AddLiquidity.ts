@@ -147,5 +147,5 @@ export const AddLiquidity = createSmartPlugin({
       },
     });
   },
-  // TODO: requiredActions
+  // I think no need to add required actions, because the required actions are already under "requiredActions"
 });

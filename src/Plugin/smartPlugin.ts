@@ -14,17 +14,8 @@ import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
-// TODO: Functions that need to be added:
 // Optional:
 // - optional helpers when constructing plugin (for example, cache for Uniswap). After talking with Sumbat - not mandatory.
-
-// TODO: For now the cache and _getCacheKey are public, should be made private in the future.
-// TODO: Add gas calculation function
-
-/* Issues that came into my mind:
- * - Should we still have the getPlugin function? If yes then we might have 2 problems - how to get required actions and how to run the getPlugin from EIP712 data
- * - Some Smart plugins may require to get plugin from 'prepare' to correctly get 'requiredActions'.
- */
 
 type RequiredActionsFunction<C extends ChainId, A extends EnhancedJsonFragment> = (args: {
   input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
@@ -141,7 +132,7 @@ export function createSmartPlugin<
     }
 
     public async getPlugin(): Promise<InstanceType<P[number]>> {
-      const cached = this.cache.get(this._getCacheKey());
+      const cached = this.cache.get(_getCacheKey(this));
       if (cached) {
         return cached as InstanceType<P[number]>;
       }
@@ -151,12 +142,12 @@ export function createSmartPlugin<
         vaultAddress: this.vaultAddress,
         provider: this.provider,
       });
-      this.cache.set(this._getCacheKey(), plugin);
+      this.cache.set(_getCacheKey(this), plugin);
       return plugin;
     }
 
     public async create(): Promise<IPluginCall | undefined> {
-      const cached = this.cache.get(this._getCacheKey());
+      const cached = this.cache.get(_getCacheKey(this));
       if (cached) {
         return await (cached as InstanceType<P[number]>).create();
       }
@@ -170,7 +161,7 @@ export function createSmartPlugin<
       if (gas) {
         plugin.setOptions({ gasLimit: (BigInt(gas) + 40000n).toString() });
       }
-      this.cache.set(this._getCacheKey(), plugin);
+      this.cache.set(_getCacheKey(this), plugin);
       return await plugin.create();
     }
 
@@ -203,10 +194,6 @@ export function createSmartPlugin<
       }
     }
 
-    public _getCacheKey() {
-      return JSON.stringify(this.get());
-    }
-
     static isSmartPlugin(data: IPluginCall) {
       const Plugin = supportedPlugins.find((p) => {
         const plugin = new p({ chainId: "1" });
@@ -219,21 +206,6 @@ export function createSmartPlugin<
   };
 }
 
-// Create a interface/type for the class that is returned in createSmartPlugin.
-
-export interface ISmartPlugin<A extends EnhancedJsonFragment = EnhancedJsonFragment, C extends ChainId = ChainId> {
-  readonly name: A["name"];
-  readonly chainId: C;
-  readonly vaultAddress: string;
-  readonly params: readonly FunctionParameter[];
-  readonly provider: ethers.providers.JsonRpcProvider;
-  readonly cache: NodeCache;
-  outputs: Record<string, Output>;
-  set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>): void;
-  get(): PluginFunctionInput<HandleUndefined<A["inputs"]>>;
-  getStrict(): RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
-  getRequiredActions(): RequiredApproval[];
-  getPlugin(): Promise<InstanceType<Plugin<any, string>>>;
-  create(): Promise<IPluginCall | undefined>;
-  _getCacheKey(): string;
+function _getCacheKey(plugin: any) {
+  return JSON.stringify(plugin.get());
 }
