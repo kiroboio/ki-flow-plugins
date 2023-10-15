@@ -53,7 +53,6 @@ export function createSmartPlugin<
     vaultAddress: string;
     chainId: C;
   }) => string;
-  // }): new (args: { chainId: C; vaultAddress: string; provider: ethers.providers.JsonRpcProvider }) => ISmartPlugin<A, C> {
 }) {
   return class {
     public readonly chainId: C;
