@@ -2,7 +2,7 @@ import { expect } from "chai";
 import * as dotenv from "dotenv";
 import { ethers } from "ethers";
 
-import { CompoundV2 } from "../../plugins";
+import { CompoundV2_cERC20, CompoundV2_cETH } from "../../plugins";
 import { Mint, RepayBorrow } from "./plugins";
 
 dotenv.config();
@@ -17,7 +17,7 @@ describe("CompoundV2 Smart Plugin tests", () => {
         vaultAddress: ethers.Wallet.createRandom().address,
       });
     });
-    it("Should create", async () => {
+    it("Should create cERC20 mint", async () => {
       smartPlugin.set({
         amount: "1" + "0".repeat(6),
         asset: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
@@ -25,7 +25,18 @@ describe("CompoundV2 Smart Plugin tests", () => {
 
       const plugin = await smartPlugin.getPlugin();
 
-      expect(plugin).instanceOf(CompoundV2.mint);
+      expect(plugin).instanceOf(CompoundV2_cERC20.mint);
+    });
+    it("Should create cETH mint", async () => {
+      smartPlugin.set({
+        amount: "1" + "0".repeat(18),
+        asset: ethers.constants.AddressZero,
+      });
+
+      const plugin = await smartPlugin.getPlugin();
+
+      expect(plugin).instanceOf(CompoundV2_cETH.mint);
+      expect(plugin.ethValue).eq("1" + "0".repeat(18));
     });
   });
   describe("CompoundV2 RepayBorrow", () => {
@@ -37,16 +48,59 @@ describe("CompoundV2 Smart Plugin tests", () => {
         vaultAddress: ethers.Wallet.createRandom().address,
       });
     });
-    it("Should create", async () => {
-      smartPlugin.set({
-        amount: "1" + "0".repeat(6),
-        asset: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
-        behalfOf: smartPlugin.vaultAddress,
+    describe("cETH", () => {
+      const asset = ethers.constants.AddressZero;
+      const amount = "1" + "0".repeat(18);
+      it("Should create repayBorrow", async () => {
+        smartPlugin.set({
+          amount,
+          asset,
+          behalfOf: smartPlugin.vaultAddress,
+        });
+
+        const plugin = await smartPlugin.getPlugin();
+
+        expect(plugin).instanceOf(CompoundV2_cETH.repayBorrow);
+        expect(plugin.ethValue).eq(amount);
       });
+      it("Should create repayBorrowBehalf", async () => {
+        smartPlugin.set({
+          amount,
+          asset,
+          behalfOf: ethers.Wallet.createRandom().address,
+        });
 
-      const plugin = await smartPlugin.getPlugin();
+        const plugin = await smartPlugin.getPlugin();
 
-      expect(plugin).instanceOf(CompoundV2.borrow);
+        expect(plugin).instanceOf(CompoundV2_cETH.repayBorrowBehalf);
+        expect(plugin.ethValue).eq(amount);
+      });
+    });
+    describe("cERC20", () => {
+      const asset = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
+      const amount = "1" + "0".repeat(6);
+      it("Should create repayBorrow", async () => {
+        smartPlugin.set({
+          amount,
+          asset,
+          behalfOf: smartPlugin.vaultAddress,
+        });
+
+        const plugin = await smartPlugin.getPlugin();
+
+        expect(plugin).instanceOf(CompoundV2_cERC20.repayBorrow);
+      });
+      it("Should create repayBorrowBehalf", async () => {
+        smartPlugin.set({
+          amount,
+          asset,
+          behalfOf: ethers.Wallet.createRandom().address,
+        });
+
+        const plugin = await smartPlugin.getPlugin();
+
+        expect(plugin).instanceOf(CompoundV2_cERC20.repayBorrowBehalf);
+      });
     });
   });
 });
