@@ -3,13 +3,13 @@ import * as dotenv from "dotenv";
 import { ethers } from "ethers";
 
 import { AaveV2 } from "../../plugins";
-import { Borrow, Deposit } from "./plugins";
+import { Borrow, Deposit, Repay } from "./plugins";
 
 dotenv.config();
 
 describe("AaveV2 Smart Plugin tests", () => {
   describe("AaveV2 Deposit", () => {
-    it("Create", async () => {
+    it("Should create", async () => {
       const smartPlugin = new Deposit({
         chainId: "1",
         provider: new ethers.providers.JsonRpcProvider("http://localhost:8545"),
@@ -29,13 +29,15 @@ describe("AaveV2 Smart Plugin tests", () => {
     });
   });
   describe("AaveV2 Borrow", () => {
-    it("Create", async () => {
-      const smartPlugin = new Borrow({
+    let smartPlugin: InstanceType<typeof Borrow>;
+    beforeEach(() => {
+      smartPlugin = new Borrow({
         chainId: "1",
         provider: new ethers.providers.JsonRpcProvider("http://localhost:8545"),
         vaultAddress: ethers.Wallet.createRandom().address,
       });
-
+    });
+    it("Should create", async () => {
       smartPlugin.set({
         interestRateMode: "2",
         amount: "1" + "0".repeat(6),
@@ -45,16 +47,9 @@ describe("AaveV2 Smart Plugin tests", () => {
 
       const plugin = await smartPlugin.getPlugin();
 
-      // Expect plugin to be instance of AaveV2.borrow
       expect(plugin).instanceOf(AaveV2.borrow);
     });
     it("interestRateMode should revert", async () => {
-      const smartPlugin = new Borrow({
-        chainId: "1",
-        provider: new ethers.providers.JsonRpcProvider("http://localhost:8545"),
-        vaultAddress: ethers.Wallet.createRandom().address,
-      });
-      // Expect this function to revert with "`${this.name}: Invalid value. Expected one of ${this.options.join(", ")}`"
       expect(() => {
         smartPlugin.set({
           // @ts-ignore
@@ -66,6 +61,43 @@ describe("AaveV2 Smart Plugin tests", () => {
       })
         .to.throw(Error)
         .with.property("message", `interestRateMode: Invalid value. Expected: 1, 2`);
+    });
+  });
+  describe("AaveV2 Repay", () => {
+    // smartPlugin is an initialized instance of AaveV2 Repay
+    let smartPlugin: InstanceType<typeof Repay>;
+
+    beforeEach(() => {
+      smartPlugin = new Repay({
+        chainId: "1",
+        provider: new ethers.providers.JsonRpcProvider("http://localhost:8545"),
+        vaultAddress: ethers.Wallet.createRandom().address,
+      });
+    });
+    it("Should create", async () => {
+      smartPlugin.set({
+        amount: "1" + "0".repeat(6),
+        asset: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
+        onBehalfOf: smartPlugin.vaultAddress,
+        rateMode: "2",
+      });
+
+      const plugin = await smartPlugin.getPlugin();
+
+      expect(plugin).instanceOf(AaveV2.repay);
+    });
+    it("rateMode should revert", async () => {
+      expect(() => {
+        smartPlugin.set({
+          // @ts-ignore
+          rateMode: "3",
+          amount: "1" + "0".repeat(6),
+          asset: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
+          onBehalfOf: smartPlugin.vaultAddress,
+        });
+      })
+        .to.throw(Error)
+        .with.property("message", `rateMode: Invalid value. Expected: 1, 2`);
     });
   });
 });
