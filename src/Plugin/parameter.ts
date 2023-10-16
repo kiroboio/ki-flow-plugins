@@ -24,7 +24,7 @@ export class FunctionParameter<
     this.components = args.components?.map((c) => new FunctionParameter(c)) || [];
     this.canBeVariable = args.canBeVariable || (true as V);
     this.hashed = args.hashed || (false as H);
-    if (this.options) {
+    if (args.options) {
       // Options are not allowed on tuples and arrays
       if (this._isTuple() || this._isArray()) {
         throw new Error(`${this.name}: Options are not allowed on tuples or arrays`);
@@ -192,7 +192,7 @@ export class FunctionParameter<
     // Check if there are options. If there are, check if the value is one of the options
     if (this.options) {
       if (!this.options.includes(value)) {
-        throw new Error(`${this.name}: Invalid value. Expected one of ${this.options.join(", ")}`);
+        throw new Error(`${this.name}: Invalid value. Expected: ${this.options.join(", ")}`);
       }
       return;
     }
