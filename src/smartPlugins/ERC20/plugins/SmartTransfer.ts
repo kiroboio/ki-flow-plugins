@@ -5,6 +5,11 @@ const abiFragment = {
   name: "smartTransfer",
   inputs: [
     {
+      name: "asset",
+      type: "address",
+      canBeVariable: false,
+    },
+    {
       name: "from",
       type: "address",
     },
@@ -27,6 +32,7 @@ export const SmartTransfer = createSmartPlugin({
     if (args.vaultAddress === args.input.from) {
       return new ERC20.transfer({
         chainId: args.chainId,
+        contractAddress: args.input.asset,
         input: {
           to: args.input.to,
           value: args.input.amount,
@@ -35,6 +41,7 @@ export const SmartTransfer = createSmartPlugin({
     }
     return new ERC20.transferFrom({
       chainId: args.chainId,
+      contractAddress: args.input.asset,
       input: {
         from: args.input.from,
         to: args.input.to,

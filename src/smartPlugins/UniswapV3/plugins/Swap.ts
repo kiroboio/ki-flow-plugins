@@ -2,7 +2,6 @@ import { Protocol } from "@uniswap/router-sdk";
 import { TradeType } from "@uniswap/sdk-core";
 import { AlphaRouter, CurrencyAmount, IV3RouteWithValidQuote } from "@uniswap/smart-order-router";
 import { ethers } from "ethers";
-import { writeFileSync } from "fs";
 
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV3 } from "../../../plugins";
@@ -90,8 +89,6 @@ export const Swap = createSmartPlugin({
     // RawQuote: route[0].rawQuote (if exactIn = output, if exactOut = input)
     // Amount: route[0].amount (if exactIn = input, if exactOut = output)
     // Gas estimate: route[0].gasEstimate
-
-    writeFileSync("swapRoute.json", JSON.stringify(swapRoute, null, 2));
 
     if (!swapRoute) throw new Error("No route found");
     return getPluginFromRoute({
