@@ -16,7 +16,7 @@ const abiFragment = {
         { name: "address", type: "address", canBeVariable: false },
         { name: "decimals", type: "uint16", canBeVariable: false },
       ],
-      name: "from",
+      name: "fromToken",
       type: "tuple",
     },
     {
@@ -24,7 +24,7 @@ const abiFragment = {
         { name: "address", type: "address", canBeVariable: false },
         { name: "decimals", type: "uint16", canBeVariable: false },
       ],
-      name: "to",
+      name: "toToken",
       type: "tuple",
     },
     {
@@ -59,10 +59,10 @@ export const Swap = createSmartPlugin({
   ],
   abiFragment,
   async prepare(args) {
-    const { from, to, amount, isAmountIn, recipient } = args.input;
+    const { fromToken, toToken, amount, isAmountIn, recipient } = args.input;
 
-    const { address: fromAddress, decimals: fromDecimals } = from;
-    const { address: toAddress, decimals: toDecimals } = to;
+    const { address: fromAddress, decimals: fromDecimals } = fromToken;
+    const { address: toAddress, decimals: toDecimals } = toToken;
     const chainId = +args.chainId;
 
     const router = new AlphaRouter({ chainId, provider: args.provider });
@@ -99,8 +99,8 @@ export const Swap = createSmartPlugin({
     });
   },
   requiredActions(args) {
-    const { from, amount } = args.input;
-    const { address: fromAddress } = from;
+    const { fromToken, amount } = args.input;
+    const { address: fromAddress } = fromToken;
 
     // If fromAddress is native, return []
     if (fromAddress === ethers.constants.AddressZero) return [];

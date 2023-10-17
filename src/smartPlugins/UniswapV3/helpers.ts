@@ -66,6 +66,7 @@ export const getPluginFromRoute = ({
         plugin.setValue(inputAmount);
       }
       plugin.setOptions({ gasLimit: route.gasEstimate.add(50000).toString() });
+      return plugin;
     }
 
     // If the path is > 2, then the plugin should be exactInput
