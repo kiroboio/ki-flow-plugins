@@ -13,11 +13,15 @@ export function createToken(token: { address: string; decimals: number }, chainI
 }
 
 export const getPluginFromRoute = ({
+  fromToken,
+  toToken,
   chainId,
   route,
   isAmountIn,
   recipient,
 }: {
+  fromToken: Token | Ether;
+  toToken: Token | Ether;
   chainId: ChainId;
   route: IV2RouteWithValidQuote;
   isAmountIn: boolean;
@@ -28,12 +32,11 @@ export const getPluginFromRoute = ({
   const path = route.route.path.map((token) => token.address);
   const deadline = Math.floor(Date.now() / 1000 + 1800).toString();
   if (isAmountIn) {
-    const input = route.amount;
-    const output = route.quote;
-    const inputAmount = input.quotient.toString();
-    const outputAmount = output.quotient.toString();
+    const inputAmount = route.amount.quotient.toString();
+    const outputAmount = route.quote.quotient.toString();
+
     // If input currency is native, then the plugin should be swapExactETHForTokens
-    if (input.currency.isNative) {
+    if (fromToken.isNative) {
       const plugin = new UniswapV2.swapExactETHForTokens({
         chainId,
         input: {
@@ -48,7 +51,7 @@ export const getPluginFromRoute = ({
       return plugin;
     }
     // If output currency is native, then the plugin should be swapExactTokensForETH
-    if (output.currency.isNative) {
+    if (toToken.isNative) {
       const plugin = new UniswapV2.swapExactTokensForETH({
         chainId,
         input: {
@@ -77,13 +80,11 @@ export const getPluginFromRoute = ({
     return plugin;
   }
 
-  const input = route.quote;
-  const output = route.amount;
   const inputAmount = route.quote.quotient.toString();
   const outputAmount = route.amount.quotient.toString();
 
   // If input currency is native, then the plugin should be swapTokensForExactETH
-  if (input.currency.isNative) {
+  if (fromToken.isNative) {
     const plugin = new UniswapV2.swapETHForExactTokens({
       chainId,
       input: {
@@ -99,7 +100,7 @@ export const getPluginFromRoute = ({
   }
 
   // If output currency is native, then the plugin should be swapExactTokensForETH
-  if (output.currency.isNative) {
+  if (toToken.isNative) {
     const plugin = new UniswapV2.swapTokensForExactETH({
       chainId,
       input: {

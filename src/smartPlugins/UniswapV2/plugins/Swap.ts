@@ -2,6 +2,7 @@ import { Protocol } from "@uniswap/router-sdk";
 import { TradeType } from "@uniswap/sdk-core";
 import { AlphaRouter, CurrencyAmount, IV2RouteWithValidQuote } from "@uniswap/smart-order-router";
 import { ethers } from "ethers";
+import { writeFileSync } from "fs";
 
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV2 } from "../../../plugins";
@@ -16,7 +17,7 @@ const abiFragment = {
         { name: "address", type: "address", canBeVariable: false },
         { name: "decimals", type: "uint16", canBeVariable: false },
       ],
-      name: "from",
+      name: "fromToken",
       type: "tuple",
     },
     {
@@ -24,7 +25,7 @@ const abiFragment = {
         { name: "address", type: "address", canBeVariable: false },
         { name: "decimals", type: "uint16", canBeVariable: false },
       ],
-      name: "to",
+      name: "toToken",
       type: "tuple",
     },
     {
@@ -61,10 +62,10 @@ export const Swap = createSmartPlugin({
   ],
   abiFragment,
   async prepare(args) {
-    const { from, to, amount, isAmountIn, recipient } = args.input;
+    const { fromToken, toToken, amount, isAmountIn, recipient } = args.input;
 
-    const { address: fromAddress, decimals: fromDecimals } = from;
-    const { address: toAddress, decimals: toDecimals } = to;
+    const { address: fromAddress, decimals: fromDecimals } = fromToken;
+    const { address: toAddress, decimals: toDecimals } = toToken;
     const chainId = +args.chainId;
 
     const router = new AlphaRouter({ chainId, provider: args.provider });
@@ -87,6 +88,8 @@ export const Swap = createSmartPlugin({
       }
     );
 
+    writeFileSync("swapRoute.json", JSON.stringify(swapRoute, null, 2));
+
     // Path: route[0].route.path
     // RawQuote: route[0].rawQuote (if exactIn = output, if exactOut = input)
     // Amount: route[0].amount (if exactIn = input, if exactOut = output)
@@ -94,6 +97,8 @@ export const Swap = createSmartPlugin({
 
     if (!swapRoute) throw new Error("No route found");
     return getPluginFromRoute({
+      fromToken: TokenA,
+      toToken: TokenB,
       chainId: args.chainId,
       isAmountIn,
       recipient,
@@ -101,8 +106,8 @@ export const Swap = createSmartPlugin({
     });
   },
   requiredActions(args) {
-    const { from, amount } = args.input;
-    const { address: fromAddress } = from;
+    const { fromToken, amount } = args.input;
+    const { address: fromAddress } = fromToken;
 
     // If fromAddress is native, return []
     if (fromAddress === ethers.constants.AddressZero) return [];

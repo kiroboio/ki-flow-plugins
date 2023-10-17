@@ -117,7 +117,7 @@ export class FunctionParameter<
 
   public getStrict(): FunctionParameterInput<I, C, V> {
     const val = this.get();
-    if (!val) {
+    if (val === undefined) {
       throw new Error(`${this.name}: Value not set`);
     }
     return val;

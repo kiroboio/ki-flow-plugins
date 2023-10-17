@@ -7,9 +7,6 @@ import { SmartMultiAllowance, SmartMultiBalance } from "./plugins";
 
 dotenv.config();
 
-const asset = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
-const amount = "1" + "0".repeat(6);
-
 describe("Multicall Smart Plugin tests", () => {
   describe("Multicall SmartMultiBalance", () => {
     let smartPlugin: InstanceType<typeof SmartMultiBalance>;

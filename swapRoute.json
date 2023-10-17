@@ -1,0 +1,706 @@
+{
+  "quote": {
+    "numerator": [
+      522867958,
+      1
+    ],
+    "denominator": [
+      1
+    ],
+    "currency": {
+      "chainId": 1,
+      "decimals": 6,
+      "isNative": false,
+      "isToken": true,
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    },
+    "decimalScale": [
+      1000000
+    ]
+  },
+  "quoteGasAdjusted": {
+    "numerator": [
+      852654864,
+      1066930703,
+      336284701,
+      22372
+    ],
+    "denominator": [
+      824785592,
+      636011104,
+      15032
+    ],
+    "currency": {
+      "chainId": 1,
+      "decimals": 6,
+      "isNative": false,
+      "isToken": true,
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    },
+    "decimalScale": [
+      1000000
+    ]
+  },
+  "estimatedGasUsed": {
+    "type": "BigNumber",
+    "hex": "0x020f58"
+  },
+  "estimatedGasUsedQuoteToken": {
+    "numerator": [
+      62893632,
+      625742421,
+      503311283,
+      19
+    ],
+    "denominator": [
+      824785592,
+      636011104,
+      15032
+    ],
+    "currency": {
+      "chainId": 1,
+      "decimals": 6,
+      "isNative": false,
+      "isToken": true,
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    },
+    "decimalScale": [
+      1000000
+    ]
+  },
+  "estimatedGasUsedUSD": {
+    "numerator": [
+      97832960,
+      217590011,
+      1
+    ],
+    "denominator": [
+      1
+    ],
+    "currency": {
+      "chainId": 1,
+      "decimals": 18,
+      "symbol": "DAI",
+      "name": "Dai Stablecoin",
+      "isNative": false,
+      "isToken": true,
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+    },
+    "decimalScale": [
+      660865024,
+      931322574
+    ]
+  },
+  "gasPriceWei": {
+    "type": "BigNumber",
+    "hex": "0x0181ba6be8"
+  },
+  "route": [
+    {
+      "protocol": "V2",
+      "amount": {
+        "numerator": [
+          588251136,
+          790460597,
+          86
+        ],
+        "denominator": [
+          100
+        ],
+        "currency": {
+          "chainId": 1,
+          "decimals": 18,
+          "symbol": "ETH",
+          "name": "Ether",
+          "isNative": true,
+          "isToken": false
+        },
+        "decimalScale": [
+          660865024,
+          931322574
+        ]
+      },
+      "rawQuote": {
+        "type": "BigNumber",
+        "hex": "0x5f2a54f6"
+      },
+      "quote": {
+        "numerator": [
+          522867958,
+          1
+        ],
+        "denominator": [
+          1
+        ],
+        "currency": {
+          "chainId": 1,
+          "decimals": 6,
+          "isNative": false,
+          "isToken": true,
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        },
+        "decimalScale": [
+          1000000
+        ]
+      },
+      "percent": 100,
+      "route": {
+        "_midPrice": null,
+        "pairs": [
+          {
+            "liquidityToken": {
+              "chainId": 1,
+              "decimals": 18,
+              "symbol": "UNI-V2",
+              "name": "Uniswap V2",
+              "isNative": false,
+              "isToken": true,
+              "address": "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+            },
+            "tokenAmounts": [
+              {
+                "numerator": [
+                  299923591,
+                  25692
+                ],
+                "denominator": [
+                  1
+                ],
+                "currency": {
+                  "chainId": 1,
+                  "decimals": 6,
+                  "isNative": false,
+                  "isToken": true,
+                  "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                },
+                "decimalScale": [
+                  1000000
+                ]
+              },
+              {
+                "numerator": [
+                  824785592,
+                  636011104,
+                  15032
+                ],
+                "denominator": [
+                  1
+                ],
+                "currency": {
+                  "chainId": 1,
+                  "decimals": 18,
+                  "symbol": "WETH",
+                  "name": "Wrapped Ether",
+                  "isNative": false,
+                  "isToken": true,
+                  "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                },
+                "decimalScale": [
+                  660865024,
+                  931322574
+                ]
+              }
+            ]
+          }
+        ],
+        "path": [
+          {
+            "chainId": 1,
+            "decimals": 6,
+            "isNative": false,
+            "isToken": true,
+            "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+          },
+          {
+            "chainId": 1,
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "isNative": false,
+            "isToken": true,
+            "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+          }
+        ],
+        "input": {
+          "chainId": 1,
+          "decimals": 6,
+          "isNative": false,
+          "isToken": true,
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        },
+        "output": {
+          "chainId": 1,
+          "decimals": 18,
+          "symbol": "WETH",
+          "name": "Wrapped Ether",
+          "isNative": false,
+          "isToken": true,
+          "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+        },
+        "protocol": "V2"
+      },
+      "gasModel": {},
+      "quoteToken": {
+        "chainId": 1,
+        "decimals": 6,
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+      },
+      "tradeType": 1,
+      "gasCostInToken": {
+        "numerator": [
+          62893632,
+          625742421,
+          503311283,
+          19
+        ],
+        "denominator": [
+          824785592,
+          636011104,
+          15032
+        ],
+        "currency": {
+          "chainId": 1,
+          "decimals": 6,
+          "isNative": false,
+          "isToken": true,
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        },
+        "decimalScale": [
+          1000000
+        ]
+      },
+      "gasCostInUSD": {
+        "numerator": [
+          189737856,
+          215565639,
+          61529532,
+          24
+        ],
+        "denominator": [
+          210619551,
+          897080168,
+          18629
+        ],
+        "currency": {
+          "chainId": 1,
+          "decimals": 6,
+          "symbol": "USDT",
+          "name": "Tether USD",
+          "isNative": false,
+          "isToken": true,
+          "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+        },
+        "decimalScale": [
+          1000000
+        ]
+      },
+      "gasEstimate": {
+        "type": "BigNumber",
+        "hex": "0x020f58"
+      },
+      "quoteAdjustedForGas": {
+        "numerator": [
+          852654864,
+          1066930703,
+          336284701,
+          22372
+        ],
+        "denominator": [
+          824785592,
+          636011104,
+          15032
+        ],
+        "currency": {
+          "chainId": 1,
+          "decimals": 6,
+          "isNative": false,
+          "isToken": true,
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        },
+        "decimalScale": [
+          1000000
+        ]
+      },
+      "poolAddresses": [
+        "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+      ],
+      "tokenPath": [
+        {
+          "chainId": 1,
+          "decimals": 6,
+          "isNative": false,
+          "isToken": true,
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        },
+        {
+          "chainId": 1,
+          "decimals": 18,
+          "symbol": "WETH",
+          "name": "Wrapped Ether",
+          "isNative": false,
+          "isToken": true,
+          "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+        }
+      ]
+    }
+  ],
+  "trade": {
+    "swaps": [
+      {
+        "route": {
+          "_midPrice": null,
+          "pairs": [
+            {
+              "liquidityToken": {
+                "chainId": 1,
+                "decimals": 18,
+                "symbol": "UNI-V2",
+                "name": "Uniswap V2",
+                "isNative": false,
+                "isToken": true,
+                "address": "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+              },
+              "tokenAmounts": [
+                {
+                  "numerator": [
+                    299923591,
+                    25692
+                  ],
+                  "denominator": [
+                    1
+                  ],
+                  "currency": {
+                    "chainId": 1,
+                    "decimals": 6,
+                    "isNative": false,
+                    "isToken": true,
+                    "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                  },
+                  "decimalScale": [
+                    1000000
+                  ]
+                },
+                {
+                  "numerator": [
+                    824785592,
+                    636011104,
+                    15032
+                  ],
+                  "denominator": [
+                    1
+                  ],
+                  "currency": {
+                    "chainId": 1,
+                    "decimals": 18,
+                    "symbol": "WETH",
+                    "name": "Wrapped Ether",
+                    "isNative": false,
+                    "isToken": true,
+                    "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                  },
+                  "decimalScale": [
+                    660865024,
+                    931322574
+                  ]
+                }
+              ]
+            }
+          ],
+          "path": [
+            {
+              "chainId": 1,
+              "decimals": 6,
+              "isNative": false,
+              "isToken": true,
+              "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+            },
+            {
+              "chainId": 1,
+              "decimals": 18,
+              "symbol": "WETH",
+              "name": "Wrapped Ether",
+              "isNative": false,
+              "isToken": true,
+              "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+            }
+          ],
+          "input": {
+            "chainId": 1,
+            "decimals": 6,
+            "isNative": false,
+            "isToken": true,
+            "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+          },
+          "output": {
+            "chainId": 1,
+            "decimals": 18,
+            "symbol": "ETH",
+            "name": "Ether",
+            "isNative": true,
+            "isToken": false
+          },
+          "protocol": "V2",
+          "pools": [
+            {
+              "liquidityToken": {
+                "chainId": 1,
+                "decimals": 18,
+                "symbol": "UNI-V2",
+                "name": "Uniswap V2",
+                "isNative": false,
+                "isToken": true,
+                "address": "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+              },
+              "tokenAmounts": [
+                {
+                  "numerator": [
+                    299923591,
+                    25692
+                  ],
+                  "denominator": [
+                    1
+                  ],
+                  "currency": {
+                    "chainId": 1,
+                    "decimals": 6,
+                    "isNative": false,
+                    "isToken": true,
+                    "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                  },
+                  "decimalScale": [
+                    1000000
+                  ]
+                },
+                {
+                  "numerator": [
+                    824785592,
+                    636011104,
+                    15032
+                  ],
+                  "denominator": [
+                    1
+                  ],
+                  "currency": {
+                    "chainId": 1,
+                    "decimals": 18,
+                    "symbol": "WETH",
+                    "name": "Wrapped Ether",
+                    "isNative": false,
+                    "isToken": true,
+                    "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                  },
+                  "decimalScale": [
+                    660865024,
+                    931322574
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "inputAmount": {
+          "numerator": [
+            522867958,
+            1
+          ],
+          "denominator": [
+            1
+          ],
+          "currency": {
+            "chainId": 1,
+            "decimals": 6,
+            "isNative": false,
+            "isToken": true,
+            "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+          },
+          "decimalScale": [
+            1000000
+          ]
+        },
+        "outputAmount": {
+          "numerator": [
+            588251136,
+            790460597,
+            86
+          ],
+          "denominator": [
+            100
+          ],
+          "currency": {
+            "chainId": 1,
+            "decimals": 18,
+            "symbol": "ETH",
+            "name": "Ether",
+            "isNative": true,
+            "isToken": false
+          },
+          "decimalScale": [
+            660865024,
+            931322574
+          ]
+        }
+      }
+    ],
+    "routes": [
+      {
+        "_midPrice": null,
+        "pairs": [
+          {
+            "liquidityToken": {
+              "chainId": 1,
+              "decimals": 18,
+              "symbol": "UNI-V2",
+              "name": "Uniswap V2",
+              "isNative": false,
+              "isToken": true,
+              "address": "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+            },
+            "tokenAmounts": [
+              {
+                "numerator": [
+                  299923591,
+                  25692
+                ],
+                "denominator": [
+                  1
+                ],
+                "currency": {
+                  "chainId": 1,
+                  "decimals": 6,
+                  "isNative": false,
+                  "isToken": true,
+                  "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                },
+                "decimalScale": [
+                  1000000
+                ]
+              },
+              {
+                "numerator": [
+                  824785592,
+                  636011104,
+                  15032
+                ],
+                "denominator": [
+                  1
+                ],
+                "currency": {
+                  "chainId": 1,
+                  "decimals": 18,
+                  "symbol": "WETH",
+                  "name": "Wrapped Ether",
+                  "isNative": false,
+                  "isToken": true,
+                  "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                },
+                "decimalScale": [
+                  660865024,
+                  931322574
+                ]
+              }
+            ]
+          }
+        ],
+        "path": [
+          {
+            "chainId": 1,
+            "decimals": 6,
+            "isNative": false,
+            "isToken": true,
+            "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+          },
+          {
+            "chainId": 1,
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "isNative": false,
+            "isToken": true,
+            "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+          }
+        ],
+        "input": {
+          "chainId": 1,
+          "decimals": 6,
+          "isNative": false,
+          "isToken": true,
+          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        },
+        "output": {
+          "chainId": 1,
+          "decimals": 18,
+          "symbol": "ETH",
+          "name": "Ether",
+          "isNative": true,
+          "isToken": false
+        },
+        "protocol": "V2",
+        "pools": [
+          {
+            "liquidityToken": {
+              "chainId": 1,
+              "decimals": 18,
+              "symbol": "UNI-V2",
+              "name": "Uniswap V2",
+              "isNative": false,
+              "isToken": true,
+              "address": "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+            },
+            "tokenAmounts": [
+              {
+                "numerator": [
+                  299923591,
+                  25692
+                ],
+                "denominator": [
+                  1
+                ],
+                "currency": {
+                  "chainId": 1,
+                  "decimals": 6,
+                  "isNative": false,
+                  "isToken": true,
+                  "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                },
+                "decimalScale": [
+                  1000000
+                ]
+              },
+              {
+                "numerator": [
+                  824785592,
+                  636011104,
+                  15032
+                ],
+                "denominator": [
+                  1
+                ],
+                "currency": {
+                  "chainId": 1,
+                  "decimals": 18,
+                  "symbol": "WETH",
+                  "name": "Wrapped Ether",
+                  "isNative": false,
+                  "isToken": true,
+                  "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+                },
+                "decimalScale": [
+                  660865024,
+                  931322574
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tradeType": 1
+  },
+  "blockNumber": {
+    "type": "BigNumber",
+    "hex": "0x01184ba0"
+  },
+  "hitsCachedRoute": false
+}
