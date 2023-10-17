@@ -12,7 +12,7 @@ const USDC = { address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", decimals: 
 const WETH = { address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", decimals: "18" };
 const WBTC = { address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599", decimals: "8" };
 const UNI = { address: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984", decimals: "18" };
-const ETH = { address: ethers.constants.AddressZero, decimals: "18" };
+// const ETH = { address: ethers.constants.AddressZero, decimals: "18" };
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL_MAINNET as string);
 
