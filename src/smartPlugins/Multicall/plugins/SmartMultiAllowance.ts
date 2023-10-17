@@ -41,7 +41,7 @@ export const SmartMultiAllowance = createSmartPlugin({
   prepareOutputs(args) {
     const balances = args.input.allowances;
     return balances.reduce((acc, _, index) => {
-      const name = `balance_${index}`;
+      const name = `allowance_${index}`;
       return { ...acc, [name]: new Output({ innerIndex: index + 2, name, type: "uint256" }) };
     }, {} as Record<string, Output>);
   },
