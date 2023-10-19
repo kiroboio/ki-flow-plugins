@@ -2,7 +2,6 @@ import { Protocol } from "@uniswap/router-sdk";
 import { TradeType } from "@uniswap/sdk-core";
 import { AlphaRouter, CurrencyAmount, IV2RouteWithValidQuote } from "@uniswap/smart-order-router";
 import { ethers } from "ethers";
-import { writeFileSync } from "fs";
 
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV2 } from "../../../plugins";
@@ -87,8 +86,6 @@ export const Swap = createSmartPlugin({
         protocols: [Protocol.V2],
       }
     );
-
-    writeFileSync("swapRoute.json", JSON.stringify(swapRoute, null, 2));
 
     // Path: route[0].route.path
     // RawQuote: route[0].rawQuote (if exactIn = output, if exactOut = input)
