@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 
 import { isEqualAddress, isNative } from "../../../helpers";
+import { Output } from "../../../Plugin/outputs";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV2 } from "../../../plugins";
 import { UniswapV2_Factory } from "../../../plugins/UniswapV2/constants";
@@ -146,6 +147,21 @@ export const AddLiquidity = createSmartPlugin({
         to: args.input.recipient,
       },
     });
+  },
+  prepareOutputs(args) {
+    // If any of the tokens are native
+    if (isNative(args.input.tokenA.address) || isNative(args.input.tokenB.address)) {
+      return {
+        amountToken: new Output({ innerIndex: 0, name: "amountToken", type: "uint256" }),
+        amountETH: new Output({ innerIndex: 1, name: "amountETH", type: "uint256" }),
+        liquidity: new Output({ innerIndex: 2, name: "liquidity", type: "uint256" }),
+      } as Record<string, Output>;
+    }
+    return {
+      amountA: new Output({ innerIndex: 0, name: "amountA", type: "uint256" }),
+      amountB: new Output({ innerIndex: 1, name: "amountB", type: "uint256" }),
+      liquidity: new Output({ innerIndex: 2, name: "liquidity", type: "uint256" }),
+    };
   },
   // I think no need to add required actions, because the required actions are already under "requiredActions"
 });

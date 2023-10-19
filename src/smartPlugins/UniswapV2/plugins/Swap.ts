@@ -121,6 +121,7 @@ export const Swap = createSmartPlugin({
 
     return approvals;
   },
+  // Prepare outputs can work in this plugin only if the call can be async.
 });
 
 // Below is a test for this Swap plugin
