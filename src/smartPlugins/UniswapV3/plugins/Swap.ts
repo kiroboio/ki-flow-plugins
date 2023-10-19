@@ -3,6 +3,7 @@ import { TradeType } from "@uniswap/sdk-core";
 import { AlphaRouter, CurrencyAmount, IV3RouteWithValidQuote } from "@uniswap/smart-order-router";
 import { ethers } from "ethers";
 
+import { Output } from "../../../Plugin/outputs";
 import { createSmartPlugin } from "../../../Plugin/smartPlugin";
 import { UniswapV3 } from "../../../plugins";
 import { RequiredApproval } from "../../../types";
@@ -116,5 +117,18 @@ export const Swap = createSmartPlugin({
     ];
 
     return approvals;
+  },
+  prepareOutputs(args) {
+    // If input.isAmountIn = true, then the output of the call is `amountOut`
+    // else the output of the call is `amountIn`
+    const { isAmountIn } = args.input;
+    const name = isAmountIn ? "amountOut" : "amountIn";
+    return {
+      [name]: new Output({
+        innerIndex: 0,
+        name,
+        type: "uint256",
+      }),
+    };
   },
 });
