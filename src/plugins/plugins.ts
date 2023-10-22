@@ -1,3 +1,4 @@
+import { OneInchArray } from "./1inch";
 import { AaveV2Array } from "./AaveV2";
 import { AaveV3Array } from "./AaveV3";
 import { ChainlinkArray } from "./Chainlink";
@@ -13,6 +14,7 @@ import { UniswapV2Array } from "./UniswapV2";
 import { UniswapV3Array } from "./UniswapV3";
 import { WETHArray } from "./WETH";
 
+export * from "./1inch";
 export * from "./AaveV2";
 export * from "./AaveV3";
 export * from "./Chainlink";
@@ -41,4 +43,5 @@ export type AllPlugins = AaveV2Array &
   SushiswapArray &
   UniswapV2Array &
   UniswapV3Array &
-  WETHArray;
+  WETHArray &
+  OneInchArray;
