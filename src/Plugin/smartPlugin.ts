@@ -64,6 +64,7 @@ export function createSmartPlugin<
     public readonly params: readonly FunctionParameter[] = [];
     public readonly provider: ethers.providers.JsonRpcProvider;
     public static readonly id: `SmartPlugin_${PR}_${A["name"]}` = `SmartPlugin_${protocol}_${abiFragment.name}`;
+    public readonly id: `SmartPlugin_${PR}_${A["name"]}` = SmartPlugin.id;
 
     // Create a cache, where plugins from getPlugin are stored with the input as the key. stdLLL should be 3 minutes.
     public cache = new NodeCache({ stdTTL: 180 });

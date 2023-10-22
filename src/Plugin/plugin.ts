@@ -260,6 +260,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
 }) {
   return class Plugin extends PluginFunction<F, I> {
     public static readonly id = `${protocol}_${abiFragment.name}`;
+    public readonly id = Plugin.id;
     constructor(args: {
       chainId: ChainId;
       vaultAddress?: string;
