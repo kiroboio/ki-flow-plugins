@@ -27,8 +27,10 @@ export function createSmartPlugin<
   P extends readonly Plugin<any, string>[] = readonly Plugin<any, string>[],
   A extends EnhancedJsonFragment = EnhancedJsonFragment,
   C extends ChainId = ChainId,
-  RF extends RequiredActionsFunction<C, A> = RequiredActionsFunction<C, A>
+  RF extends RequiredActionsFunction<C, A> = RequiredActionsFunction<C, A>,
+  PR extends string = string
 >({
+  protocol,
   supportedPlugins,
   prepare,
   abiFragment,
@@ -36,6 +38,7 @@ export function createSmartPlugin<
   requiredActions,
   estimateGas,
 }: {
+  protocol: PR;
   abiFragment: A;
   supportedPlugins: P;
   prepare: (args: {
@@ -54,12 +57,13 @@ export function createSmartPlugin<
     chainId: C;
   }) => string;
 }) {
-  return class {
+  return class SmartPlugin {
     public readonly chainId: C;
     public readonly name: A["name"] = abiFragment.name;
     public readonly vaultAddress: string;
     public readonly params: readonly FunctionParameter[] = [];
     public readonly provider: ethers.providers.JsonRpcProvider;
+    public static readonly id: `SmartPlugin_${PR}_${A["name"]}` = `SmartPlugin_${protocol}_${abiFragment.name}`;
 
     // Create a cache, where plugins from getPlugin are stored with the input as the key. stdLLL should be 3 minutes.
     public cache = new NodeCache({ stdTTL: 180 });
@@ -193,7 +197,11 @@ export function createSmartPlugin<
       }
     }
 
-    static isSmartPlugin(data: IPluginCall) {
+    static isSmartPlugin(): boolean {
+      return true;
+    }
+
+    static isSmartPluginOfSimplePlugin(data: IPluginCall) {
       const Plugin = supportedPlugins.find((p) => {
         const plugin = new p({ chainId: "1" });
         return plugin.isPlugin(data);
@@ -208,3 +216,6 @@ export function createSmartPlugin<
 function _getCacheKey(plugin: any) {
   return JSON.stringify(plugin.get());
 }
+
+// Create SmartPlugin type
+export type SmartPlugin = ReturnType<typeof createSmartPlugin>;
