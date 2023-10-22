@@ -5,6 +5,11 @@ export const OneInch_Router: readonly SupportedContract[] = [
     address: "0x1111111254EEB25477B68fb85Ed929f73A960582",
     chainId: "1",
   },
+  {
+    address: "0x1111111254EEB25477B68fb85Ed929f73A960582",
+    // Arbitrum chainid
+    chainId: "42161",
+  },
   // TODO: Not sure if OneInch has Goerli support
   // {
   //   address: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
