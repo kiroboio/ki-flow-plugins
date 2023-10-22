@@ -27,7 +27,8 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly abiFragment: A;
   public readonly outputParams: FunctionParameter[] = [];
   public readonly supportedContracts: readonly SupportedContract[] = [];
-  public readonly id: `${I}_${A["name"]}`;
+  public readonly protocol: I;
+  // public readonly id: `${I}_${A["name"]}`;
 
   public contractAddress?: string;
   public ethValue: string | Variable = "0";
@@ -45,13 +46,14 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     rpcUrl?: string;
   }) {
+    this.protocol = args.protocol;
     this.chainId = args.chainId;
     this.method = args.abiFragment.name;
     this.params = args.abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
     this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.abiFragment = args.abiFragment;
-    this.id = `${args.protocol}_${args.abiFragment.name}`;
+    // this.id = `${args.protocol}_${args.abiFragment.name}`;
     if (args.vaultAddress) this.vaultAddress = args.vaultAddress;
     if (args.abiFragment.gas) this.gas = args.abiFragment.gas;
     if (args.abiFragment.options) {
@@ -221,7 +223,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
   public clone(): PluginFunction<A> {
     return new PluginFunction({
-      protocol: this.id.split("_")[0] as I,
+      protocol: this.protocol,
       abiFragment: this.abiFragment,
       chainId: this.chainId,
       contractAddress: this.contractAddress,
@@ -257,6 +259,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
   supportedContracts?: readonly SupportedContract[];
 }) {
   return class Plugin extends PluginFunction<F, I> {
+    public static readonly id = `${protocol}_${abiFragment.name}`;
     constructor(args: {
       chainId: ChainId;
       vaultAddress?: string;

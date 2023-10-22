@@ -9,13 +9,5 @@ export function getPlugin(pluginId: string): Plugin<any, any> | SmartPlugin | un
     return [...acc, ...Object.values(cur)];
   }, [] as SmartPlugin[]);
   const allPlugins = [...allSimplePlugins, ...allSmartPlugins];
-  return allPlugins.find((plugin) => {
-    // @ts-ignore
-    if (plugin.isSmartPlugin !== undefined && plugin.isSmartPlugin()) {
-      plugin = plugin as SmartPlugin;
-      return plugin.id === pluginId;
-    }
-    const pl = new (plugin as Plugin<any, any>)({ chainId: "1" });
-    return pl.id === pluginId;
-  });
+  return allPlugins.find((plugin) => plugin.id === pluginId);
 }
