@@ -28,6 +28,7 @@ const abiFragment = {
 } as const;
 
 export const Borrow = createSmartPlugin({
+  protocol: "AaveV2",
   supportedPlugins: [AaveV2.borrow],
   abiFragment,
   async prepare(args) {

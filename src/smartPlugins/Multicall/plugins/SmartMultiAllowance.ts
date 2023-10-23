@@ -30,6 +30,7 @@ const abiFragment = {
 } as const;
 
 export const SmartMultiAllowance = createSmartPlugin({
+  protocol: "Kirobo",
   supportedPlugins: [Multicall.multiAllowance],
   abiFragment,
   async prepare(args) {

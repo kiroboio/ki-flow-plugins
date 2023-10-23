@@ -26,6 +26,7 @@ const abiFragment = {
 } as const;
 
 export const SmartTransfer = createSmartPlugin({
+  protocol: "ERC20",
   supportedPlugins: [ERC20.transfer, ERC20.transferFrom],
   abiFragment,
   async prepare(args) {

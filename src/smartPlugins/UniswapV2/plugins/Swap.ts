@@ -51,6 +51,7 @@ const abiFragment = {
 } as const;
 
 export const Swap = createSmartPlugin({
+  protocol: "UniswapV2",
   supportedPlugins: [
     UniswapV2.swapETHForExactTokens,
     UniswapV2.swapExactETHForTokens,

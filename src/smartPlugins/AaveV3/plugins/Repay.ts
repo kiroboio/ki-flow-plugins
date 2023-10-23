@@ -27,6 +27,7 @@ const abiFragment = {
 } as const;
 
 export const Repay = createSmartPlugin({
+  protocol: "AaveV3",
   supportedPlugins: [AaveV3.repay],
   abiFragment,
   async prepare(args) {

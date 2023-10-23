@@ -52,6 +52,7 @@ const abiFragment = {
 } as const;
 
 export const Swap = createSmartPlugin({
+  protocol: "UniswapV3",
   supportedPlugins: [
     UniswapV3.exactInput,
     UniswapV3.exactInputSingle,

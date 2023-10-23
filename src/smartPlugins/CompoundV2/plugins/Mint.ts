@@ -20,6 +20,7 @@ const abiFragment = {
 } as const;
 
 export const Mint = createSmartPlugin({
+  protocol: "CompoundV2",
   supportedPlugins: [CompoundV2_cETH.mint, CompoundV2_cERC20.mint],
   abiFragment,
   async prepare(args) {

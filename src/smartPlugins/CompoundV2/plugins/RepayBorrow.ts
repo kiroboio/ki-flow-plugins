@@ -25,6 +25,7 @@ const abiFragment = {
 } as const;
 
 export const RepayBorrow = createSmartPlugin({
+  protocol: "CompoundV2",
   supportedPlugins: [
     CompoundV2_cETH.repayBorrow,
     CompoundV2_cETH.repayBorrowBehalf,

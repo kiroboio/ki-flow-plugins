@@ -32,6 +32,7 @@ const abiFragment = {
 } as const;
 
 export const Withdraw = createSmartPlugin({
+  protocol: "CompoundV3",
   supportedPlugins: [CompoundV3.withdraw, CompoundV3.withdrawTo, CompoundV3.withdrawFrom],
   abiFragment,
   async prepare(args) {

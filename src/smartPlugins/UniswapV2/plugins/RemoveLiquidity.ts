@@ -32,6 +32,7 @@ const abiFragment = {
 
 // TODO: This can be greatly improved with multicalls
 export const RemoveLiquidity = createSmartPlugin({
+  protocol: "UniswapV2",
   supportedPlugins: [UniswapV2.removeLiquidity],
   abiFragment,
   async prepare(args) {

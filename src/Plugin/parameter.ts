@@ -1,5 +1,10 @@
 import { InstanceOf } from "../helpers/instanceOf";
 import { EnhancedJsonFragmentType, FPValue, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
+import { Params } from "./smartPlugin";
+
+export type ComponentMethods<C extends readonly FunctionParameter[]> = {
+  [K in C[number]["name"]]: ReturnType<C[number]["getWithMethods"]>;
+};
 
 export class FunctionParameter<
   N extends string = string,
@@ -11,17 +16,29 @@ export class FunctionParameter<
 > {
   public readonly name: N;
   public readonly internalType: I;
-  public readonly components: FunctionParameter[];
+  public readonly components: Params<C>;
   public readonly canBeVariable: V;
   public readonly hashed: H;
   public readonly options?: O;
 
   public value?: FPValue<N, I, C, O>;
 
-  constructor(args: { name: N; type: I; components?: C; canBeVariable?: V; hashed?: H; options?: O }) {
+  constructor(args: {
+    name: N;
+    type: I;
+    components?: C;
+    canBeVariable?: V;
+    hashed?: H;
+    options?: O;
+    functionComponents?: Params<C>;
+  }) {
     this.name = args.name;
     this.internalType = args.type;
-    this.components = args.components?.map((c) => new FunctionParameter(c)) || [];
+    if (args.functionComponents) {
+      this.components = args.functionComponents;
+    } else {
+      this.components = (args.components || []).map((c) => new FunctionParameter(c)) as Params<C>;
+    }
     this.canBeVariable = args.canBeVariable || (true as V);
     this.hashed = args.hashed || (false as H);
     if (args.options) {
@@ -123,6 +140,20 @@ export class FunctionParameter<
     return val;
   }
 
+  public getWithMethods(): {
+    get: FunctionParameter["get"];
+    set: FunctionParameter["set"];
+  } & ComponentMethods<(typeof this)["components"]> {
+    const params = this.components.reduce((acc, cur) => {
+      return { ...acc, [cur.name]: cur.getWithMethods() };
+    }, {} as ComponentMethods<(typeof this)["components"]>);
+    return {
+      ...params,
+      get: this.get.bind(this),
+      set: this.set.bind(this),
+    };
+  }
+
   public getAsCoreParam(): Param {
     const baseParam = {
       name: this.name,
@@ -158,11 +189,12 @@ export class FunctionParameter<
     return new FunctionParameter({
       name: this.name,
       type: this.internalType,
-      components: this.components.map((c) => c.clone()),
+      functionComponents: this.components,
     });
   }
 
   private _findComponentFromName(name: string): FunctionParameter | undefined {
+    // @ts-ignore
     return this.components.find((c) => c.name === name);
   }
 

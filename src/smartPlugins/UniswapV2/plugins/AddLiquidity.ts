@@ -52,6 +52,7 @@ const abiFragment = {
 } as const;
 
 export const AddLiquidity = createSmartPlugin({
+  protocol: "UniswapV2",
   supportedPlugins: [UniswapV2.addLiquidity, UniswapV2.addLiquidityETH],
   abiFragment,
   async prepare(args) {

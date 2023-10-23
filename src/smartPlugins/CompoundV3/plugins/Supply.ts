@@ -34,6 +34,7 @@ const abiFragment = {
 } as const;
 
 export const Supply = createSmartPlugin({
+  protocol: "CompoundV3",
   supportedPlugins: [CompoundV3.supply, CompoundV3.supplyTo, CompoundV3.supplyFrom],
   abiFragment,
   async prepare(args) {

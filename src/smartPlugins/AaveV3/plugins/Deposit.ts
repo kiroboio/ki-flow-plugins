@@ -22,6 +22,7 @@ const abiFragment = {
 } as const;
 
 export const Deposit = createSmartPlugin({
+  protocol: "AaveV3",
   supportedPlugins: [AaveV3.deposit],
   abiFragment,
   async prepare(args) {

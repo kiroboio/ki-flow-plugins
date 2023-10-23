@@ -4,6 +4,7 @@ import NodeCache from "node-cache";
 import {
   ChainId,
   EnhancedJsonFragment,
+  EnhancedJsonFragmentType,
   HandleUndefined,
   IPluginCall,
   PluginFunctionInput,
@@ -11,11 +12,27 @@ import {
   RequiredObject,
 } from "../types";
 import { Output } from "./outputs";
-import { FunctionParameter } from "./parameter";
+import { ComponentMethods, FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
 // Optional:
 // - optional helpers when constructing plugin (for example, cache for Uniswap). After talking with Sumbat - not mandatory.
+// TODO: fromJSON, toJSON
+
+type CreateFunctionParameter<T extends EnhancedJsonFragmentType> = FunctionParameter<
+  T["name"],
+  T["type"],
+  T["components"] extends readonly EnhancedJsonFragmentType[] ? T["components"] : [],
+  T["canBeVariable"] extends boolean ? T["canBeVariable"] : true,
+  T["hashed"] extends boolean ? T["hashed"] : false,
+  T["options"] extends readonly string[] ? T["options"] : undefined
+>;
+
+export type Params<T extends readonly EnhancedJsonFragmentType[] | undefined> = T extends undefined
+  ? []
+  : T extends readonly EnhancedJsonFragmentType[]
+  ? CreateFunctionParameter<T[number]>[]
+  : never;
 
 type RequiredActionsFunction<C extends ChainId, A extends EnhancedJsonFragment> = (args: {
   input: RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
@@ -61,7 +78,7 @@ export function createSmartPlugin<
     public readonly chainId: C;
     public readonly name: A["name"] = abiFragment.name;
     public readonly vaultAddress: string;
-    public readonly params: readonly FunctionParameter[] = [];
+    public readonly params: Params<A["inputs"]>;
     public readonly provider: ethers.providers.JsonRpcProvider;
     public static readonly id: `SmartPlugin_${PR}_${A["name"]}` = `SmartPlugin_${protocol}_${abiFragment.name}`;
     public readonly id: `SmartPlugin_${PR}_${A["name"]}` = SmartPlugin.id;
@@ -77,15 +94,18 @@ export function createSmartPlugin<
     }) {
       this.chainId = args.chainId;
       this.vaultAddress = args.vaultAddress;
-      this.params = abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
+      this.params = (abiFragment.inputs || []).map((c) => new FunctionParameter(c)) as Params<A["inputs"]>;
       this.provider = args.provider;
     }
 
-    get inputs() {
+    get inputs(): {
+      get: SmartPlugin["get"];
+      set: SmartPlugin["set"];
+    } & ComponentMethods<(typeof this)["params"]> {
       const params = this.params.reduce((acc, cur) => {
-        return { ...acc, [cur.name]: cur.get() };
-      }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
-      return { params, set: this.set.bind(this), get: this.get.bind(this) };
+        return { ...acc, [cur.name]: cur.getWithMethods() };
+      }, {} as ComponentMethods<(typeof this)["params"]>);
+      return { ...params, set: this.set.bind(this), get: this.get.bind(this) };
     }
 
     get outputs(): Record<string, Output> {
