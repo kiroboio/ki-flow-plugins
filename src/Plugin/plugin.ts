@@ -28,7 +28,6 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public readonly outputParams: FunctionParameter[] = [];
   public readonly supportedContracts: readonly SupportedContract[] = [];
   public readonly protocol: I;
-  // public readonly id: `${I}_${A["name"]}`;
 
   public contractAddress?: string;
   public ethValue: string | Variable = "0";
