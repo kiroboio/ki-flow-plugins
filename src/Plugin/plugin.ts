@@ -86,10 +86,14 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   get inputs() {
-    const params = this.params.reduce((acc, cur) => {
-      return { ...acc, [cur.name]: cur.get() };
-    }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
-    return { params, set: this.set.bind(this), get: this.get.bind(this) };
+    // const params = this.params.reduce((acc, cur) => {
+    //   return { ...acc, [cur.name]: cur.get() };
+    // }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
+    return { set: this.set.bind(this), get: this.get.bind(this) };
+  }
+
+  get inputTypes() {
+    return this.abiFragment.inputs || [];
   }
 
   get outputs() {
