@@ -12,26 +12,29 @@ import {
   RequiredObject,
 } from "../types";
 import { Output } from "./outputs";
-import { ComponentMethods, FunctionParameter } from "./parameter";
+import { FunctionParameter } from "./parameter";
 import { Plugin } from "./plugin";
 
 // Optional:
 // - optional helpers when constructing plugin (for example, cache for Uniswap). After talking with Sumbat - not mandatory.
 // TODO: fromJSON, toJSON
 
-type CreateFunctionParameter<T extends EnhancedJsonFragmentType> = FunctionParameter<
-  T["name"],
-  T["type"],
-  T["components"] extends readonly EnhancedJsonFragmentType[] ? T["components"] : [],
-  T["canBeVariable"] extends boolean ? T["canBeVariable"] : true,
-  T["hashed"] extends boolean ? T["hashed"] : false,
-  T["options"] extends readonly string[] ? T["options"] : undefined
->;
+// type CreateFunctionParameter<T extends EnhancedJsonFragmentType> = FunctionParameter<
+//   T["name"],
+//   T["type"],
+//   T["components"] extends readonly EnhancedJsonFragmentType[] ? T["components"] : [],
+//   T["canBeVariable"] extends boolean ? T["canBeVariable"] : true,
+//   T["hashed"] extends boolean ? T["hashed"] : false,
+//   T["options"] extends readonly string[] ? T["options"] : undefined
+// >;
+
+// Type that creates FunctionParameter array from EnhancedJsonFragment[]
+type CreateFunctionParameters<T extends readonly EnhancedJsonFragmentType[]> = FunctionParameter<T[number]>[];
 
 export type Params<T extends readonly EnhancedJsonFragmentType[] | undefined> = T extends undefined
   ? []
   : T extends readonly EnhancedJsonFragmentType[]
-  ? CreateFunctionParameter<T[number]>[]
+  ? CreateFunctionParameters<T>
   : never;
 
 type RequiredActionsFunction<C extends ChainId, A extends EnhancedJsonFragment> = (args: {
@@ -81,7 +84,6 @@ export function createSmartPlugin<
     public readonly params: Params<A["inputs"]>;
     public readonly provider: ethers.providers.JsonRpcProvider;
     public static readonly id: `SmartPlugin_${PR}_${A["name"]}` = `SmartPlugin_${protocol}_${abiFragment.name}`;
-    public readonly id: `SmartPlugin_${PR}_${A["name"]}` = SmartPlugin.id;
 
     // Create a cache, where plugins from getPlugin are stored with the input as the key. stdLLL should be 3 minutes.
     public cache = new NodeCache({ stdTTL: 180 });
@@ -98,14 +100,27 @@ export function createSmartPlugin<
       this.provider = args.provider;
     }
 
+    get id() {
+      return SmartPlugin.id;
+    }
+
     get inputs(): {
-      get: SmartPlugin["get"];
-      set: SmartPlugin["set"];
-    } & ComponentMethods<(typeof this)["params"]> {
-      const params = this.params.reduce((acc, cur) => {
-        return { ...acc, [cur.name]: cur.getWithMethods() };
-      }, {} as ComponentMethods<(typeof this)["params"]>);
-      return { ...params, set: this.set.bind(this), get: this.get.bind(this) };
+      get(): PluginFunctionInput<HandleUndefined<A["inputs"]>>;
+      set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>): void;
+      // } & ParameterInputFromFragments<A["inputs"]> {
+    } {
+      // const params = this.params.reduce((acc, cur) => {
+      //   return { ...acc, [cur.name]: cur.getWithMethods() };
+      // }, {} as ParameterInputFromFragments<A["inputs"]>);
+      return {
+        // ...params,
+        set: this.set.bind(this),
+        get: this.get.bind(this),
+      };
+    }
+
+    get inputTypes() {
+      return abiFragment.inputs || [];
     }
 
     get outputs(): Record<string, Output> {

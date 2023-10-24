@@ -18,6 +18,7 @@ const abiFragment = {
       ],
       name: "fromToken",
       type: "tuple",
+      appType: "Token",
     },
     {
       components: [
@@ -26,6 +27,7 @@ const abiFragment = {
       ],
       name: "toToken",
       type: "tuple",
+      appType: "Token",
     },
     {
       name: "amount",

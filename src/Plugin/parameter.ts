@@ -1,57 +1,85 @@
 import { InstanceOf } from "../helpers/instanceOf";
-import { EnhancedJsonFragmentType, FPValue, FunctionParameterInput, FunctionParameterValue, Param } from "../types";
-import { Params } from "./smartPlugin";
+import {
+  EnhancedJsonFragmentType,
+  FPValue,
+  FunctionParameterInput,
+  FunctionParameterValue,
+  HandleUndefined,
+  Param,
+} from "../types";
 
-export type ComponentMethods<C extends readonly FunctionParameter[]> = {
-  [K in C[number]["name"]]: ReturnType<C[number]["getWithMethods"]>;
-};
+// export type GetWithMethods<T extends FunctionParameter, C extends ReadonlyArray<EnhancedJsonFragmentType>> = {
+//   get(): FunctionParameterInput<T["internalType"], C, T["canBeVariable"]>;
+//   set(value: FunctionParameterInput<T["internalType"], C, T["canBeVariable"]>): void;
+// } & {};
 
-export class FunctionParameter<
-  N extends string = string,
-  I extends string = string,
-  C extends readonly EnhancedJsonFragmentType[] = readonly EnhancedJsonFragmentType[],
-  V extends boolean = boolean,
-  H extends boolean = boolean,
-  O extends readonly string[] | undefined = readonly string[] | undefined
-> {
-  public readonly name: N;
-  public readonly internalType: I;
-  public readonly components: Params<C>;
-  public readonly canBeVariable: V;
-  public readonly hashed: H;
-  public readonly options?: O;
+// type InputToType<T extends EnhancedJsonFragmentType> = T["components"] extends ReadonlyArray<EnhancedJsonFragmentType>
+//   ? InputsToObject<T>
+//   : T["type"] extends "bool"
+//   ? boolean
+//   : string;
 
-  public value?: FPValue<N, I, C, O>;
+export type ParameterInputFromFragments<T extends ReadonlyArray<EnhancedJsonFragmentType> | undefined> =
+  T extends readonly EnhancedJsonFragmentType[]
+    ? {
+        [K in T[number]["name"]]: InputsToObject<Extract<T[number], { name: K }>>;
+      }
+    : object;
 
-  constructor(args: {
-    name: N;
-    type: I;
-    components?: C;
-    canBeVariable?: V;
-    hashed?: H;
-    options?: O;
-    functionComponents?: Params<C>;
-  }) {
-    this.name = args.name;
-    this.internalType = args.type;
-    if (args.functionComponents) {
-      this.components = args.functionComponents;
-    } else {
-      this.components = (args.components || []).map((c) => new FunctionParameter(c)) as Params<C>;
-    }
-    this.canBeVariable = args.canBeVariable || (true as V);
-    this.hashed = args.hashed || (false as H);
-    if (args.options) {
+type InputsToObject<T extends EnhancedJsonFragmentType> = {
+  get(): FunctionParameterInput<
+    T["type"],
+    HandleUndefined<T["components"]>,
+    HandleUndefined<T["canBeVariable"], boolean>
+  >;
+  set(
+    value: FunctionParameterInput<
+      T["type"],
+      HandleUndefined<T["components"]>,
+      HandleUndefined<T["canBeVariable"], boolean>
+    >
+  ): void;
+} & ParameterInputFromFragments<T["components"]>;
+
+type FPComponents<C extends EnhancedJsonFragmentType> = C["components"] extends ReadonlyArray<EnhancedJsonFragmentType>
+  ? C["components"]
+  : [];
+
+type FPCanBeVariable<V extends EnhancedJsonFragmentType> = V["canBeVariable"] extends boolean
+  ? V["canBeVariable"]
+  : true;
+type FPHashed<H extends EnhancedJsonFragmentType> = H["hashed"] extends boolean ? H["hashed"] : false;
+type FPOptions<O extends EnhancedJsonFragmentType> = O["options"] extends readonly string[] ? O["options"] : undefined;
+
+export class FunctionParameter<F extends EnhancedJsonFragmentType = EnhancedJsonFragmentType> {
+  public readonly name: F["name"];
+  public readonly internalType: F["type"];
+  public readonly components: FPComponents<F>;
+  public readonly canBeVariable: FPCanBeVariable<F>;
+  public readonly hashed: FPHashed<F>;
+  public readonly options?: FPOptions<F>;
+
+  private value?: FPValue<F["name"], F["type"], FPComponents<F>, FPOptions<F>>;
+  private readonly _abiFragment: F;
+
+  constructor(abiFragment: F) {
+    this._abiFragment = abiFragment;
+    this.name = abiFragment.name;
+    this.internalType = abiFragment.type;
+    this.components = (abiFragment.components || []) as FPComponents<F>;
+    this.canBeVariable = (abiFragment.canBeVariable ?? true) as FPCanBeVariable<F>;
+    this.hashed = (abiFragment.hashed ?? false) as FPHashed<F>;
+    if (abiFragment.options) {
       // Options are not allowed on tuples and arrays
       if (this._isTuple() || this._isArray()) {
         throw new Error(`${this.name}: Options are not allowed on tuples or arrays`);
       }
 
       // If there are options, we need to validate them to make sure they are valid
-      args.options?.forEach((o) => {
+      abiFragment.options?.forEach((o) => {
         this._validateValue(o);
       });
-      this.options = args.options;
+      this.options = abiFragment.options as FPOptions<F>;
     }
   }
 
@@ -65,18 +93,20 @@ export class FunctionParameter<
         arrayString = this.internalType.slice(this.internalType.lastIndexOf("["));
       }
 
-      return `(${this.components.map((c) => c.type).join(",")})${arrayString}`;
+      return `(${this._generateTypeFromComponents(
+        this.components as readonly EnhancedJsonFragmentType[]
+      )})${arrayString}`;
     }
     return this.internalType;
   }
 
-  public set(value: FunctionParameterInput<I, C, V>) {
+  public set(value: FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>) {
     if (this._isTuple()) {
       if (this._isArray()) {
-        const storedVal: FunctionParameterValue<N, "tuple[]", C> = [];
-        const inputVal = value as unknown as FunctionParameterInput<"tuple[]", C>;
+        const storedVal: FunctionParameterValue<F["name"], "tuple[]", FPComponents<F>> = [];
+        const inputVal = value as unknown as FunctionParameterInput<"tuple[]", FPComponents<F>>;
         inputVal.forEach((v) => {
-          const val: FunctionParameterValue<N, "tuple", C> = {} as any;
+          const val: FunctionParameterValue<F["name"], "tuple", FPComponents<F>> = {} as any;
           Object.entries<any>(v).forEach((k) => {
             const clone = this._findComponentFromName(k[0])?.clone();
             if (clone) {
@@ -89,9 +119,9 @@ export class FunctionParameter<
         this.value = storedVal as any;
         return this.get();
       }
-      const storedVal: FunctionParameterValue<N, "tuple", C> = {} as any;
+      const storedVal: FunctionParameterValue<F["name"], "tuple", FPComponents<F>> = {} as any;
 
-      const val = value as unknown as FunctionParameterInput<"tuple", C>;
+      const val = value as unknown as FunctionParameterInput<"tuple", FPComponents<F>>;
       Object.entries<any>(val).forEach((k) => {
         const clone = this._findComponentFromName(k[0])?.clone();
         if (clone) {
@@ -104,35 +134,35 @@ export class FunctionParameter<
       return this.get();
     }
     this._validateValue(value);
-    this.value = value as unknown as FPValue<N, I, C, O>;
+    this.value = value as unknown as FPValue<F["name"], F["type"], FPComponents<F>, FPOptions<F>>;
     return this.get();
   }
 
-  public get(): FunctionParameterInput<I, C, V> | undefined {
+  public get(): FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>> | undefined {
     if (this._isTuple()) {
       if (this._isArray()) {
-        const outputVal: FunctionParameterInput<"tuple[]", C> = [];
-        const inputVal = this.value as unknown as FunctionParameterValue<N, "tuple[]", C>;
+        const outputVal: FunctionParameterInput<"tuple[]", FPComponents<F>> = [];
+        const inputVal = this.value as unknown as FunctionParameterValue<F["name"], "tuple[]", FPComponents<F>>;
         inputVal.forEach((v) => {
-          const arrayVal: FunctionParameterInput<"tuple", C> = {};
+          const arrayVal: FunctionParameterInput<"tuple", FPComponents<F>> = {};
           Object.entries<any>(v).forEach((k) => {
             arrayVal[k[0] as keyof typeof arrayVal] = k[1].get();
           });
           outputVal.push(arrayVal);
         });
-        return outputVal as unknown as FunctionParameterInput<I, C, V>;
+        return outputVal as unknown as FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>;
       }
-      const outputVal: FunctionParameterInput<"tuple", C> = {};
-      const inputVal = this.value as FunctionParameterValue<N, "tuple", C>;
+      const outputVal: FunctionParameterInput<"tuple", FPComponents<F>> = {};
+      const inputVal = this.value as FunctionParameterValue<F["name"], "tuple", FPComponents<F>>;
       Object.entries<any>(inputVal).forEach((k) => {
         outputVal[k[0] as keyof typeof outputVal] = k[1].get();
       });
-      return outputVal as FunctionParameterInput<I, C, V>;
+      return outputVal as FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>;
     }
-    return this.value as unknown as FunctionParameterInput<I, C, V>;
+    return this.value as unknown as FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>;
   }
 
-  public getStrict(): FunctionParameterInput<I, C, V> {
+  public getStrict(): FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>> {
     const val = this.get();
     if (val === undefined) {
       throw new Error(`${this.name}: Value not set`);
@@ -141,15 +171,17 @@ export class FunctionParameter<
   }
 
   public getWithMethods(): {
-    get: FunctionParameter["get"];
-    set: FunctionParameter["set"];
-  } & ComponentMethods<(typeof this)["components"]> {
-    const params = this.components.reduce((acc, cur) => {
-      return { ...acc, [cur.name]: cur.getWithMethods() };
-    }, {} as ComponentMethods<(typeof this)["components"]>);
+    get(): FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>;
+    set(value: FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>): void;
+    // } & ParameterInputFromFragments<FPComponents<F>> {
+  } {
+    // const params = this.components.reduce((acc, cur) => {
+    //   return { ...acc, [cur.name]: cur.getWithMethods() };
+    // }, {} as ParameterInputFromFragments<FPComponents<F>>);
+    const params = {};
     return {
       ...params,
-      get: this.get.bind(this),
+      get: this.get.bind(this) as () => FunctionParameterInput<F["type"], FPComponents<F>, FPCanBeVariable<F>>,
       set: this.set.bind(this),
     };
   }
@@ -163,7 +195,7 @@ export class FunctionParameter<
     if (this._isTuple()) {
       // Check if the tuple is an array
       if (this._isArray()) {
-        const val = this.value as unknown as FunctionParameterValue<N, "tuple[]", C>;
+        const val = this.value as unknown as FunctionParameterValue<F["name"], "tuple[]", FPComponents<F>>;
         return {
           ...baseParam,
           customType: true,
@@ -172,7 +204,7 @@ export class FunctionParameter<
           }),
         };
       }
-      const val = this.value as FunctionParameterValue<N, "tuple", C>;
+      const val = this.value as FunctionParameterValue<F["name"], "tuple", FPComponents<F>>;
       return {
         ...baseParam,
         customType: true,
@@ -185,12 +217,8 @@ export class FunctionParameter<
     };
   }
 
-  public clone(): FunctionParameter {
-    return new FunctionParameter({
-      name: this.name,
-      type: this.internalType,
-      functionComponents: this.components,
-    });
+  public clone(): FunctionParameter<F> {
+    return new FunctionParameter(this._abiFragment);
   }
 
   private _findComponentFromName(name: string): FunctionParameter | undefined {
@@ -283,5 +311,16 @@ export class FunctionParameter<
         throw new Error(`${this.name}: Invalid ${type} length`);
       }
     }
+  }
+
+  private _generateTypeFromComponents(components: readonly EnhancedJsonFragmentType[]): string {
+    return `(${components
+      .map((c) => {
+        if (c.components) {
+          return this._generateTypeFromComponents(c.components);
+        }
+        return c.type;
+      })
+      .join(",")})`;
   }
 }

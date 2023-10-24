@@ -64,9 +64,15 @@ export interface JsonFragment {
 }
 
 export interface EnhancedJsonFragmentType extends JsonFragmentType {
+  // For app. For example, Token
+  readonly appType?: string;
+  // If the value can be a variable (external, global etc.)
   readonly canBeVariable?: boolean;
+  // If tuple, then components are required
   readonly components?: ReadonlyArray<EnhancedJsonFragmentType>;
+  // If the string should be hashed.
   readonly hashed?: boolean;
+  // Value options
   readonly options?: readonly string[];
 }
 
@@ -120,17 +126,25 @@ export type FunctionParameterValue<
   C extends readonly EnhancedJsonFragmentType[]
 > = T extends "tuple"
   ? {
-      [K in C[number]["name"]]: FunctionParameter<
-        K,
-        Extract<C[number], { name: K }>["type"],
-        HandleUndefined<Extract<C[number], { name: K }>["components"]>
-      >;
+      [K in C[number]["name"]]: FunctionParameter<{
+        name: K;
+        type: Extract<C[number], { name: K }>["type"];
+        components: Extract<C[number], { name: K }>["components"];
+      }>;
     }
   : T extends "bool"
-  ? FunctionParameter<T, "bool", C>
+  ? FunctionParameter<{
+      name: N;
+      type: "bool";
+      components: C;
+    }>
   : T extends `${infer _}[${string}`
   ? Array<FunctionParameterValue<N, _, C>>
-  : FunctionParameter<N, T, C>;
+  : FunctionParameter<{
+      name: N;
+      type: T;
+      components: C;
+    }>;
 
 export type FPValue<
   N extends string,
