@@ -104,7 +104,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     return getOutputs<A["outputs"]>({ outputs: this.abiFragment.outputs });
   }
 
-  public async getGasLimit() {
+  public async estimateGas() {
     if (!this.gas) return (80000n + CALL_OVERHEAD).toString(); // default gas limit
     return (BigInt(this.gas) + CALL_OVERHEAD).toString();
   }
@@ -157,7 +157,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       from: this.vaultAddress,
       options: {
         callType: this.getCallType(),
-        gasLimit: await this.getGasLimit(),
+        gasLimit: await this.estimateGas(),
         ...this.options,
       },
     };

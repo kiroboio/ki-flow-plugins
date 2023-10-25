@@ -152,10 +152,10 @@ export function createSmartPlugin<
     }
 
     public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
-      Object.entries<any>(params).forEach((p) => {
+      Object.entries(params).forEach((p) => {
         const param = this.params.find((fp) => fp.name === p[0]);
         if (param) {
-          param.set(p[1]);
+          param.set(p[1] as any);
         }
       });
     }
@@ -166,7 +166,6 @@ export function createSmartPlugin<
       }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
     }
 
-    // Create a function that returns the same as get, but it checks if the value is undefined and if it is, it throws an error.
     public getStrict() {
       return this.params.reduce((acc, cur) => {
         return { ...acc, [cur.name]: cur.getStrict() };
