@@ -132,6 +132,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
+    // TODO: params should be a tuple (like ethers - support object and array)
     Object.entries<any>(params).forEach((p) => {
       const param = this.params.find((fp) => fp.name === p[0]);
       if (param) {
