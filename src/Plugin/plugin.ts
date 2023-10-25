@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, VoidSigner } from "ethers";
 import _ from "lodash";
 
 import { CALL_OVERHEAD } from "../constants";
@@ -31,19 +31,20 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
 
   public contractAddress?: string;
   public ethValue: string | Variable = "0";
-  public rpcUrl?: string;
   public options: A["options"] = {};
   public vaultAddress: string | undefined;
+  public provider: ethers.providers.Provider;
 
   constructor(args: {
     protocol: I;
     abiFragment: A;
     chainId: ChainId;
+    rpcUrl?: string;
+    provider?: ethers.providers.Provider;
     vaultAddress?: string;
     contractAddress?: string;
     supportedContracts?: readonly SupportedContract[];
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
-    rpcUrl?: string;
   }) {
     this.protocol = args.protocol;
     this.chainId = args.chainId;
@@ -52,7 +53,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.abiFragment = args.abiFragment;
-    // this.id = `${args.protocol}_${args.abiFragment.name}`;
+
     if (args.vaultAddress) this.vaultAddress = args.vaultAddress;
     if (args.abiFragment.gas) this.gas = args.abiFragment.gas;
     if (args.abiFragment.options) {
@@ -71,8 +72,12 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     if (args.contractAddress) {
       this.contractAddress = args.contractAddress;
     }
-    if (args.rpcUrl) {
-      this.rpcUrl = args.rpcUrl;
+    if (args.provider) {
+      this.provider = args.provider;
+    } else if (args.rpcUrl) {
+      this.provider = new ethers.providers.JsonRpcProvider(args.rpcUrl);
+    } else {
+      throw new Error("Provider or RPC URL not provided");
     }
   }
 
@@ -135,10 +140,6 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     });
   }
 
-  public setRpcUrl(rpcUrl: string) {
-    this.rpcUrl = rpcUrl;
-  }
-
   public get() {
     return this.params.reduce((acc, cur) => {
       return { ...acc, [cur.name]: cur.get() };
@@ -164,19 +165,16 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   public async simulate({
-    rpcUrl,
     from,
     input,
   }: {
-    rpcUrl?: string;
     from: string;
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) {
     if (!this.contractAddress) {
       throw new Error("Contract address not set");
     }
-    rpcUrl = rpcUrl || this.rpcUrl;
-    if (!rpcUrl) throw new Error("RPC URL not set or provided");
+    const provider = this.provider;
 
     const params = this.params.map((p) => {
       if (input && p.name in input) {
@@ -184,7 +182,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       }
       return p.get();
     });
-    const signer = new ethers.providers.JsonRpcProvider(rpcUrl).getSigner(from);
+    const signer = new VoidSigner(from, provider);
     const contract = new ethers.Contract(this.contractAddress, [this.abiFragment], signer);
     const result = await contract.callStatic[this.method](...params);
     return {
@@ -194,11 +192,9 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   public async safeSimulate({
-    rpcUrl,
     from,
     input,
   }: {
-    rpcUrl: string;
     from: string;
     input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
   }) {
@@ -209,7 +205,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       };
     }
     try {
-      return await this.simulate({ rpcUrl, from, input });
+      return await this.simulate({ from, input });
     } catch (e) {
       if (typeof e === "object" && e && "reason" in e) {
         return {
@@ -266,6 +262,8 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
     public readonly id = Plugin.id;
     constructor(args: {
       chainId: ChainId;
+      rpcUrl?: string;
+      provider?: ethers.providers.Provider;
       vaultAddress?: string;
       contractAddress?: string;
       input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
@@ -278,6 +276,8 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
         supportedContracts,
         input: args.input,
         vaultAddress: args.vaultAddress,
+        rpcUrl: args.rpcUrl,
+        provider: args.provider,
       });
     }
   };

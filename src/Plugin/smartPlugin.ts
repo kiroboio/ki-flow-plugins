@@ -91,13 +91,23 @@ export function createSmartPlugin<
     constructor(args: {
       chainId: C;
       vaultAddress: string;
-      provider: ethers.providers.JsonRpcProvider;
+      rpcUrl?: string;
+      provider?: ethers.providers.JsonRpcProvider;
       input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     }) {
       this.chainId = args.chainId;
       this.vaultAddress = args.vaultAddress;
       this.params = (abiFragment.inputs || []).map((c) => new FunctionParameter(c)) as Params<A["inputs"]>;
-      this.provider = args.provider;
+      if (args.input) {
+        this.set(args.input);
+      }
+      if (args.provider) {
+        this.provider = args.provider;
+      } else if (args.rpcUrl) {
+        this.provider = new ethers.providers.JsonRpcProvider(args.rpcUrl);
+      } else {
+        throw new Error("No provider or rpcUrl passed");
+      }
     }
 
     get id() {
