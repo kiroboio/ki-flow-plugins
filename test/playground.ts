@@ -1,33 +1,34 @@
-class Person {
-  public driver: boolean = false;
-  constructor(public name: string) {}
-
-  setDriver() {
-    this.driver = true;
-  }
-}
-
-class Bus {
-  public passengers: Person[] = [];
-  public passangersByName: Record<string, Person> = {};
-  constructor(passengers: Person[]) {
-    this.passengers = passengers;
-    this.passangersByName = passengers.reduce((acc, passenger) => {
-      acc[passenger.name] = passenger;
-      return acc;
-    }, {} as Record<string, Person>);
-  }
-}
+import { ParamType } from "ethers/lib/utils";
 
 function main() {
-  const person = new Person("John");
-  const bus = new Bus([person]);
+  const abi = [
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "token",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "amount",
+          type: "uint256",
+        },
+      ],
+      name: "deposit",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+  ];
 
-  console.log(bus);
+  const params = abi[0].inputs.map((c) => ParamType.fromObject(c));
 
-  person.setDriver();
+  console.log(params);
 
-  console.log("Bus after calling person", bus);
+  const format = params[0].format();
+
+  console.log(format);
 }
 
 main();
