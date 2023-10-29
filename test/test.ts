@@ -1,14 +1,7 @@
 import console from "console";
-import { ethers } from "ethers";
+import process from "process";
 
-import { FunctionParameter, SmartPlugins } from "../src";
-import scriptData from "./scriptData";
-
-const plugin = new SmartPlugins.UniswapV3.Swap({
-  chainId: "1",
-  provider: new ethers.providers.JsonRpcProvider(scriptData[1].rpcUrl),
-  vaultAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-});
+import { createInput } from "../src";
 
 // plugin.set({
 //   fromToken: {
@@ -25,11 +18,11 @@ const plugin = new SmartPlugins.UniswapV3.Swap({
 //   slippage: "500",
 // });
 
-const multiBalance = new SmartPlugins.Multicall.SmartMultiBalance({
-  chainId: "1",
-  provider: new ethers.providers.JsonRpcProvider(scriptData[1].rpcUrl),
-  vaultAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-});
+// const multiBalance = new SmartPlugins.Multicall.SmartMultiBalance({
+//   chainId: "1",
+//   provider: new ethers.providers.JsonRpcProvider(scriptData[1].rpcUrl),
+//   vaultAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+// });
 
 const FPData = {
   components: [
@@ -41,9 +34,47 @@ const FPData = {
 } as const;
 
 async function main() {
-  const param = new FunctionParameter(FPData);
+  const data = [
+    {
+      name: "to",
+      type: "address",
+    },
+    {
+      name: "value",
+      type: "uint256",
+    },
+    {
+      name: "isSomething",
+      type: "bool",
+    },
+    {
+      name: "fromToken",
+      type: "tuple",
+      components: [
+        { name: "address", type: "address", canBeVariable: false },
+        { name: "decimals", type: "uint16", canBeVariable: false },
+      ],
+    },
+    {
+      name: "list",
+      type: "uint256[]",
+    },
+  ] as const;
 
-  console.log(param);
+  const input = createInput(data);
+
+  input.set({
+    to: "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+    value: "12",
+    isSomething: true,
+    fromToken: {
+      address: "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+      decimals: "18",
+    },
+    list: ["1", "2", "3"],
+  });
+
+  console.log(input.get());
 }
 
 main()

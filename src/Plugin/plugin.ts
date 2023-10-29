@@ -1,5 +1,4 @@
 import { ethers, VoidSigner } from "ethers";
-import { ParamType } from "ethers/lib/utils";
 import _ from "lodash";
 
 import { CALL_OVERHEAD } from "../constants";
@@ -19,23 +18,22 @@ import { FunctionParameter } from "./parameter";
 
 type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
 
-export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragment, I extends string = string> {
-  readonly chainId: ChainId;
-  readonly method: A["name"];
-  // readonly params: FunctionParameter[] = [];
-  readonly params: ParamType[] = [];
-  readonly functionType: A["stateMutability"] = "payable";
-  readonly gas: string = "0";
-  readonly abiFragment: A;
-  readonly outputParams: FunctionParameter[] = [];
-  readonly supportedContracts: readonly SupportedContract[] = [];
-  readonly protocol: I;
+export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment, I extends string = string> {
+  public readonly chainId: ChainId;
+  public readonly method: A["name"];
+  public readonly params: FunctionParameter[] = [];
+  public readonly functionType: A["stateMutability"] = "payable";
+  public readonly gas: string = "0";
+  public readonly abiFragment: A;
+  public readonly outputParams: FunctionParameter[] = [];
+  public readonly supportedContracts: readonly SupportedContract[] = [];
+  public readonly protocol: I;
 
-  contractAddress?: string;
-  ethValue: string | Variable = "0";
-  options: A["options"] = {};
-  vaultAddress: string | undefined;
-  provider: ethers.providers.Provider;
+  public contractAddress?: string;
+  public ethValue: string | Variable = "0";
+  public options: A["options"] = {};
+  public vaultAddress: string | undefined;
+  public provider: ethers.providers.Provider;
 
   constructor(args: {
     protocol: I;
@@ -51,7 +49,7 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     this.protocol = args.protocol;
     this.chainId = args.chainId;
     this.method = args.abiFragment.name;
-    this.params = args.abiFragment.inputs?.map((c) => ParamType.fromObject(c)) || [];
+    this.params = args.abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
     this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.abiFragment = args.abiFragment;
@@ -83,12 +81,12 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     }
   }
 
-  get signature(): string {
+  get functionSignature(): string {
     return `${this.method}(${this.params.map((p) => p.type).join(",")})`;
   }
 
-  get signatureHash(): string {
-    return ethers.utils.id(this.signature);
+  get functionSignatureHash(): string {
+    return ethers.utils.id(this.functionSignature);
   }
 
   get inputs() {
@@ -106,17 +104,17 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     return getOutputs<A["outputs"]>({ outputs: this.abiFragment.outputs });
   }
 
-  async estimateGas() {
+  public async estimateGas() {
     if (!this.gas) return (80000n + CALL_OVERHEAD).toString(); // default gas limit
     return (BigInt(this.gas) + CALL_OVERHEAD).toString();
   }
 
-  setValue(value: ETHValueInput<A["stateMutability"]> | Variable) {
+  public setValue(value: ETHValueInput<A["stateMutability"]> | Variable) {
     if (this.functionType !== "payable") return;
     this.ethValue = value || "0";
   }
 
-  setContractAddress(address: string) {
+  public setContractAddress(address: string) {
     // If there are supported contracts, check if the address is supported
     if (this.supportedContracts) {
       const supportedContract = this.supportedContracts.find((s) => s.address.toLowerCase() === address.toLowerCase());
@@ -128,12 +126,12 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     return address;
   }
 
-  setOptions(options: A["options"]) {
+  public setOptions(options: A["options"]) {
     this.options = _.merge({}, this.options, options);
     return this.options;
   }
 
-  set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
+  public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
     // TODO: params should be a tuple (like ethers - support object and array)
     Object.entries<any>(params).forEach((p) => {
       const param = this.params.find((fp) => fp.name === p[0]);
@@ -143,13 +141,13 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     });
   }
 
-  get() {
+  public get() {
     return this.params.reduce((acc, cur) => {
       return { ...acc, [cur.name]: cur.get() };
     }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
   }
 
-  async create(): Promise<IPluginCall | undefined> {
+  public async create(): Promise<IPluginCall | undefined> {
     if (!this.contractAddress) return undefined;
     const params = this.params.map((p) => p.getAsCoreParam());
     const call: IPluginCall = {
@@ -167,7 +165,7 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     return call;
   }
 
-  async simulate({
+  public async simulate({
     from,
     input,
   }: {
@@ -194,7 +192,7 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     };
   }
 
-  async safeSimulate({
+  public async safeSimulate({
     from,
     input,
   }: {
@@ -223,8 +221,8 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     }
   }
 
-  clone(): FunctionFragment<A> {
-    return new FunctionFragment({
+  public clone(): PluginFunction<A> {
+    return new PluginFunction({
       protocol: this.protocol,
       abiFragment: this.abiFragment,
       chainId: this.chainId,
@@ -234,7 +232,7 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     });
   }
 
-  isPlugin(data: IPluginCall) {
+  public isPlugin(data: IPluginCall) {
     const isMethod = data.method === this.method;
     const isParams = data.params.every((p, i) => {
       return p.name === this.params[i].name && p.type === this.params[i].type;
@@ -243,7 +241,7 @@ export class FunctionFragment<A extends EnhancedJsonFragment = EnhancedJsonFragm
     return isMethod && isParams;
   }
 
-  getCallType(): CallType {
+  public getCallType(): CallType {
     if (this.functionType === "payable" || this.functionType === "nonpayable") {
       return "ACTION";
     }
@@ -260,7 +258,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
   protocol: I;
   supportedContracts?: readonly SupportedContract[];
 }) {
-  return class Plugin extends FunctionFragment<F, I> {
+  return class Plugin extends PluginFunction<F, I> {
     public static readonly id = `${protocol}_${abiFragment.name}`;
     public readonly id = Plugin.id;
     constructor(args: {
