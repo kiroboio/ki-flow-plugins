@@ -40,9 +40,9 @@ export type InputFragmentValue<F extends EnhancedJsonFragmentType> =
   | CanBeVariable<F>;
 
 export type InputSet<P extends readonly EnhancedJsonFragmentType[]> = {
-  [K in P[number]["name"]]: P[number]["type"] extends "tuple"
+  [K in P[number]["name"]]: Extract<P[number], { name: K }>["type"] extends "tuple"
     ? InputSet<HandleUndefined<Extract<P[number], { name: K }>["components"]>>
-    : P[number]["type"] extends `${string}]`
-    ? InputFragmentValue<Extract<P[number], { name: K }>>[]
+    : Extract<P[number], { name: K }>["type"] extends `${infer _}[${string}`
+    ? InputFragmentValue<{ type: _; name: string }>[]
     : InputFragmentValue<Extract<P[number], { name: K }>>;
 };

@@ -51,7 +51,7 @@ export function createSmartPlugin<
   PR extends string = string
 >({
   protocol,
-  supportedPlugins,
+  // supportedPlugins,
   prepare,
   abiFragment,
   prepareOutputs,
@@ -246,15 +246,15 @@ export function createSmartPlugin<
       return true;
     }
 
-    static isSmartPluginOfSimplePlugin(data: IPluginCall) {
-      const Plugin = supportedPlugins.find((p) => {
-        const plugin = new p({ chainId: "1" });
-        return plugin.isPlugin(data);
-      });
+    // static isSmartPluginOfSimplePlugin(data: IPluginCall) {
+    //   const Plugin = supportedPlugins.find((p) => {
+    //     const plugin = new p({ chainId: "1" });
+    //     return plugin.isPlugin(data);
+    //   });
 
-      if (!Plugin) return false;
-      return true;
-    }
+    //   if (!Plugin) return false;
+    //   return true;
+    // }
   };
 }
 

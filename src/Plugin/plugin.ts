@@ -13,15 +13,17 @@ import {
   SupportedContract,
   Variable,
 } from "../types";
+import { createInput } from "./input";
 import { getOutputs } from "./outputs";
 import { FunctionParameter } from "./parameter";
 
 type ETHValueInput<T extends string | undefined> = T extends "payable" ? string : undefined | null;
 
+export type Inputs<A extends EnhancedJsonFragment> = ReturnType<typeof createInput<HandleUndefined<A["inputs"]>>>;
+
 export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragment, I extends string = string> {
   public readonly chainId: ChainId;
   public readonly method: A["name"];
-  public readonly params: FunctionParameter[] = [];
   public readonly functionType: A["stateMutability"] = "payable";
   public readonly gas: string = "0";
   public readonly abiFragment: A;
@@ -35,6 +37,8 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   public vaultAddress: string | undefined;
   public provider: ethers.providers.Provider;
 
+  public inputs: Inputs<A>;
+
   constructor(args: {
     protocol: I;
     abiFragment: A;
@@ -44,15 +48,15 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     vaultAddress?: string;
     contractAddress?: string;
     supportedContracts?: readonly SupportedContract[];
-    input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
+    input?: Parameters<Inputs<A>["set"]>[0];
   }) {
     this.protocol = args.protocol;
     this.chainId = args.chainId;
     this.method = args.abiFragment.name;
-    this.params = args.abiFragment.inputs?.map((c) => new FunctionParameter(c)) || [];
     this.outputParams = args.abiFragment.outputs?.map((c) => new FunctionParameter(c)) || [];
     this.functionType = args.abiFragment.stateMutability || "payable";
     this.abiFragment = args.abiFragment;
+    this.inputs = createInput(args.abiFragment.inputs || []) as any;
 
     if (args.vaultAddress) this.vaultAddress = args.vaultAddress;
     if (args.abiFragment.gas) this.gas = args.abiFragment.gas;
@@ -82,18 +86,11 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
   }
 
   get functionSignature(): string {
-    return `${this.method}(${this.params.map((p) => p.type).join(",")})`;
+    return this.inputs.getFunctionSignature(this.method);
   }
 
   get functionSignatureHash(): string {
     return ethers.utils.id(this.functionSignature);
-  }
-
-  get inputs() {
-    // const params = this.params.reduce((acc, cur) => {
-    //   return { ...acc, [cur.name]: cur.get() };
-    // }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
-    return { set: this.set.bind(this), get: this.get.bind(this) };
   }
 
   get inputTypes() {
@@ -131,25 +128,18 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     return this.options;
   }
 
-  public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
-    // TODO: params should be a tuple (like ethers - support object and array)
-    Object.entries<any>(params).forEach((p) => {
-      const param = this.params.find((fp) => fp.name === p[0]);
-      if (param) {
-        param.set(p[1]);
-      }
-    });
+  set(value: Parameters<Inputs<A>["set"]>[0]) {
+    if (!value) return;
+    this.inputs.set(value);
   }
 
-  public get() {
-    return this.params.reduce((acc, cur) => {
-      return { ...acc, [cur.name]: cur.get() };
-    }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
+  get() {
+    return this.inputs.get();
   }
 
   public async create(): Promise<IPluginCall | undefined> {
     if (!this.contractAddress) return undefined;
-    const params = this.params.map((p) => p.getAsCoreParam());
+    const params = this.inputs.getCoreParameters();
     const call: IPluginCall = {
       method: this.method,
       params,
@@ -177,7 +167,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     }
     const provider = this.provider;
 
-    const params = this.params.map((p) => {
+    const params = this.inputs.data.map((p) => {
       if (input && p.name in input) {
         return input[p.name as keyof typeof input];
       }
@@ -227,18 +217,9 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
       abiFragment: this.abiFragment,
       chainId: this.chainId,
       contractAddress: this.contractAddress,
-      input: this.get(),
+      input: this.inputs.get(),
       vaultAddress: this.vaultAddress,
     });
-  }
-
-  public isPlugin(data: IPluginCall) {
-    const isMethod = data.method === this.method;
-    const isParams = data.params.every((p, i) => {
-      return p.name === this.params[i].name && p.type === this.params[i].type;
-    });
-
-    return isMethod && isParams;
   }
 
   public getCallType(): CallType {
@@ -267,7 +248,7 @@ export function createPlugin<F extends Readonly<JsonFragment>, I extends string>
       provider?: ethers.providers.Provider;
       vaultAddress?: string;
       contractAddress?: string;
-      input?: Partial<PluginFunctionInput<HandleUndefined<F["inputs"]>>>;
+      input?: Parameters<Inputs<F>["set"]>[0];
     }) {
       super({
         protocol,

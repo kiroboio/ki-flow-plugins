@@ -1,4 +1,4 @@
-import { EnhancedJsonFragmentType, HandleUndefined } from "../types";
+import { EnhancedJsonFragmentType, HandleUndefined, Param } from "../types";
 import {
   BaseInputData,
   GetArrayType,
@@ -25,8 +25,22 @@ export class InputFragment<F extends EnhancedJsonFragmentType> {
     return this._data;
   }
 
+  getAsParam(): Param {
+    return {
+      name: this.name,
+      type: this.type,
+      value: this._data as any,
+      customType: false,
+      // hashed: ....
+    };
+  }
+
   set(value: InputFragmentValue<F>) {
     this._data = value;
+  }
+
+  getFullType() {
+    return this.type;
   }
 
   static create<F extends EnhancedJsonFragmentType>(fragment: F): GetInputFragmentType<F> {
@@ -47,7 +61,6 @@ export class TupleInputFragment<F extends EnhancedJsonFragmentType> {
   type: F["type"];
   name: F["name"];
 
-  private _components: readonly EnhancedJsonFragmentType[] = [];
   private _data: Record<string, InputFragmentType> = {};
 
   constructor(fragment: F) {
@@ -90,6 +103,18 @@ export class TupleInputFragment<F extends EnhancedJsonFragmentType> {
     return result;
   }
 
+  getAsParam(): Param {
+    return {
+      name: this.name,
+      type: this.type,
+      value: Object.values(this._data).map((val) => {
+        return val.getAsParam();
+      }),
+      customType: true,
+      // hashed: ....
+    };
+  }
+
   set(value: InputMethods<HandleUndefined<F["components"]>>) {
     // Verify every key
     Object.keys(value).forEach((key) => {
@@ -101,6 +126,11 @@ export class TupleInputFragment<F extends EnhancedJsonFragmentType> {
         throw new Error(`Invalid key ${key}`);
       }
     });
+  }
+
+  getFullType() {
+    const params = Object.values(this._data).map((p) => p.getFullType()) as string[];
+    return `(${params.join(",")})`;
   }
 }
 
@@ -146,6 +176,18 @@ export class ArrayInputFragment<F extends EnhancedJsonFragmentType> {
     return this._data.map((d) => d.get());
   }
 
+  getAsParam(): Param {
+    return {
+      name: this.name,
+      type: this.type,
+      value: this._data.map((val) => {
+        return val.getAsParam();
+      }),
+      customType: this._components !== undefined,
+      // hashed: ....
+    };
+  }
+
   set(value: InputFragmentValue<F>) {
     // Verify every value
     (value as Array<any>).forEach((v, index) => {
@@ -161,6 +203,14 @@ export class ArrayInputFragment<F extends EnhancedJsonFragmentType> {
         this._data[index] = input;
       }
     });
+  }
+
+  getFullType() {
+    if (this._components) {
+      const params = this._components.map((p) => InputFragment.create(p).getFullType());
+      return `(${params.join(",")})${this.type.slice(this.type.indexOf("["))}`;
+    }
+    return this.type;
   }
 }
 
@@ -185,15 +235,30 @@ export class BaseInput<P extends readonly EnhancedJsonFragmentType[]> {
     });
   }
 
-  get() {
+  get data() {
+    return this._data;
+  }
+
+  get(): InputSet<P> {
     // @ts-ignore
     return this._data.reduce((acc, cur) => {
       return { ...acc, [cur.name]: cur.get() };
-    }, {});
+    }, {} as InputSet<P>);
   }
 
   getAsArray() {
     return this._data.map((d) => d.get());
+  }
+
+  getCoreParameters(): Param[] {
+    return this._data.map((d) => {
+      return d.getAsParam();
+    });
+  }
+
+  getFunctionSignature(method: string) {
+    const params = this._data.map((p) => p.type);
+    return `${method}(${params.join(",")})`;
   }
 
   set(value: any[] | Partial<InputSet<P>>) {
