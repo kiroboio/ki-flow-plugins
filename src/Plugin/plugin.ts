@@ -81,7 +81,7 @@ export class PluginFunction<A extends EnhancedJsonFragment = EnhancedJsonFragmen
     } else if (args.rpcUrl) {
       this.provider = new ethers.providers.JsonRpcProvider(args.rpcUrl);
     } else {
-      throw new Error("Provider or RPC URL not provided");
+      this.provider = ethers.getDefaultProvider();
     }
   }
 

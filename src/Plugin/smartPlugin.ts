@@ -11,9 +11,10 @@ import {
   RequiredApproval,
   RequiredObject,
 } from "../types";
+import { createInput } from "./input";
 import { Output } from "./outputs";
 import { FunctionParameter } from "./parameter";
-import { Plugin } from "./plugin";
+import { Inputs, Plugin } from "./plugin";
 
 // Optional:
 // - optional helpers when constructing plugin (for example, cache for Uniswap). After talking with Sumbat - not mandatory.
@@ -81,9 +82,10 @@ export function createSmartPlugin<
     public readonly chainId: C;
     public readonly name: A["name"] = abiFragment.name;
     public readonly vaultAddress: string;
-    public readonly params: Params<A["inputs"]>;
     public readonly provider: ethers.providers.JsonRpcProvider;
     public static readonly id: `SmartPlugin_${PR}_${A["name"]}` = `SmartPlugin_${protocol}_${abiFragment.name}`;
+
+    inputs: Inputs<A>;
 
     // Create a cache, where plugins from getPlugin are stored with the input as the key. stdLLL should be 3 minutes.
     public cache = new NodeCache({ stdTTL: 180 });
@@ -95,9 +97,10 @@ export function createSmartPlugin<
       provider?: ethers.providers.JsonRpcProvider;
       input?: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>;
     }) {
+      this.inputs = createInput(abiFragment.inputs || []) as Inputs<A>;
       this.chainId = args.chainId;
       this.vaultAddress = args.vaultAddress;
-      this.params = (abiFragment.inputs || []).map((c) => new FunctionParameter(c)) as Params<A["inputs"]>;
+
       if (args.input) {
         this.set(args.input);
       }
@@ -112,21 +115,6 @@ export function createSmartPlugin<
 
     get id() {
       return SmartPlugin.id;
-    }
-
-    get inputs(): {
-      get(): PluginFunctionInput<HandleUndefined<A["inputs"]>>;
-      set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>): void;
-      // } & ParameterInputFromFragments<A["inputs"]> {
-    } {
-      // const params = this.params.reduce((acc, cur) => {
-      //   return { ...acc, [cur.name]: cur.getWithMethods() };
-      // }, {} as ParameterInputFromFragments<A["inputs"]>);
-      return {
-        // ...params,
-        set: this.set.bind(this),
-        get: this.get.bind(this),
-      };
     }
 
     get inputTypes() {
@@ -151,24 +139,19 @@ export function createSmartPlugin<
       return undefined;
     }
 
-    public set(params: Partial<PluginFunctionInput<HandleUndefined<A["inputs"]>>>) {
-      Object.entries(params).forEach((p) => {
-        const param = this.params.find((fp) => fp.name === p[0]);
-        if (param) {
-          param.set(p[1] as any);
-        }
-      });
+    set(value: Parameters<Inputs<A>["set"]>[0]) {
+      if (!value) return;
+      this.inputs.set(value);
     }
 
-    public get() {
-      return this.params.reduce((acc, cur) => {
-        return { ...acc, [cur.name]: cur.get() };
-      }, {} as PluginFunctionInput<HandleUndefined<A["inputs"]>>);
+    get() {
+      return this.inputs.get();
     }
 
     public getStrict() {
-      return this.params.reduce((acc, cur) => {
-        return { ...acc, [cur.name]: cur.getStrict() };
+      // @ts-ignore
+      return this.inputs.data.reduce((acc, cur) => {
+        return { ...acc, [cur.name]: cur.get() };
       }, {} as RequiredObject<PluginFunctionInput<HandleUndefined<A["inputs"]>>>);
     }
 

@@ -17,6 +17,8 @@ async function main() {
     path: ["0x1f9840a85d5af5bf1d1762f925bdaddc4201f984", ethers.Wallet.createRandom().address],
     to: ethers.Wallet.createRandom().address,
   });
+
+  console.log(JSON.stringify(await Swap.create(), null, 2));
 }
 
 main()
