@@ -16,6 +16,6 @@ export function createRequiredActionForPlugin<P extends Plugin<any, string>>({
     chainId: ChainId;
   }) => Promise<RequiredApproval[]> | RequiredApproval[];
 }) {
-  const pl = new plugin({ chainId: "1", rpcUrl: "none" });
-  return [pl.id, requiredActions] as const;
+  const pl = new plugin({ chainId: "1" });
+  return [pl, requiredActions] as const;
 }

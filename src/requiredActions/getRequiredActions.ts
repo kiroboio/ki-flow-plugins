@@ -15,7 +15,7 @@ export async function getRequiredActions<I extends string>({
   call: IPluginCall;
   chainId: ChainId;
 }) {
-  const requiredActionsData = AllRequiredActions.find((data) => data[0] === pluginId);
+  const requiredActionsData = AllRequiredActions.find((data) => data[0].id === pluginId);
 
   if (!requiredActionsData) return [];
   const requiredActions = requiredActionsData[1];
@@ -27,6 +27,35 @@ export async function getRequiredActions<I extends string>({
     contractAddress: call.to,
     provider,
     input: params,
+    vaultAddress: call.from,
+  });
+}
+
+export async function getRequiredActionsFromSignature({
+  signature,
+  provider,
+  chainId,
+  call,
+}: {
+  provider: ethers.providers.Provider;
+  signature: string;
+  chainId: ChainId;
+  call: IPluginCall;
+}) {
+  const requiredActionsData = AllRequiredActions.find(
+    (data) => data[0].functionSignatureHash.toLowerCase() === signature.toLowerCase()
+  );
+
+  if (!requiredActionsData) return [];
+  const requiredActions = requiredActionsData[1];
+
+  const input = parseParams(call.params);
+
+  return await requiredActions({
+    input,
+    chainId,
+    contractAddress: signature,
+    provider,
     vaultAddress: call.from,
   });
 }
