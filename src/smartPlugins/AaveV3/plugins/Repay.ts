@@ -15,9 +15,8 @@ const abiFragment = {
       type: "uint256",
     },
     {
-      name: "rateMode",
+      name: "interestRateMode",
       type: "uint256",
-      options: ["1", "2"],
     },
     {
       name: "onBehalfOf",

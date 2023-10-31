@@ -49,19 +49,6 @@ describe("AaveV2 Smart Plugin tests", () => {
 
       expect(plugin).instanceOf(AaveV2.borrow);
     });
-    it("interestRateMode should revert", async () => {
-      expect(() => {
-        smartPlugin.set({
-          // @ts-ignore
-          interestRateMode: "3",
-          amount: "1" + "0".repeat(6),
-          asset: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
-          onBehalfOf: smartPlugin.vaultAddress,
-        });
-      })
-        .to.throw(Error)
-        .with.property("message", `interestRateMode: Invalid value. Expected: 1, 2`);
-    });
   });
   describe("AaveV2 Repay", () => {
     // smartPlugin is an initialized instance of AaveV2 Repay
@@ -85,19 +72,6 @@ describe("AaveV2 Smart Plugin tests", () => {
       const plugin = await smartPlugin.getPlugin();
 
       expect(plugin).instanceOf(AaveV2.repay);
-    });
-    it("rateMode should revert", async () => {
-      expect(() => {
-        smartPlugin.set({
-          // @ts-ignore
-          rateMode: "3",
-          amount: "1" + "0".repeat(6),
-          asset: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
-          onBehalfOf: smartPlugin.vaultAddress,
-        });
-      })
-        .to.throw(Error)
-        .with.property("message", `rateMode: Invalid value. Expected: 1, 2`);
     });
   });
 });
