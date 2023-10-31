@@ -1,4 +1,4 @@
-name: CI
+name: Semantic Release & Publish
 on:
   push:
     branches: [main]
@@ -6,13 +6,10 @@ jobs:
   test:
     runs-on: ubuntu-lastest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12"
+      - uses: actions/checkout@v3
       - run: yarn install --frozen-lockfile
       - run: yarn test
-      - name: Release
+      - name: Release & Publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
