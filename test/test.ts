@@ -1,24 +1,20 @@
-import console from "console";
 import { ethers } from "ethers";
-import process from "process";
 
-import { UniswapV2 } from "../src";
+import { UniswapV2 } from "../src/plugins";
+import { Variable } from "../src/types";
 
-const Swap = new UniswapV2.swapExactTokensForTokens({
+const Swap = new UniswapV2.swapExactTokensForETH({
   chainId: "1",
-  rpcUrl: "none",
+  vaultAddress: ethers.Wallet.createRandom().address,
 });
 
-async function main() {
-  Swap.set({
-    amountIn: "123",
-    amountOutMin: "223",
-    deadline: "321",
-    path: ["0x1f9840a85d5af5bf1d1762f925bdaddc4201f984", ethers.Wallet.createRandom().address],
-    to: ethers.Wallet.createRandom().address,
-  });
+const variable: Variable = {
+  type: "global",
+  id: "activatorAddress",
+};
 
-  console.log(JSON.stringify(await Swap.create(), null, 2));
+async function main() {
+  const data = await Swap.create();
 }
 
 main()
